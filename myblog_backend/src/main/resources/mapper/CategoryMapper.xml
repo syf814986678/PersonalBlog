@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shiyifan.dao.CategoryMapper">
+    <cache/>
+    <!--查询所有种类-->
+    <select id="selectAllCategoryByPage" resultType="mycategory">
+        select *
+        from mycategory
+        where category_user_id =#{userid}
+        and is_deleted =0
+        order by create_gmt desc
+        limit #{pageNow},#{pageSize};
+    </select>
+
+    <!--查询添加博客种类-->
+    <select id="selectAllCategoryForBlog" resultType="mycategory">
+        select category_id,category_name,create_gmt
+        from mycategory
+        where category_user_id =#{userid}
+        and is_deleted =0
+        order by create_gmt desc
+    </select>
+
+    <!--查询总条数-->
+    <select id="selectTotalCategoryNums" resultType="int">
+        select count(category_id) from mycategory
+        where category_user_id =#{userid}
+        and is_deleted =0
+    </select>
+
+    <!--添加种类-->
+    <insert id="addCategory">
+        insert into mycategory
+        values (null,#{categoryname},0,#{userid},0,null,null)
+    </insert>
+
+    <!--根据种类ID和用户ID查找一个种类-->
+    <select id="selectCategoryById" resultType="mycategory">
+        select *
+        from mycategory
+        where category_id =#{categoryid}
+        and category_user_id =#{userid}
+        and is_deleted =0
+    </select>
+
+    <!--根据种类ID和用户ID更新种类-->
+    <update id="updateCategory">
+        update mycategory
+        set category_name =#{categoryname}
+        ,update_gmt = CURRENT_TIMESTAMP
+        where category_id =#{categoryid}
+        and category_user_id =#{userid}
+        and is_deleted =0
+    </update>
+
+    <!--根据种类ID和用户ID删除种类-->
+    <update id="deleteCategory">
+        update mycategory
+        set is_deleted =1,update_gmt = CURRENT_TIMESTAMP
+        where category_id =#{categoryid}
+        and category_user_id =#{userid}
+    </update>
+
+    <!--根据种类ID和用户ID查找种类Rank-->
+    <select id="getCategoryRank" resultType="int">
+        select category_rank
+        from mycategory
+        where category_id =#{categoryid}
+        and category_user_id =#{userid}
+        and is_deleted =0
+    </select>
+
+    <!--根据博客ID和用户ID获取博客的种类ID-->
+    <select id="getCategoryid" resultType="int">
+        select blog_category_id
+        from myblog
+        where blog_id =#{blogid}
+        and blog_user_id= #{userid}
+        and is_deleted =0
+    </select>
+
+    <!--根据种类ID和用户ID添加权重-->
+    <update id="addCategoryRank" >
+        update mycategory
+        set category_rank=category_rank+1
+        where category_id =#{categoryid}
+        and category_user_id= #{userid}
+        and is_deleted =0
+    </update>
+
+    <!--根据种类ID和用户ID减少权重-->
+    <update id="deleteCategoryRank" >
+        update mycategory
+        set category_rank=category_rank-1
+        where category_id =#{categoryid}
+        and category_user_id= #{userid}
+        and is_deleted =0
+    </update>
+
+    <select id="selectAllCategoryForCommon" resultType="mycategory">
+        select category_id,category_name,category_rank
+        from mycategory
+        where category_rank >0
+        and is_deleted =0
+        order by category_rank desc
+        limit 0,10
+    </select>
+</mapper>

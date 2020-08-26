@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shiyifan.dao.BlogMapper">
+
+    <resultMap id="blogandcategory" type="myblog">
+        <association property="mycategory" column="blog_category_id"  select="selectCategoryById"/>
+    </resultMap>
+
+    <resultMap id="blogandcategoryandusername" type="myblog">
+        <association property="mycategory" column="blog_category_id"  select="selectCategoryById"/>
+        <association property="myuser" column="blog_user_id"  select="selectUserById"/>
+    </resultMap>
+
+    <select id="selectCategoryById" resultType="mycategory">
+        select category_id,category_name,category_rank
+        from mycategory
+        where category_id =#{blog_category_id}
+        and is_deleted =0
+    </select>
+
+    <select id="selectUserById" resultType="myuser">
+        select user_id,user_name
+        from myuser
+        where user_id =#{blog_user_id}
+        and is_deleted =0
+    </select>
+
+    <!--*****************************登陆后进行的操作*****************************-->
+    <!--添加博客-->
+    <insert id="addBlog" parameterType="myblog">
+        insert into myblog
+        values (#{blogId},#{blogTitle},#{blogCoverImage},#{blogContent},#{mycategory.categoryId},#{myuser.userId},#{isDeleted},null,null)
+    </insert>
+
+    <!--根据博客ID和用户ID查找博客-->
+    <select id="selectBlogById" resultMap="blogandcategoryandusername">
+        select *
+        from myblog
+        where blog_id =#{blogid}
+        and blog_user_id =#{userid}
+        and is_deleted =0
+    </select>
+
+    <!--根据ID删除博客-->
+    <update id="deleteBlogById">
+        update myblog
+        set is_deleted =1,update_gmt = CURRENT_TIMESTAMP
+        where blog_id =#{blogid}
+        and blog_user_id =#{userid}
+    </update>
+
+    <!--更新博客-->
+    <update id="updateBlog" parameterType="myblog">
+        update myblog
+        <set>
+            <if test="blogTitle != null">blog_title =#{blogTitle},</if>
+            <if test="blogCoverImage != null">blog_cover_image =#{blogCoverImage},</if>
+            <if test="blogContent != null">blog_content =#{blogContent},</if>
+            <if test="mycategory != null">blog_category_id =#{mycategory.categoryId}</if>
+        </set>
+        ,update_gmt = CURRENT_TIMESTAMP
+        where blog_id =#{blogId}
+        and blog_user_id =#{myuser.userId}
+        and is_deleted =0
+    </update>
+
+    <!--分页查询博客-->
+    <select id="selectBlogAll" resultMap="blogandcategory">
+         select blog_id,blog_title,blog_cover_image,blog_category_id,create_gmt,update_gmt
+         from myblog
+         where blog_user_id =#{userid}
+         and is_deleted =0
+         order by create_gmt desc;
+    </select>
+    <select id="selectBlogForOne" resultMap="blogandcategory">
+         select blog_id,blog_title,blog_cover_image,blog_category_id,create_gmt,update_gmt
+         from myblog
+         where blog_user_id =#{userid}
+         and blog_id=#{blogid}
+         and is_deleted =0
+         order by create_gmt desc;
+    </select>
+
+    <!--查询总条数-->
+    <select id="selectTotalBlogNums" resultType="int">
+        select count(blog_user_id) from myblog
+        where blog_user_id =#{userid}
+        and is_deleted =0
+    </select>
+
+    <!--根据种类ID查找博客-->
+    <select id="selectBlogByCategoryIdAndPage" resultMap="blogandcategory">
+         select blog_id,blog_title,blog_cover_image,blog_category_id,create_gmt,update_gmt
+         from myblog
+         where blog_user_id =#{userid}
+         and blog_category_id =#{categoryid}
+         and is_deleted =0
+         limit #{pageNow},#{pageSize};
+    </select>
+
+    <!--************************************************************************-->
+
+    <!--*****************************公共操作*****************************-->
+    <!--根据博客ID查找博客-->
+    <select id="selectBlogByIdForCommon" resultMap="blogandcategoryandusername">
+        select *
+        from myblog blog
+        where blog_id =#{blogid}
+        and is_deleted =0
+    </select>
+
+    <!--查找最新博客-->
+    <select id="selectBlogAllForCommon" resultMap="blogandcategoryandusername">
+        select blog_id,blog_title,blog_cover_image,blog_category_id,blog_user_id,create_gmt,update_gmt
+        from myblog blog
+        where is_deleted =0
+        <if test="categoryid != 0">
+            AND blog_category_id =#{categoryid}
+        </if>
+        ORDER BY create_gmt DESC;
+    </select>
+    <select id="selectBlogForOneForCommon" resultMap="blogandcategoryandusername">
+        select blog_id,blog_title,blog_cover_image,blog_category_id,blog_user_id,create_gmt,update_gmt
+        from myblog blog
+        where is_deleted =0
+        and blog_id =#{blogid}
+        ORDER BY create_gmt DESC;
+    </select>
+
+    <!--查询全部总条数-->
+    <select id="selectTotalBlogNumsForCommon" resultType="int">
+        select count(blog_user_id) from myblog
+        where is_deleted =0
+        <if test="categoryid != 0">
+            AND blog_category_id =#{categoryid}
+        </if>
+    </select>
+
+    <!--根据作者查找博客-->
+    <select id="selectBlogByAuthorForCommon" resultMap="blogandcategoryandusername">
+         select blog_id,blog_title,blog_cover_image,blog_category_id,blog_user_id,create_gmt,update_gmt
+         from myblog
+         where blog_user_id =#{userid}
+         and is_deleted =0
+         order by create_gmt desc
+         limit #{pageNow},#{pageSize};
+    </select>
+</mapper>
