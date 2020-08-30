@@ -22,7 +22,7 @@
         },
         methods:{
           open(myurl){
-            window.open("/index/blog/"+myurl)
+            window.open("/#/index/blog/"+myurl)
           },
         },
         created() {

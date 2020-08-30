@@ -366,7 +366,7 @@
           });
         },
         showBlog(row){
-          window.open("/index/blog/"+row.blogId)
+          window.open("/#/index/blog/"+row.blogId)
         },
         randomName(filename,len) {
           len = len || 32;
