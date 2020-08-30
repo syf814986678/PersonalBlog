@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 @Data
 public class MyConstant {
     /*
-        阿里云oos
+        阿里云oss
      */
-    @Value("${ali.oos.endpoint}")
+    @Value("${ali.oss.endpoint}")
     private String endpoint;
-    @Value("${ali.oos.accessKeyId}")
+    @Value("${ali.oss.accessKeyId}")
     private String accessKeyId;
-    @Value("${ali.oos.accessKeySecret}")
+    @Value("${ali.oss.accessKeySecret}")
     private String accessKeySecret;
-    @Value("${ali.oos.bucket}")
+    @Value("${ali.oss.bucket}")
     private String bucket;
 
     /*

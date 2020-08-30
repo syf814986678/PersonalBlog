@@ -141,7 +141,6 @@ public class UploadController {
                 jasonCallback.put("callbackBodyType", "application/x-www-form-urlencoded");
                 String base64CallbackBody = BinaryUtil.toBase64String(jasonCallback.toString().getBytes());
                 map.put("callback", base64CallbackBody);
-                System.out.println(map.toString());
                 result.setCodeState(CodeState.success);
 
             }
@@ -151,7 +150,6 @@ public class UploadController {
             }
         }
         catch (Exception e){
-            System.out.println("获取oosToken错误");
             System.out.println(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
@@ -169,7 +167,6 @@ public class UploadController {
         Gson gson = new Gson();
         HashMap<String, Object> map = new HashMap<>();
         String filename = request.getParameter("filename");
-        System.out.println(filename);
         filename = "https://picture.chardance.cloud/".concat(filename);
         map.put("filename", filename);
         map.put("Size", request.getParameter("size"));
@@ -178,7 +175,6 @@ public class UploadController {
         map.put("Height", request.getParameter("Height"));
         map.put("codeState", CodeState.success);
         String resultJson = gson.toJson(map);
-        System.out.println(resultJson);
         return resultJson;
     }
 }
