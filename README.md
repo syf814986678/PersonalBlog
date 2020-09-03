@@ -24,6 +24,7 @@
 6. Spring-Security  
 7. Jasypt  
 8. Jwt  
+9. Elasticsearch
 
 .....更多技术正在学习中.....
 

@@ -24,6 +24,7 @@ Backend:
 6. Spring-Security  
 7. Jasypt  
 8. Jwt  
+9. Elasticsearch
 
 .....More technology is being learned.....
 
