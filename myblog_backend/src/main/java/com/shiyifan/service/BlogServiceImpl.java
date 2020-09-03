@@ -1,11 +1,26 @@
 package com.shiyifan.service;
 
+import com.google.gson.Gson;
 import com.shiyifan.dao.BlogMapper;
 import com.shiyifan.dao.CategoryMapper;
+import com.shiyifan.pojo.ElasticSearchBlog;
 import com.shiyifan.pojo.Myblog;
 import com.shiyifan.pojo.Mycategory;
 import com.shiyifan.utils.ArabicNumToChineseNumUtil;
 import com.shiyifan.utils.RedisUtil;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -13,12 +28,16 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 @Service
 @Transactional
 @Order
-public class BlogServiceImpl implements BlogService, ApplicationRunner {
+public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     @Autowired
     private BlogMapper blogMapper;
@@ -31,6 +50,9 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
 
     @Autowired
     private ArabicNumToChineseNumUtil numUtil;
+
+    @Autowired
+    private RestHighLevelClient restHighLevelClient;
 
     /*----------------登陆后进行的操作----------------*/
 
@@ -49,17 +71,22 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
         redisUtil.lSet("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommon",mynewblog);
         redisUtil.incr("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommonTotal",1);
         System.out.println("redis添加成功");
+        try {
+            ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(myblog.getBlogId());
+            IndexRequest indexRequest = new IndexRequest("blogindex");
+            Gson gson = new Gson();
+            indexRequest.id(blog.getBlogId());
+            indexRequest.source(gson.toJson(blog), XContentType.JSON);
+            restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     public Myblog selectBlogById(int userid, String blogid) {
         Myblog myblog = blogMapper.selectBlogById(userid, blogid);
-        if (myblog.getMycategory()==null){
-            Mycategory mycategory = new Mycategory();
-            mycategory.setCategoryId(0);
-            mycategory.setCategoryName("无");
-            myblog.setMycategory(mycategory);
-        }
         return myblog;
     }
 
@@ -67,7 +94,7 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
     public void deleteBlogById(int userid, String blogid, int categoryid) {
         blogMapper.deleteBlogById(userid, blogid);
         categoryMapper.deleteCategoryRank(userid, categoryid);
-        List<Object> myblogs = redisUtil.lGet("user-"+userid+"-myblogs", 0, -1);
+        ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+userid+"-myblogs", 0, -1);
         Iterator<Object> iterator = myblogs.iterator();
         while (iterator.hasNext()){
             Myblog myblog = (Myblog) iterator.next();
@@ -78,7 +105,7 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
                 break;
             }
         }
-        myblogs = redisUtil.lGet("myblogsForCommon", 0, -1);
+        myblogs = (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", 0, -1);
         iterator = myblogs.iterator();
         while (iterator.hasNext()){
             Myblog myblog = (Myblog) iterator.next();
@@ -91,6 +118,13 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
                 break;
             }
         }
+        try {
+            DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogid);
+            deleteRequest.timeout("1s");
+            restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -102,7 +136,7 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
         }
         blogMapper.updateBlog(myblog);
         Myblog mynewblog = blogMapper.selectBlogForOne(myblog.getMyuser().getUserId(), myblog.getBlogId());
-        List<Object> myblogs = redisUtil.lGet("user-"+myblog.getMyuser().getUserId()+"-myblogs", 0, -1);
+        ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+myblog.getMyuser().getUserId()+"-myblogs", 0, -1);
         Iterator<Object> iterator = myblogs.iterator();
         int index = 0;
         while (iterator.hasNext()){
@@ -115,7 +149,7 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
         }
         index=0;
         mynewblog=blogMapper.selectBlogForOneForCommon(myblog.getBlogId());
-        myblogs = redisUtil.lGet("myblogsForCommon", 0, -1);
+        myblogs = (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", 0, -1);
         iterator = myblogs.iterator();
         while (iterator.hasNext()){
             Myblog myredisblog = (Myblog) iterator.next();
@@ -134,23 +168,37 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
             }
             index++;
         }
+        redisUtil.del(myblog.getBlogId());
+        try {
+            DeleteRequest deleteRequest = new DeleteRequest("blogindex", myblog.getBlogId());
+            deleteRequest.timeout("1s");
+            restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+            ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(myblog.getBlogId());
+            IndexRequest indexRequest = new IndexRequest("blogindex");
+            Gson gson = new Gson();
+            indexRequest.id(blog.getBlogId());
+            indexRequest.source(gson.toJson(blog), XContentType.JSON);
+            restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public List<Myblog> selectBlogByPage(int userid, int pageNow, int pageSize) {
+    public ArrayList<Myblog> selectBlogByPage(int userid, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
         int end = (pageNow*pageSize)-1;
-        List<Object> myblogs = redisUtil.lGet("user-"+userid+"-myblogs", start, end);
+        ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+userid+"-myblogs", start, end);
         if(myblogs.size()==0){
             System.out.println("初始化redis,redis中不存在");
             Iterator<Myblog> iterator = blogMapper.selectBlogAll(userid).iterator();
             while (iterator.hasNext()){
                 redisUtil.RSet("user-"+userid+"-myblogs", iterator.next());
             }
-            myblogs=redisUtil.lGet("user-"+userid+"-myblogs", start, end);
+            myblogs= (ArrayList<Object>) redisUtil.lGet("user-"+userid+"-myblogs", start, end);
         }
         System.out.println("redis中存在");
-        return (List<Myblog>)(Object)myblogs;
+        return (ArrayList<Myblog>)(Object)myblogs;
     }
 
     @Override
@@ -168,7 +216,7 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
 //   todo
 //   未使用
     @Override
-    public List<Myblog> selectBlogByCategoryIdAndPage(int userid, int categoryid, int pageNow, int pageSize) {
+    public ArrayList<Myblog> selectBlogByCategoryIdAndPage(int userid, int categoryid, int pageNow, int pageSize) {
         return blogMapper.selectBlogByCategoryIdAndPage(userid,categoryid,pageNow,pageSize);
     }
 
@@ -205,19 +253,27 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
     /*------------------------------公共操作-------------------------------*/
     @Override
     public Myblog selectBlogByIdForCommon(String blogid) {
-        return blogMapper.selectBlogByIdForCommon(blogid);
+        Myblog myblog = (Myblog) redisUtil.get(blogid);
+        if(myblog==null){
+            System.out.println("初始化redis,redis中不存在");
+            redisUtil.set(blogid, blogMapper.selectBlogByIdForCommon(blogid));
+            myblog = (Myblog) redisUtil.get(blogid);
+        }
+        System.out.println("redis中存在");
+        return myblog;
     }
 
+
     @Override
-    public List<Myblog> selectBlogAllByPageForCommon(int categoryid,int pageNow,int pageSize) {
+    public ArrayList<Myblog> selectBlogAllByPageForCommon(int categoryid,int pageNow,int pageSize) {
         int start = (pageNow-1)*pageSize;
         int end = (pageNow*pageSize)-1;
-        List<Object> myblogs=null;
+        ArrayList<Object> myblogs=null;
         if(categoryid==0){
-            myblogs = redisUtil.lGet("myblogsForCommon", start, end);
+            myblogs = (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
         }
         else {
-            myblogs = redisUtil.lGet("category-"+categoryid+"-myblogsForCommon", start, end);
+            myblogs = (ArrayList<Object>) redisUtil.lGet("category-"+categoryid+"-myblogsForCommon", start, end);
         }
         if(myblogs.size()==0){
             System.out.println("初始化redis,redis中不存在");
@@ -225,10 +281,10 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
             while (iterator.hasNext()){
                 redisUtil.RSet("myblogsForCommon", iterator.next());
             }
-            myblogs=redisUtil.lGet("myblogsForCommon", start, end);
+            myblogs= (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
         }
         System.out.println("redis中存在");
-        return (List<Myblog>)(Object)myblogs;
+        return (ArrayList<Myblog>)(Object)myblogs;
     }
 
     @Override
@@ -251,18 +307,57 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
 
 
     @Override
-    public List<Myblog> selectBlogByAuthorForCommon(int userid, int pageNow, int pageSize) {
+    public ArrayList<Myblog> selectBlogByAuthorForCommon(int userid, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
         return blogMapper.selectBlogByAuthorForCommon(userid,start,pageSize);
     }
 
 
+
+    /*---------------------------------------------------------------------------*/
+
+    /*------------------------------搜索操作-------------------------------*/
+
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public ArrayList<Map<String, Object>> searchContentPage(String keyword, int pageNow, int pageSize) {
+        int start = (pageNow-1)*pageSize;
+        SearchRequest searchRequest = new SearchRequest("blogindex");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.multiMatchQuery(keyword, "blogTitle","blogContent").analyzer("ik_max_word"))
+                .from(start)
+                .size(pageSize)
+                .highlighter(new HighlightBuilder().field("*").requireFieldMatch(false).preTags("<span style=\"color:red;font-weight:bold\">").postTags("</span>"));
+        searchSourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse search = null;
+        try {
+            search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ArrayList<Map<String, Object>> list = new ArrayList<>();
+        for (SearchHit hit : search.getHits().getHits()) {
+            Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+            if (highlightFields.containsKey("blogContent")){
+                sourceAsMap.put("blogContent",highlightFields.get("blogContent").fragments()[0].toString());
+            }
+            if (highlightFields.containsKey("blogTitle")){
+                sourceAsMap.put("blogTitle",highlightFields.get("blogTitle").fragments()[0].toString());
+            }
+            list.add(sourceAsMap);
+        }
+        return list;
+    }
+
+    /*---------------------------------------------------------------------------*/
+
+    @Override
+    public void run(ApplicationArguments args){
         System.out.println("初始化redis,redis中不存在");
         try {
             redisUtil.flushDb();
-            List<Mycategory> mycategories = categoryMapper.selectAllCategoryForCommon();
+            ArrayList<Mycategory> mycategories = categoryMapper.selectAllCategoryForCommon();
             Iterator<Mycategory> iterator = mycategories.iterator();
             while (iterator.hasNext()){
                 Mycategory mycategory = iterator.next();

@@ -1,5 +1,8 @@
 package com.shiyifan.utils;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class ArabicNumToChineseNumUtil {
     static char[] cnArr = new char [] {'一','二','三','四','五','六','七','八','九'};
     /**

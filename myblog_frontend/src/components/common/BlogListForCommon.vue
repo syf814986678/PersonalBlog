@@ -2,7 +2,7 @@
   <div
     v-infinite-scroll="load"
     :infinite-scroll-disabled="disabled">
-    <div v-if="calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 5px auto;width: 1333px;">
+    <div v-if="calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 5px auto;width: 95%;">
       <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 20px">{{blog.blogTitle}}</el-tag>
       <el-row style="margin-top: 10px">
         <el-col :span="6">
@@ -20,7 +20,7 @@
       </el-row>
 
       <el-image
-        style="height: 640px;width: 1333px;cursor:pointer;margin-top: 5px"
+        style="height: 640px;width: 95%;cursor:pointer;margin-top: 5px"
         :src="blog.blogCoverImage"
         :lazy="lazy"
         @click="showBlog(blog.blogId)"
@@ -118,7 +118,11 @@
               if (this.total>1){
                 setTimeout(() => {
                   this.disabled=false
+                  document.getElementById("myelmain").scrollTop=1
                 }, 500)
+              }
+              else {
+                this.lazy=false
               }
             }
           }).catch(error=> {
@@ -137,7 +141,11 @@
               if (this.total>1){
                 setTimeout(() => {
                   this.disabled=false
+                  document.getElementById("myelmain").scrollTop=1
                 }, 500)
+              }
+              else {
+                this.lazy=false
               }
             }
           }).catch(error=> {
@@ -156,7 +164,11 @@
               if (this.total>1){
                 setTimeout(() => {
                   this.disabled=false
+                  document.getElementById("myelmain").scrollTop=1
                 }, 500)
+              }
+              else {
+                this.lazy=false
               }
             }
           }).catch(error=> {
@@ -172,9 +184,7 @@
     created() {
       if(this.$store.state.myblogs.length===0){
         this.refresh(this.currentPage)
-        setTimeout(() => {
-          document.getElementById("myelmain").scrollTop=1
-        }, 500)
+
       }
       else {
         this.myblogs = this.$store.state.myblogs

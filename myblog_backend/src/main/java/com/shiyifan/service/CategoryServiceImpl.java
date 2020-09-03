@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Service
 @Transactional
@@ -18,13 +18,13 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public List<Mycategory> selectAllCategoryByPage(int userid, int pageNow, int pageSize) {
+    public ArrayList<Mycategory> selectAllCategoryByPage(int userid, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
         return categoryMapper.selectAllCategoryByPage(userid, start, pageSize);
     }
 
     @Override
-    public List<Mycategory> selectAllCategoryForBlog(int userid) {
+    public ArrayList<Mycategory> selectAllCategoryForBlog(int userid) {
         return categoryMapper.selectAllCategoryForBlog(userid);
     }
 
@@ -60,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public List<Mycategory> selectAllCategoryForCommon() {
+    public ArrayList<Mycategory> selectAllCategoryForCommon() {
         return categoryMapper.selectAllCategoryForCommon();
     }
 }

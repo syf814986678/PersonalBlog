@@ -1,11 +1,12 @@
 package com.shiyifan.dao;
 
+import com.shiyifan.pojo.ElasticSearchBlog;
 import com.shiyifan.pojo.Myblog;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Mapper
 @Repository
@@ -24,14 +25,14 @@ public interface BlogMapper {
     void updateBlog(Myblog myblog);
 
     //分页查询博客
-    List<Myblog> selectBlogAll(@Param("userid")int userid);
+    ArrayList<Myblog> selectBlogAll(@Param("userid")int userid);
     Myblog selectBlogForOne(@Param("userid")int userid,@Param("blogid")String blogid);
 
     //查询总条数
     int selectTotalBlogNums(@Param("userid")int userid);
 
     //根据种类ID查找博客
-    List<Myblog> selectBlogByCategoryIdAndPage(@Param("userid")int userid,@Param("categoryid")int categoryid,@Param("pageNow")int pageNow,@Param("pageSize")int pageSize);
+    ArrayList<Myblog> selectBlogByCategoryIdAndPage(@Param("userid")int userid,@Param("categoryid")int categoryid,@Param("pageNow")int pageNow,@Param("pageSize")int pageSize);
 
     /*---------------------------------------------------------------------------*/
 
@@ -40,12 +41,16 @@ public interface BlogMapper {
     Myblog selectBlogByIdForCommon(@Param("blogid") String blogid);
 
     //查找最新博客
-    List<Myblog> selectBlogAllForCommon(@Param("categoryid")int categoryid);
+    ArrayList<Myblog> selectBlogAllForCommon(@Param("categoryid")int categoryid);
     Myblog selectBlogForOneForCommon(@Param("blogid") String blogid);
 
     //查询全部总条数
     int selectTotalBlogNumsForCommon(@Param("categoryid")int categoryid);
 
     //根据作者查找博客
-    List<Myblog> selectBlogByAuthorForCommon(@Param("userid")int userid,@Param("pageNow")int pageNow,@Param("pageSize")int pageSize);
+    ArrayList<Myblog> selectBlogByAuthorForCommon(@Param("userid")int userid,@Param("pageNow")int pageNow,@Param("pageSize")int pageSize);
+
+    //ElasticSearch查找博客
+    ElasticSearchBlog selectElasticSearchBlogByIdForCommon(@Param("blogid") String blogid);
+    ArrayList<ElasticSearchBlog> selectElasticSearchAllBlogForCommon();
 }

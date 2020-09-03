@@ -11,12 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/blog")
 public class BlogController {
     @Autowired
@@ -35,7 +32,7 @@ public class BlogController {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
                 int userid = (int)claims.get("userid");
-                List<Myblog> myblogs = blogService.selectBlogByPage(userid,1,5);
+                ArrayList<Myblog> myblogs = blogService.selectBlogByPage(userid,1,5);
                 blogService.selectTotalBlogNums(userid);
                 result.setCodeState(CodeState.success);
                 map.put("myblogs", myblogs);
@@ -66,7 +63,7 @@ public class BlogController {
             if(claims!=null){
                 int userid = (int)claims.get("userid");
                 Myblog myblog = blogService.selectBlogById(userid, blogid);
-                List<Mycategory> mycategories = categoryService.selectAllCategoryForBlog(userid);
+                ArrayList<Mycategory> mycategories = categoryService.selectAllCategoryForBlog(userid);
                 result.setCodeState(CodeState.success);
                 map.put("myblog", myblog);
                 map.put("mycategories", mycategories);
@@ -96,7 +93,7 @@ public class BlogController {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
                 int userid = (int)claims.get("userid");
-                List<Myblog> myblogs = blogService.selectBlogByPage(userid, pageNow, pageSize);
+                ArrayList<Myblog> myblogs = blogService.selectBlogByPage(userid, pageNow, pageSize);
                 int totalBlogNums = blogService.selectTotalBlogNums(userid);
                 result.setCodeState(CodeState.success);
                 map.put("myblogs", myblogs);
@@ -284,7 +281,7 @@ public class BlogController {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
-            List<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(0,pageNow, pageSize);
+            ArrayList<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(0,pageNow, pageSize);
             int nums = blogService.selectTotalBlogNumsForCommon(0);
             result.setCodeState(CodeState.success);
             map.put("myblogs", myblogs);
@@ -307,7 +304,7 @@ public class BlogController {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
-            List<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(categoryid, pageNow, pageSize);
+            ArrayList<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(categoryid, pageNow, pageSize);
             int nums = blogService.selectTotalBlogNumsForCommon(categoryid);
             result.setCodeState(CodeState.success);
             map.put("myblogs", myblogs);
@@ -330,7 +327,7 @@ public class BlogController {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
-            List<Myblog> myblogs = blogService.selectBlogByAuthorForCommon(userid, pageNow, pageSize);
+            ArrayList<Myblog> myblogs = blogService.selectBlogByAuthorForCommon(userid, pageNow, pageSize);
             int nums = blogService.selectTotalBlogNums(userid);
             result.setCodeState(CodeState.success);
             map.put("myblogs", myblogs);
@@ -347,4 +344,27 @@ public class BlogController {
         return result;
     }
     /*---------------------------------------------------------------------------*/
+
+    /*------------------------------搜索操作-------------------------------*/
+    @PostMapping("/search/{keyword}")
+    public Result search(@PathVariable("keyword") String keyword){
+        Result result = new Result();
+        HashMap<String, Object> map = new HashMap<>();
+        System.out.println(keyword);
+        try {
+            ArrayList<Map<String, Object>> results = blogService.searchContentPage(keyword, 1,30);
+            map.put("results", results);
+            map.put("total", results.size());
+            result.setCodeState(CodeState.success);
+        }
+        catch (Exception e) {
+            System.out.println(e);
+            result.setCodeState(CodeState.exception);
+            map.put("exception", "服务端处理错误！请稍后再试");
+        }
+        finally {
+            result.setMsg(map);
+        }
+        return result;
+    }
 }

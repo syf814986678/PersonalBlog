@@ -5,17 +5,17 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Mapper
 @Repository
 public interface CategoryMapper {
     /*------------------------------登陆后进行的操作-------------------------------*/
     //分页查询所有种类
-    List<Mycategory> selectAllCategoryByPage(@Param("userid")int userid, @Param("pageNow")int pageNow, @Param("pageSize")int pageSize);
+    ArrayList<Mycategory> selectAllCategoryByPage(@Param("userid")int userid, @Param("pageNow")int pageNow, @Param("pageSize")int pageSize);
 
     //查询添加博客种类
-    List<Mycategory> selectAllCategoryForBlog(@Param("userid")int userid);
+    ArrayList<Mycategory> selectAllCategoryForBlog(@Param("userid")int userid);
 
     //查询总条数
     int selectTotalCategoryNums(@Param("userid")int userid);
@@ -46,5 +46,5 @@ public interface CategoryMapper {
     /*---------------------------------------------------------------------------*/
     /*------------------------------公共操作-------------------------------*/
     //查找所有的种类
-    List<Mycategory> selectAllCategoryForCommon();
+    ArrayList<Mycategory> selectAllCategoryForCommon();
 }

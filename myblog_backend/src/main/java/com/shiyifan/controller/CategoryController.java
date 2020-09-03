@@ -9,11 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/category")
 public class CategoryController {
 
@@ -28,7 +27,7 @@ public class CategoryController {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
                 int userid = (int)claims.get("userid");
-                List<Mycategory> mycategories = categoryService.selectAllCategoryByPage(userid,pageNow,pageSize);
+                ArrayList<Mycategory> mycategories = categoryService.selectAllCategoryByPage(userid,pageNow,pageSize);
                 int totalCategoryNums = categoryService.selectTotalCategoryNums(userid);
                 result.setCodeState(CodeState.success);
                 map.put("mycategories",mycategories);
@@ -58,7 +57,7 @@ public class CategoryController {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
                 int userid = (int)claims.get("userid");
-                List<Mycategory> mycategories = categoryService.selectAllCategoryForBlog(userid);
+                ArrayList<Mycategory> mycategories = categoryService.selectAllCategoryForBlog(userid);
                 result.setCodeState(CodeState.success);
                 map.put("mycategories",mycategories);
             }
@@ -202,7 +201,7 @@ public class CategoryController {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
-            List<Mycategory> mycategories = categoryService.selectAllCategoryForCommon();
+            ArrayList<Mycategory> mycategories = categoryService.selectAllCategoryForCommon();
             result.setCodeState(CodeState.success);
             map.put("mycategories",mycategories);
         }

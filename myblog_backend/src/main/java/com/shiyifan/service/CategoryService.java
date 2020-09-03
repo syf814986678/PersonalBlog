@@ -2,15 +2,15 @@ package com.shiyifan.service;
 
 import com.shiyifan.pojo.Mycategory;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public interface CategoryService {
     /*------------------------------登陆后进行的操作-------------------------------*/
     //分页查询所有种类
-    List<Mycategory> selectAllCategoryByPage(int userid,int pageNow,int pageSize);
+    ArrayList<Mycategory> selectAllCategoryByPage(int userid, int pageNow, int pageSize);
 
     //查询添加博客种类
-    List<Mycategory> selectAllCategoryForBlog(int userid);
+    ArrayList<Mycategory> selectAllCategoryForBlog(int userid);
 
     //查询总条数
     int selectTotalCategoryNums(int userid);
@@ -32,5 +32,5 @@ public interface CategoryService {
     /*---------------------------------------------------------------------------*/
     /*------------------------------公共操作-------------------------------*/
     //查找所有的种类
-    List<Mycategory> selectAllCategoryForCommon();
+    ArrayList<Mycategory> selectAllCategoryForCommon();
 }

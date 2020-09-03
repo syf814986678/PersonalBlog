@@ -12,6 +12,7 @@ import BlogListForCommon from "../components/common/BlogListForCommon";
 import categoryList from "../components/users/categoryList";
 // 引入vuex
 import store from '@/store';
+import BlogSearchForCommon from "../components/common/BlogSearchForCommon";
 Vue.use(Router)
 /*
   防止重复点击使得路由重复，报错。
@@ -46,6 +47,13 @@ const router=new Router({
         title: '首页',
       },
       children: [
+        {
+          path: 'search/:whatsearch',
+          component: BlogSearchForCommon,
+          meta: {
+            title: '博客搜索',
+          }
+        },
         {
           path: 'bloglist/:bloglist/:bloglist2',
           component: BlogListForCommon,

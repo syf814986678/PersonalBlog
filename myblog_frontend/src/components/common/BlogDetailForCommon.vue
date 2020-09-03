@@ -1,7 +1,7 @@
 <template>
     <div>
       <el-row style="margin-bottom: 5px">
-        <el-col style=" font-size: 45px;font-weight: bold;font-family: Arial;word-break: break-all;text-align: center">
+        <el-col class="myblogtitle"  style="font-size: 45px;font-weight: bold;font-family: Arial;word-break: break-all;text-align: center">
           {{this.myblog.blogTitle}}
         </el-col>
       </el-row>
@@ -81,6 +81,7 @@
           })},
         },
         created() {
+          document.documentElement.scrollTop=0
           this.refresh();
         },
 
@@ -91,5 +92,10 @@
   .el-divider--horizontal{
     margin: 10px 0;
     background: #02f5c4;
+  }
+  @media only screen and (max-width: 767px) {
+    .myblogtitle{
+      color: white;
+    }
   }
 </style>

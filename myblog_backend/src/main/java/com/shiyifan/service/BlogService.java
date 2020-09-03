@@ -1,12 +1,12 @@
 package com.shiyifan.service;
 
 import com.shiyifan.pojo.Myblog;
-import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 
 public interface BlogService {
-    /*----------------登陆后进行的操作----------------*/
+    /*------------------------------登陆后进行的操作-------------------------------*/
     //添加博客
     void addBlog(Myblog myblog);
 
@@ -20,13 +20,13 @@ public interface BlogService {
     void updateBlog(Myblog myblog);
 
     //分页查询博客
-    List<Myblog> selectBlogByPage(int userid, int pageNow, int pageSize);
+    ArrayList<Myblog> selectBlogByPage(int userid, int pageNow, int pageSize);
 
     //查询总条数
     int selectTotalBlogNums(int userid);
 
     //根据种类ID查找博客
-    List<Myblog> selectBlogByCategoryIdAndPage(int userid,int categoryid,int pageNow,int pageSize);
+    ArrayList<Myblog> selectBlogByCategoryIdAndPage(int userid,int categoryid,int pageNow,int pageSize);
 
     //暂存redis
     Boolean setTempBlog(Myblog myblog);
@@ -38,14 +38,19 @@ public interface BlogService {
 
     /*------------------------------公共操作-------------------------------*/
     //根据博客ID查找博客
-    Myblog selectBlogByIdForCommon(@Param("blogid") String blogid);
+    Myblog selectBlogByIdForCommon(String blogid);
 
-    //分页查询博客
-    List<Myblog> selectBlogAllByPageForCommon(int categoryid,int pageNow, int pageSize);
+    //分页查询博客selectBlogByPage
+    ArrayList<Myblog> selectBlogAllByPageForCommon(int categoryid,int pageNow, int pageSize);
 
     //查询全部总条数
     int selectTotalBlogNumsForCommon(int categoryid);
 
     //根据作者查找博客
-    List<Myblog> selectBlogByAuthorForCommon(int userid,int pageNow,int pageSize);
+    ArrayList<Myblog> selectBlogByAuthorForCommon(int userid,int pageNow,int pageSize);
+
+    /*---------------------------------------------------------------------------*/
+
+    /*------------------------------搜索操作-------------------------------*/
+    ArrayList<Map<String, Object>> searchContentPage(String keyword, int pageNo, int pageSize);
 }

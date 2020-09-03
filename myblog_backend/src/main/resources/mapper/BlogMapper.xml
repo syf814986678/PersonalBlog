@@ -28,6 +28,27 @@
         and is_deleted =0
     </select>
 
+
+    <resultMap id="elasticsearchBlog" type="ElasticSearchBlog">
+        <association property="blogCategory" column="blog_category_id"  select="selectCategory"/>
+        <association property="blogUser" column="blog_user_id"  select="selectUser"/>
+    </resultMap>
+
+    <select id="selectCategory" resultType="string">
+        select category_name
+        from mycategory
+        where category_id =#{blog_category_id}
+        and is_deleted =0
+    </select>
+
+    <select id="selectUser" resultType="string">
+        select user_name
+        from myuser
+        where user_id =#{blog_user_id}
+        and is_deleted =0
+    </select>
+
+
     <!--*****************************登陆后进行的操作*****************************-->
     <!--添加博客-->
     <insert id="addBlog" parameterType="myblog">
@@ -147,5 +168,18 @@
          and is_deleted =0
          order by create_gmt desc
          limit #{pageNow},#{pageSize};
+    </select>
+
+    <!--ElasticSearch查找博客-->
+    <select id="selectElasticSearchBlogByIdForCommon" resultMap="elasticsearchBlog">
+        select *
+        from myblog blog
+        where blog_id =#{blogid}
+        and is_deleted =0
+    </select>
+    <select id="selectElasticSearchAllBlogForCommon" resultMap="elasticsearchBlog">
+        select *
+        from myblog blog
+        where is_deleted =0
     </select>
 </mapper>
