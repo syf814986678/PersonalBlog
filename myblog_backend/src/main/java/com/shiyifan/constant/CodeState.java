@@ -14,4 +14,6 @@ public class CodeState {
 
     //捕获异常
     public static final int exception=999;
+    //oss-callback异常
+    public static final int ossException=998;
 }

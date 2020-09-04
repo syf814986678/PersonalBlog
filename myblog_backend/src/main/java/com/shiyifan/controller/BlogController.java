@@ -11,7 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/blog")
@@ -346,6 +353,8 @@ public class BlogController {
     /*---------------------------------------------------------------------------*/
 
     /*------------------------------搜索操作-------------------------------*/
+
+    //搜索博客
     @PostMapping("/search/{keyword}")
     public Result search(@PathVariable("keyword") String keyword){
         Result result = new Result();
@@ -362,6 +371,45 @@ public class BlogController {
             map.put("exception", "服务端处理错误！请稍后再试");
         }
         finally {
+            result.setMsg(map);
+        }
+        return result;
+    }
+
+    //查找热词
+    @PostMapping("/hotkeys")
+    public Result hotkeys(){
+        Result result = new Result();
+        HashMap<String, Object> map = new HashMap<>();
+        InputStreamReader in=null;
+        BufferedReader br=null;
+        try {
+            String s = "";
+            in = new InputStreamReader(new FileInputStream("/home/syf/myblog/remote.txt"), "UTF-8");
+            br = new BufferedReader(in);
+            ArrayList<HashMap<String, String>> hotkeys = new ArrayList<>();
+            while ((s = br.readLine()) != null) {
+                HashMap<String, String> stringmap = new HashMap<>();
+                stringmap.put("value", s);
+                hotkeys.add(stringmap);
+            }
+            map.put("hotkeys", hotkeys);
+            result.setCodeState(CodeState.success);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            result.setCodeState(CodeState.exception);
+            map.put("exception", "服务端处理错误！请稍后再试");
+        }
+        finally {
+            try {
+                assert in != null;
+                in.close();
+                assert br != null;
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             result.setMsg(map);
         }
         return result;

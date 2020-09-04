@@ -1,7 +1,7 @@
 import axios from "axios";
 import store from "../store";
 const http = axios.create({
-                            // baseURL: 'http://192.168.3.2:8989'
+                             // baseURL: 'http://192.168.3.2:8989'
 })
 //请求拦截
 http.interceptors.request.use(function (config) {
@@ -23,6 +23,7 @@ http.interceptors.response.use(function (response) {
     case 202:store.commit('errorMsg',response.data.msg["operationError"]);break;
     case 701:store.commit('errorMsg',response.data.msg["tokenError"]);store.commit('logout');break;
     case 999:store.commit('errorMsg',response.data.msg["exception"]);break;
+    case 998:store.commit('errorMsg',response.data.exception);break;
     default:break;
   }
 }, function (error) {

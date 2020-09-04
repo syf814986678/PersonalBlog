@@ -5,7 +5,7 @@
         <el-container>
               <el-col :xl="21" :xs="24" class="bg">
 
-                <el-main class="mymain" id="myelmain">
+                <el-main v-loading="this.$store.state.mainloading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" class="mymain" id="myelmain">
                   <transition mode="out-in"
                               enter-active-class="animate__animated animate__bounceInDown animate__faster"
                               leave-active-class="animate__animated animate__bounceOutDown animate__faster">
@@ -19,7 +19,23 @@
                     <el-row style="margin-top: 10px">
                       <el-button round class="mybutton" v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId)">{{item.categoryName}}({{item.categoryRank}})</el-button>
                     </el-row>
-                    <el-input id="myinput2" size="small" style="width: 80%;margin: 10px auto" minlength="2" maxlength="20" v-model="input" placeholder="请输入搜索内容" suffix-icon=" el-icon-s-opportunity"  prefix-icon="el-icon-search"></el-input>
+                    <el-autocomplete
+                      style="width: 80%;margin: 10px auto"
+                      id="myinput2"
+                      size="small"
+                      :minlength="1"
+                      :maxlength="20"
+                      v-model="input"
+                      :fetch-suggestions="querySearchAsync"
+                      placeholder="请输入搜索内容"
+                      @select="handleSelect"
+                      suffix-icon=" el-icon-s-opportunity"
+                      prefix-icon="el-icon-search">
+                      <template slot-scope="{ item }">
+                        <span class="addr">{{ item.value }}</span>
+                        <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
+                      </template>
+                    </el-autocomplete>
                   </div>
                 </el-col>
 
@@ -31,7 +47,21 @@
                   class="myaside"
                   v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
                   <div class="mydiv2">
-                    <el-input id="myinput1" minlength="2" maxlength="20" v-model="input" placeholder="请输入搜索内容" suffix-icon=" el-icon-s-opportunity"  prefix-icon="el-icon-search"></el-input>
+                    <el-autocomplete
+                      id="myinput1"
+                      :minlength="1"
+                      :maxlength="20"
+                      v-model="input"
+                      :fetch-suggestions="querySearchAsync"
+                      placeholder="请输入搜索内容"
+                      @select="handleSelect"
+                      suffix-icon=" el-icon-s-opportunity"
+                      prefix-icon="el-icon-search">
+                      <template slot-scope="{ item }">
+                        <span class="addr">{{ item.value }}</span>
+                        <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
+                      </template>
+                    </el-autocomplete>
                   </div>
                   <div class="mydiv2">
                     <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px; font-family: Arial;margin-top: 10px">TOP10类型</el-tag></el-row>
@@ -54,20 +84,42 @@
 </template>
 
 <script>
-
     export default {
         name: "commonIndex",
       data(){
         return{
           mycategories:[],
-          loading: true,
-          input:''
+          loading: false,
+          input:'',
+          hotkeys: []
         }
       },
       methods:{
+        querySearchAsync(queryString,cb){
+          this.$http.post("/blog/hotkeys").then(response=>{
+            if (response!=null){
+              this.hotkeys=response.data.msg["hotkeys"]
+              cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
+        },
+        createStateFilter(queryString) {
+          return (input) => {
+            return (input.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+          };
+        },
+        handleSelect(){
+          this.search()
+        },
         search(){
-          if (this.input.length>=1){
+          if (this.input.length>=1  && (this.$route.params.whatsearch!==this.input)){
             this.$router.push("/index/search/"+this.input)
+            this.$store.commit('setmainloading',true)
+            document.documentElement.scrollTop=0
           }
         },
         select(id){

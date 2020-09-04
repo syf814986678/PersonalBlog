@@ -27,9 +27,13 @@ export default new Vuex.Store({
     // reload: false
     myblogs:[],
     total: null,
-    height:0
+    height:0,
+    mainloading:true,
   },
   mutations:{
+    setmainloading(state,status){
+      state.mainloading=status
+    },
     setHeight(state,height){
       state.height=height
     },

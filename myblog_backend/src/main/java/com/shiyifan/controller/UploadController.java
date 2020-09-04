@@ -141,7 +141,6 @@ public class UploadController {
                 String base64CallbackBody = BinaryUtil.toBase64String(jasonCallback.toString().getBytes());
                 map.put("callback", base64CallbackBody);
                 result.setCodeState(CodeState.success);
-
             }
             else {
                 result.setCodeState(CodeState.tokenError);
@@ -165,15 +164,21 @@ public class UploadController {
     public String callback(HttpServletRequest request) {
         Gson gson = new Gson();
         HashMap<String, Object> map = new HashMap<>();
-        String filename = request.getParameter("filename");
-        filename = "https://picture.chardance.cloud/".concat(filename);
-        map.put("filename", filename);
-        map.put("Size", request.getParameter("size"));
-        map.put("MimeType", request.getParameter("mimeType"));
-        map.put("Width", request.getParameter("Width"));
-        map.put("Height", request.getParameter("Height"));
-        map.put("codeState", CodeState.success);
-        String resultJson = gson.toJson(map);
-        return resultJson;
+        try {
+            String filename = request.getParameter("filename");
+            filename = "https://picture.chardance.cloud/".concat(filename);
+            map.put("filename", filename);
+            map.put("Size", request.getParameter("size"));
+            map.put("MimeType", request.getParameter("mimeType"));
+            map.put("Width", request.getParameter("Width"));
+            map.put("Height", request.getParameter("Height"));
+            map.put("codeState", CodeState.success);
+        }
+        catch (Exception e){
+            System.out.println(e);
+            map.put("codeState", CodeState.ossException);
+            map.put("exception", "服务端处理错误！请稍后再试");
+        }
+        return gson.toJson(map);
     }
 }

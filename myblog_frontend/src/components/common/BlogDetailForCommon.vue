@@ -74,6 +74,7 @@
               if (response!=null){
                 this.myblog=response.data.msg["myblog"]
                 document.title=this.myblog.blogTitle
+                this.$store.commit('setmainloading',false)
               }
           }).catch(error=> {
               console.log(error)

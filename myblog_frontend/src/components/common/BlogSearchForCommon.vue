@@ -1,5 +1,5 @@
 <template>
-<div style="margin: 5px auto"  v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+<div style="margin: 5px auto">
   <div v-for="result in results" :key="result.blogId">
     <div>
       <el-row>
@@ -60,7 +60,6 @@
             total:null,
             allresults:[],
             lazy: true,
-            loading:true,
           }
         },
         methods:{
@@ -79,7 +78,7 @@
                 this.allresults=response.data.msg["results"];
                 this.total=response.data.msg["total"]
                 this.results=this.allresults.slice((this.pageNow-1)*this.pageSize,this.pageNow*this.pageSize);
-                this.loading=false
+                this.$store.commit('setmainloading',false)
                 if (this.results.length>4){
                   setTimeout(() => {
                     document.getElementById("myelmain").scrollTop=1
@@ -88,7 +87,6 @@
                 else {
                   this.lazy=false
                 }
-                document.documentElement.scrollTop=0
               }
             }).catch(error=> {
               console.log(error)
@@ -102,8 +100,12 @@
         },
       watch:{
         '$route': function (to, from) {
+          console.log("getada")
           this.pageNow=1;
-          this.loading=true
+          this.$store.commit('setmainloading',true)
+          this.allresults.length=0
+          this.results.length=0
+          this.total=0
           this.refresh();
         }
       }

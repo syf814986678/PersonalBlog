@@ -1,63 +1,63 @@
 <template>
   <div
-    v-infinite-scroll="load"
-    :infinite-scroll-disabled="disabled">
-    <div v-if="calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 5px auto;width: 95%;">
-      <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 20px">{{blog.blogTitle}}</el-tag>
-      <el-row style="margin-top: 10px">
-        <el-col :span="6">
-          <el-tag effect="dark" type="warning" @click="selectauthor(blog.myuser.userId)" style="cursor:pointer;font-size: 14px ">作者：{{blog.myuser.userName}}</el-tag>
-        </el-col>
-        <el-col :span="6">
-          <el-tag effect="dark" type="success" @click="select(blog.mycategory.categoryId)" style="cursor:pointer;font-size: 14px">类别：{{blog.mycategory.categoryName}}</el-tag>
-        </el-col>
-        <el-col :span="6">
-          <el-tag effect="dark" type="primary" style="font-size: 14px">发布时间：{{blog.createGmt}}</el-tag>
-        </el-col>
-        <el-col :span="6">
-          <el-tag effect="dark" type="primary" style="font-size: 14px">修改时间：{{blog.updateGmt}}</el-tag>
-        </el-col>
-      </el-row>
+      v-infinite-scroll="load"
+      :infinite-scroll-disabled="disabled">
+      <div v-if="calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 5px auto;width: 95%;">
+        <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 20px">{{blog.blogTitle}}</el-tag>
+        <el-row style="margin-top: 10px">
+          <el-col :span="6">
+            <el-tag effect="dark" type="warning" @click="selectauthor(blog.myuser.userId)" style="cursor:pointer;font-size: 14px ">作者：{{blog.myuser.userName}}</el-tag>
+          </el-col>
+          <el-col :span="6">
+            <el-tag effect="dark" type="success" @click="select(blog.mycategory.categoryId)" style="cursor:pointer;font-size: 14px">类别：{{blog.mycategory.categoryName}}</el-tag>
+          </el-col>
+          <el-col :span="6">
+            <el-tag effect="dark" type="primary" style="font-size: 14px">发布时间：{{blog.createGmt}}</el-tag>
+          </el-col>
+          <el-col :span="6">
+            <el-tag effect="dark" type="primary" style="font-size: 14px">修改时间：{{blog.updateGmt}}</el-tag>
+          </el-col>
+        </el-row>
 
-      <el-image
-        style="height: 640px;width: 95%;cursor:pointer;margin-top: 5px"
-        :src="blog.blogCoverImage"
-        :lazy="lazy"
-        @click="showBlog(blog.blogId)"
-        fit="fill" ></el-image>
-      <el-divider></el-divider>
+        <el-image
+          style="height: 640px;width: 95%;cursor:pointer;margin-top: 5px"
+          :src="blog.blogCoverImage"
+          :lazy="lazy"
+          @click="showBlog(blog.blogId)"
+          fit="fill" ></el-image>
+        <el-divider></el-divider>
+      </div>
+
+      <div v-if="!calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 5px auto;width: 98%">
+        <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 13px">{{blog.blogTitle}}</el-tag>
+        <el-row style="margin-top: 10px;margin-bottom: 3px">
+          <el-col :span="12">
+            <el-tag effect="dark" type="warning" @click="selectauthor(blog.myuser.userId)" style="cursor:pointer;font-size: 11px;">作者：{{blog.myuser.userName}}</el-tag>
+          </el-col>
+          <el-col :span="12">
+            <el-tag effect="dark" type="success" @click="select(blog.mycategory.categoryId)" style="cursor:pointer;font-size: 11px;">类别：{{blog.mycategory.categoryName}}</el-tag>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-tag effect="dark" type="primary" style="font-size: 11px;width: 95%">发布时间:{{blog.createGmt}}</el-tag>
+          </el-col>
+          <el-col :span="12">
+            <el-tag effect="dark" type="primary" style="font-size: 11px;width: 95%">修改时间:{{blog.updateGmt}}</el-tag>
+          </el-col>
+
+
+        </el-row>
+
+        <el-image
+          style="height: 180px;width: 98%;cursor:pointer;margin-top: 5px"
+          :src="blog.blogCoverImage"
+          :lazy="lazy"
+          @click="showBlog(blog.blogId)"
+          fit="fill" ></el-image>
+        <el-divider></el-divider>
+      </div>
     </div>
-
-    <div v-if="!calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 5px auto;width: 98%">
-      <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 13px">{{blog.blogTitle}}</el-tag>
-      <el-row style="margin-top: 10px;margin-bottom: 3px">
-        <el-col :span="12">
-          <el-tag effect="dark" type="warning" @click="selectauthor(blog.myuser.userId)" style="cursor:pointer;font-size: 11px;">作者：{{blog.myuser.userName}}</el-tag>
-        </el-col>
-        <el-col :span="12">
-          <el-tag effect="dark" type="success" @click="select(blog.mycategory.categoryId)" style="cursor:pointer;font-size: 11px;">类别：{{blog.mycategory.categoryName}}</el-tag>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-tag effect="dark" type="primary" style="font-size: 11px;width: 95%">发布时间:{{blog.createGmt}}</el-tag>
-        </el-col>
-        <el-col :span="12">
-          <el-tag effect="dark" type="primary" style="font-size: 11px;width: 95%">修改时间:{{blog.updateGmt}}</el-tag>
-        </el-col>
-
-
-      </el-row>
-
-      <el-image
-        style="height: 180px;width: 98%;cursor:pointer;margin-top: 5px"
-        :src="blog.blogCoverImage"
-        :lazy="lazy"
-        @click="showBlog(blog.blogId)"
-        fit="fill" ></el-image>
-      <el-divider></el-divider>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -66,7 +66,6 @@
     data() {
       return  {
         myblogs:[],
-        loading: true,
         currentPage: this.$store.state.commonCurrentPage,
         pageSize: 5,
         total: null,
@@ -112,13 +111,11 @@
             if (response!=null){
               this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
-              this.loading=false
               this.myblogs=this.$store.state.myblogs
               this.total=this.$store.state.total
               if (this.total>1){
                 setTimeout(() => {
                   this.disabled=false
-                  document.getElementById("myelmain").scrollTop=1
                 }, 500)
               }
               else {
@@ -135,13 +132,11 @@
             if (response!=null){
               this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
-              this.loading=false
               this.myblogs=this.$store.state.myblogs
               this.total=this.$store.state.total
               if (this.total>1){
                 setTimeout(() => {
                   this.disabled=false
-                  document.getElementById("myelmain").scrollTop=1
                 }, 500)
               }
               else {
@@ -158,13 +153,11 @@
             if (response!=null){
               this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
-              this.loading=false
               this.myblogs=this.$store.state.myblogs
               this.total=this.$store.state.total
               if (this.total>1){
                 setTimeout(() => {
                   this.disabled=false
-                  document.getElementById("myelmain").scrollTop=1
                 }, 500)
               }
               else {
@@ -184,33 +177,34 @@
     created() {
       if(this.$store.state.myblogs.length===0){
         this.refresh(this.currentPage)
-
       }
       else {
         this.myblogs = this.$store.state.myblogs
         this.total = this.$store.state.total
-        if(this.$store.state.height===0){
-          if (this.total>1){
-            setTimeout(() => {
-              document.getElementById("myelmain").scrollTop=1
-              this.disabled=false
-            }, 500)
-          }
-          else {
-            this.lazy=false
-          }
-        }else {
-          if (this.total>1){
-            setTimeout(() => {
-              document.getElementById("myelmain").scrollTop=this.$store.state.height
-              this.disabled=false
-            }, 500)
-          }
-          else {
-            this.lazy=false
-          }
+      }
+      if(this.$store.state.height===0){
+        if (this.total>1){
+          setTimeout(() => {
+            document.getElementById("myelmain").scrollTop=1
+            this.disabled=false
+          }, 500)
+        }
+        else {
+          this.lazy=false
         }
       }
+      else {
+        if (this.total>1){
+          setTimeout(() => {
+            document.getElementById("myelmain").scrollTop=this.$store.state.height
+            this.disabled=false
+          }, 500)
+        }
+        else {
+          this.lazy=false
+        }
+      }
+      this.$store.commit('setmainloading',false)
     },
     beforeRouteLeave (to, from, next) {
       this.disabled= true
