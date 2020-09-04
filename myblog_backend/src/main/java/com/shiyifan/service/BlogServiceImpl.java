@@ -28,6 +28,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -346,6 +348,25 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
                 sourceAsMap.put("blogTitle",highlightFields.get("blogTitle").fragments()[0].toString());
             }
             list.add(sourceAsMap);
+        }
+        if(redisUtil.get(keyword)==null){
+            redisUtil.set(keyword, 1);
+        }
+        else {
+            redisUtil.incr(keyword, 1);
+            if(Integer.parseInt(String.valueOf(redisUtil.get(keyword)))==5){
+                try {
+                    FileWriter fw = new FileWriter("/home/syf/myblog/remote.txt", true);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    // 往已有的文件上添加字符串
+                    bw.write(keyword+"\n");
+                    bw.close();
+                    fw.close();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
         return list;
     }

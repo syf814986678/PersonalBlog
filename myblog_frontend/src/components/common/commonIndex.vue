@@ -81,6 +81,9 @@
       },
       created() {
         const that =this;
+        if (this.$route.params.whatsearch!=null){
+          this.input=this.$route.params.whatsearch
+        }
         this.$http.post("/category/selectAllCategoryForCommon").then(response=>{
           if (response!=null){
             this.mycategories=response.data.msg["mycategories"]

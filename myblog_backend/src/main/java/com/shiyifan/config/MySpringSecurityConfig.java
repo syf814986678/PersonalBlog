@@ -10,6 +10,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
+/**
+ * @author 81498
+ */
 @Configuration
 @EnableWebSecurity
 public class MySpringSecurityConfig extends WebSecurityConfigurerAdapter {

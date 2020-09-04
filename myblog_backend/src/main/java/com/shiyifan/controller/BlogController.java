@@ -350,7 +350,6 @@ public class BlogController {
     public Result search(@PathVariable("keyword") String keyword){
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        System.out.println(keyword);
         try {
             ArrayList<Map<String, Object>> results = blogService.searchContentPage(keyword, 1,30);
             map.put("results", results);

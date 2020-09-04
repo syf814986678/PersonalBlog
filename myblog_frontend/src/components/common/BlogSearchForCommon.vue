@@ -1,5 +1,5 @@
 <template>
-<div style="margin: 5px auto"  v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">>
+<div style="margin: 5px auto"  v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
   <div v-for="result in results" :key="result.blogId">
     <div>
       <el-row>
