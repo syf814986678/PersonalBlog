@@ -1,5 +1,15 @@
 <template>
-  <el-form inline-message :model="form" :rules="rules" ref="form" @submit.native.prevent>
+  <el-form
+    v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)"
+
+    inline-message
+    :model="form"
+    :rules="rules"
+    ref="form"
+    @submit.native.prevent>
 
     <el-row :gutter="20">
       <el-col :span="12">
@@ -218,6 +228,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            this.loading=true
             this.$http.post("/blog/addBlog",this.form).then(response=>{
               if (response!=null){
                 this.$notify({

@@ -83,7 +83,6 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @Override

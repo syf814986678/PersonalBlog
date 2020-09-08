@@ -24,7 +24,7 @@
                       id="myinput2"
                       size="small"
                       :minlength="1"
-                      :maxlength="20"
+                      :maxlength="30"
                       v-model="input"
                       :fetch-suggestions="querySearchAsync"
                       placeholder="请输入搜索内容"
@@ -50,7 +50,7 @@
                     <el-autocomplete
                       id="myinput1"
                       :minlength="1"
-                      :maxlength="20"
+                      :maxlength="30"
                       v-model="input"
                       :fetch-suggestions="querySearchAsync"
                       placeholder="请输入搜索内容"
