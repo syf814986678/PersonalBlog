@@ -25,6 +25,7 @@
 7. Jasypt  
 8. Jwt  
 9. Elasticsearch
+10. RabbitMQ
 
 .....更多技术正在学习中.....
 

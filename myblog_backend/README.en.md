@@ -5,14 +5,16 @@ Personal blog backend support
 
 #### Software Architecture
 Software architecture description
-1. Springboot 
+1. Springboot
 2. Mysql
-3. Mybaits  
-4. Druid 
+3. Mybaits
+4. Druid
 5. Redis
-6. Spring-Security 
+6. Spring-Security
 7. Jasypt
-8. Jwt  
+8. Jwt
+9. Elasticsearch
+10. RabbitMQ
 
 .....More technology is being learned.....
 #### Contribution

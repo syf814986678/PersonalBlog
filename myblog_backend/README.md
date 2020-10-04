@@ -5,14 +5,16 @@
 
 #### 软件架构
 软件架构说明  
-1. Springboot  
-2. Mysql  
-3. Mybaits  
-4. Druid  
-5. Redis  
-6. Spring-Security  
-7. Jasypt  
-8. Jwt  
+1. Springboot
+2. Mysql
+3. Mybaits
+4. Druid
+5. Redis
+6. Spring-Security
+7. Jasypt
+8. Jwt
+9. Elasticsearch
+10. RabbitMQ
 
 .....更多技术正在学习中.....
 

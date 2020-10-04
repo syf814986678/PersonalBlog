@@ -25,6 +25,7 @@ Backend:
 7. Jasypt  
 8. Jwt  
 9. Elasticsearch
+10. RabbitMQ
 
 .....More technology is being learned.....
 
