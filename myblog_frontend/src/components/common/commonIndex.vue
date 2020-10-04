@@ -69,6 +69,7 @@
                       <el-button round class="mybutton" v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId)">{{item.categoryName}}({{item.categoryRank}})</el-button>
                     </el-row>
                   </div>
+
                 </el-aside>
               </el-col>
         </el-container>
@@ -77,11 +78,14 @@
             <el-link style="margin-top: -18px;margin-bottom: 0" href="http://chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
             <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
             <el-link style="margin-top: -18px;margin-bottom: 0" href="http://www.beian.miit.gov.cn" target="_blank" type="danger">沪ICP备20013409号</el-link>
-           </span>
+            <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
+            <el-link class="showTime" style="margin-top: -18px;margin-bottom: 0" href="http://time.tianqi.com/" target="_blank" type="success"></el-link>
+          </span>
         </el-footer>
       </el-container>
     </div>
 </template>
+
 
 <script>
     export default {
@@ -161,6 +165,32 @@
         document.onkeydown = undefined
         next()
       },
+    }
+    var t = null;
+    t = setTimeout(time, 1000); //開始运行
+    function time() {
+      clearTimeout(t); //清除定时器
+      const dt = new Date();
+      var y = dt.getFullYear();
+      var mt = dt.getMonth() + 1;
+      var day = dt.getDate();
+      var h = dt.getHours(); //获取时
+      var m = dt.getMinutes(); //获取分
+      var s = dt.getSeconds(); //获取秒
+      document.querySelector(".showTime").innerHTML =
+        y +
+        "年" +
+        mt +
+        "月" +
+        day +
+        "日" +
+        h +
+        "时" +
+        m +
+        "分" +
+        s +
+        "秒";
+      t = setTimeout(time, 1000); //设定定时器，循环运行
     }
 </script>
 
