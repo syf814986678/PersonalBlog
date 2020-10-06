@@ -75,11 +75,11 @@
         </el-container>
         <el-footer class="myfooter">
           <span class="footer">
-            <el-link style="margin-top: -18px;margin-bottom: 0" href="http://chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
+            <el-link style="margin-top: -16px;margin-bottom: 0" href="http://chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
             <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
-            <el-link style="margin-top: -18px;margin-bottom: 0" href="http://www.beian.miit.gov.cn" target="_blank" type="danger">沪ICP备20013409号</el-link>
+            <el-link style="margin-top: -16px;margin-bottom: 0" href="http://www.beian.miit.gov.cn" target="_blank" type="danger">沪ICP备20013409号</el-link>
             <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
-            <el-link class="showTime" style="margin-top: -18px;margin-bottom: 0" href="http://time.tianqi.com/" target="_blank" type="success"></el-link>
+            <el-link class="showTime" style="margin-top: -16px;margin-bottom: 0" href="http://time.tianqi.com/" target="_blank" type="success"></el-link>
           </span>
         </el-footer>
       </el-container>
@@ -197,14 +197,14 @@
 <style scoped>
   .myheader {
     background-color: #ffffff;
-    margin-top: 5px;
+    margin-top: -6px;
     text-align: center;
   }
   .myfooter  {
     background-color: #ffffff;
     text-align: center;
     line-height: 60px;
-    margin-top: 3px;
+    margin-top: 6px;
     margin-bottom: -10px;
   }
   .footer {
@@ -250,6 +250,9 @@
     margin: 5px 5px;
   }
   @media only screen and (max-width: 767px) {
+    .showTime{
+      display: none;
+    }
     .mydiv{
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.5);
       margin: 20px 10px;
@@ -282,20 +285,5 @@
       background-color: rgba(255, 234, 216, 0.63);
     }
   }
-
-
-
-  /*.mydiv{*/
-  /*  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.5);*/
-  /*  margin: 20px 10px;*/
-  /*  text-align: center;*/
-  /*  background-color: rgba(255, 234, 216, 0.63);*/
-  /*}*/
-  /*.mydiv2{*/
-  /*  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.5);*/
-  /*  margin: 20px 10px;*/
-  /*  text-align: center;*/
-  /*  background-color: rgba(255, 234, 216, 0.63);*/
-  /*}*/
 
 </style>
