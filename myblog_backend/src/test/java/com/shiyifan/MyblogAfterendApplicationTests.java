@@ -1,15 +1,36 @@
 package com.shiyifan;
 
+import com.google.gson.Gson;
+import com.shiyifan.dao.BlogMapper;
+import com.shiyifan.pojo.ElasticSearchBlog;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+
 @SpringBootTest
 class MyblogAfterendApplicationTests {
 
-//    @Autowired
-//    private RestHighLevelClient restHighLevelClient;
+    @Autowired
+    private RestHighLevelClient restHighLevelClient;
+
+    @Autowired
+    private BlogMapper blogMapper;
+    @Test
+    public void test() throws IOException {
+        ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon("5561f3a3280f4e6c9ff98a13aa5d5e94");
+        IndexRequest indexRequest = new IndexRequest("blogindex");
+        Gson gson = new Gson();
+        indexRequest.id(blog.getBlogId());
+        indexRequest.source(gson.toJson(blog), XContentType.JSON);
+        restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+    }
 
 //    @Test
 //    public void testindex() throws IOException {

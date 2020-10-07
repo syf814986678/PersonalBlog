@@ -25,12 +25,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -73,8 +77,13 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         redisUtil.lSet("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommon",mynewblog);
         redisUtil.incr("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommonTotal",1);
         System.out.println("redis添加成功");
+        addElasticsearchBlog(myblog.getBlogId());
+    }
+
+    @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 2000L, multiplier = 1.5))
+    private void addElasticsearchBlog(String blogId){
         try {
-            ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(myblog.getBlogId());
+            ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(blogId);
             IndexRequest indexRequest = new IndexRequest("blogindex");
             Gson gson = new Gson();
             indexRequest.id(blog.getBlogId());
@@ -320,6 +329,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     /*------------------------------搜索操作-------------------------------*/
 
     @Override
+    @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 2000L, multiplier = 1.5))
     public ArrayList<Map<String, Object>> searchContentPage(String keyword, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
         SearchRequest searchRequest = new SearchRequest("blogindex");
@@ -392,6 +402,10 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         }
     }
 
+    @Recover
+    public void recover(Exception e){
+        System.out.println("搜索重试失败"+ LocalTime.now());
+    }
 
 }
 
