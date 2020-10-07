@@ -1,18 +1,25 @@
 package com.shiyifan;
 
-import com.google.gson.Gson;
 import com.shiyifan.dao.BlogMapper;
-import com.shiyifan.pojo.ElasticSearchBlog;
-import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 class MyblogAfterendApplicationTests {
@@ -24,12 +31,31 @@ class MyblogAfterendApplicationTests {
     private BlogMapper blogMapper;
     @Test
     public void test() throws IOException {
-        ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon("5561f3a3280f4e6c9ff98a13aa5d5e94");
-        IndexRequest indexRequest = new IndexRequest("blogindex");
-        Gson gson = new Gson();
-        indexRequest.id(blog.getBlogId());
-        indexRequest.source(gson.toJson(blog), XContentType.JSON);
-        restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+        SearchRequest searchRequest = new SearchRequest("blogindex");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.multiMatchQuery("leetcode题解", "blogTitle","blogContent,blogCategory").analyzer("ik_max_word"))
+                .highlighter(new HighlightBuilder().field("*").requireFieldMatch(false).preTags("<span style=\"color:red;font-weight:bold\">").postTags("</span>"));
+        searchSourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse search = null;
+        try {
+            search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ArrayList<Map<String, Object>> list = new ArrayList<>();
+        for (SearchHit hit : search.getHits().getHits()) {
+            Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+            if (highlightFields.containsKey("blogContent")){
+                sourceAsMap.put("blogContent",highlightFields.get("blogContent").fragments()[0].toString());
+            }
+            if (highlightFields.containsKey("blogTitle")){
+                sourceAsMap.put("blogTitle",highlightFields.get("blogTitle").fragments()[0].toString());
+            }
+            list.add(sourceAsMap);
+        }
+        System.out.println(list.toString());
     }
 
 //    @Test

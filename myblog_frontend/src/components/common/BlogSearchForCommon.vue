@@ -11,7 +11,8 @@
             fit="fill"></el-image>
         </el-col>
         <el-col :span="18" style="text-align: center;background-color: rgba(239,236,236,0.78)">
-          <h2 v-html="result.blogTitle" @click="open(result.blogId)" style="cursor:pointer;background-color: rgba(184,134,11,0.38)"></h2>
+<!--          <h2 v-html="result.blogTitle" @click="open(result.blogId)" style="cursor:pointer;background-color: rgba(184,134,11,0.38)"></h2>-->
+          <h2 style="background-color: rgba(184,134,11,0.38)"><el-link v-html="result.blogTitle" :href="'https://www.chardance.cloud/#/index/blog/'+result.blogId" target="_blank" style="font-size: 25px"></el-link></h2>
           <div v-html="result.blogContent" style="text-align:left;overflow: auto;word-break: break-all;margin: 0 10px;font-size: 20px;line-height: 30px;height: 100px"></div>
           <el-row style="margin-bottom: 5px">
             <el-col :span="6">
@@ -63,9 +64,9 @@
           }
         },
         methods:{
-          open(id){
-            window.open("/#/index/blog/"+id)
-          },
+          // open(id){
+          //   window.open("/#/index/blog/"+id)
+          // },
           handleCurrentChange(page){
             document.getElementById("myelmain").scrollTop=1
             document.documentElement.scrollTop=0
