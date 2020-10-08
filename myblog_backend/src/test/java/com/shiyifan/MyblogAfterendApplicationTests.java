@@ -1,27 +1,15 @@
 package com.shiyifan;
 
 import com.shiyifan.dao.BlogMapper;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
+import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 @SpringBootTest
+@Log4j2
 class MyblogAfterendApplicationTests {
 
     @Autowired
@@ -29,33 +17,12 @@ class MyblogAfterendApplicationTests {
 
     @Autowired
     private BlogMapper blogMapper;
+
     @Test
-    public void test() throws IOException {
-        SearchRequest searchRequest = new SearchRequest("blogindex");
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.multiMatchQuery("leetcode题解", "blogTitle","blogContent,blogCategory").analyzer("ik_max_word"))
-                .highlighter(new HighlightBuilder().field("*").requireFieldMatch(false).preTags("<span style=\"color:red;font-weight:bold\">").postTags("</span>"));
-        searchSourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-        searchRequest.source(searchSourceBuilder);
-        SearchResponse search = null;
-        try {
-            search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ArrayList<Map<String, Object>> list = new ArrayList<>();
-        for (SearchHit hit : search.getHits().getHits()) {
-            Map<String, HighlightField> highlightFields = hit.getHighlightFields();
-            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-            if (highlightFields.containsKey("blogContent")){
-                sourceAsMap.put("blogContent",highlightFields.get("blogContent").fragments()[0].toString());
-            }
-            if (highlightFields.containsKey("blogTitle")){
-                sourceAsMap.put("blogTitle",highlightFields.get("blogTitle").fragments()[0].toString());
-            }
-            list.add(sourceAsMap);
-        }
-        System.out.println(list.toString());
+    public void test(){
+        log.error("----------------------- error-----------------------");
+        log.warn("----------------------- warn-----------------------");
+        log.info("----------------------- info-----------------------");
     }
 
 //    @Test

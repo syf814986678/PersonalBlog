@@ -9,6 +9,7 @@ import com.shiyifan.constant.CodeState;
 import com.shiyifan.constant.MyConstant;
 import com.shiyifan.vo.Result;
 import io.jsonwebtoken.Claims;
+import lombok.extern.log4j.Log4j2;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,8 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/upload")
+@Log4j2
+@CrossOrigin
 public class UploadController {
 
     @Autowired
@@ -53,7 +56,7 @@ public class UploadController {
             }
         }
         catch (Exception e){
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -87,7 +90,7 @@ public class UploadController {
             }
         }
         catch (Exception e){
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -148,7 +151,7 @@ public class UploadController {
             }
         }
         catch (Exception e){
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -175,7 +178,7 @@ public class UploadController {
             map.put("codeState", CodeState.success);
         }
         catch (Exception e){
-            System.out.println(e);
+            log.error(e);
             map.put("codeState", CodeState.ossException);
             map.put("exception", "服务端处理错误！请稍后再试");
         }

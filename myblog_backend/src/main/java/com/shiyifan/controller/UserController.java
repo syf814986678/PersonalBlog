@@ -5,6 +5,7 @@ import com.shiyifan.pojo.Myuser;
 import com.shiyifan.service.UserService;
 import com.shiyifan.utils.JwtUtil;
 import com.shiyifan.vo.Result;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,8 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/user")
+@Log4j2
+@CrossOrigin
 public class UserController {
 
     @Autowired
@@ -37,7 +40,7 @@ public class UserController {
             }
         }
         catch (Exception e){
-            e.printStackTrace();
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }

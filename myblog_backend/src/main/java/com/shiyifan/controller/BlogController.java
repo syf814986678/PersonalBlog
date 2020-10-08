@@ -7,6 +7,7 @@ import com.shiyifan.service.BlogService;
 import com.shiyifan.service.CategoryService;
 import com.shiyifan.vo.Result;
 import io.jsonwebtoken.Claims;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,8 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/blog")
+@Log4j2
+@CrossOrigin
 public class BlogController {
     @Autowired
     private BlogService blogService;
@@ -50,7 +53,7 @@ public class BlogController {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -81,7 +84,7 @@ public class BlogController {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -107,13 +110,12 @@ public class BlogController {
                 map.put("totalBlogNums", totalBlogNums);
             }
             else {
-                System.out.println("controller"+request.getAttribute("tokenError"));
                 result.setCodeState(CodeState.tokenError);
                 map.put("tokenError", request.getAttribute("tokenError"));
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -142,7 +144,7 @@ public class BlogController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -170,7 +172,7 @@ public class BlogController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -199,7 +201,7 @@ public class BlogController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -228,7 +230,7 @@ public class BlogController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -251,7 +253,7 @@ public class BlogController {
             map.put("setTempBlog", "未完成博客已暂存");
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -272,7 +274,7 @@ public class BlogController {
             map.put("myblog", myblog);
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -295,7 +297,7 @@ public class BlogController {
             map.put("nums",nums);
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -318,7 +320,7 @@ public class BlogController {
             map.put("nums",nums);
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -341,7 +343,7 @@ public class BlogController {
             map.put("nums",nums);
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -366,7 +368,7 @@ public class BlogController {
             result.setCodeState(CodeState.success);
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -397,7 +399,7 @@ public class BlogController {
             result.setCodeState(CodeState.success);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -408,7 +410,7 @@ public class BlogController {
                 assert br != null;
                 br.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e);
             }
             result.setMsg(map);
         }

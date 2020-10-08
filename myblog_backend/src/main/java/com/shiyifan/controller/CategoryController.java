@@ -5,6 +5,7 @@ import com.shiyifan.pojo.Mycategory;
 import com.shiyifan.service.CategoryService;
 import com.shiyifan.vo.Result;
 import io.jsonwebtoken.Claims;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,8 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/category")
+@Log4j2
+@CrossOrigin
 public class CategoryController {
 
     @Autowired
@@ -39,7 +42,7 @@ public class CategoryController {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -67,7 +70,7 @@ public class CategoryController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -95,7 +98,7 @@ public class CategoryController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -123,7 +126,7 @@ public class CategoryController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -151,7 +154,7 @@ public class CategoryController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -186,7 +189,7 @@ public class CategoryController {
             }
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
         }
@@ -206,10 +209,9 @@ public class CategoryController {
             map.put("mycategories",mycategories);
         }
         catch (Exception e) {
-            System.out.println(e);
+            log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");
-            System.out.println("服务端处理错误！请稍后再试");
         }
         finally {
             result.setMsg(map);
