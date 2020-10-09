@@ -5,6 +5,7 @@ import com.shiyifan.pojo.Myblog;
 import com.shiyifan.pojo.Mycategory;
 import com.shiyifan.service.BlogService;
 import com.shiyifan.service.CategoryService;
+import com.shiyifan.utils.CountUvUtil;
 import com.shiyifan.vo.Result;
 import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j2;
@@ -24,13 +25,15 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/blog")
 @Log4j2
-@CrossOrigin
 public class BlogController {
     @Autowired
     private BlogService blogService;
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private CountUvUtil countUvUtil;
     /*------------------------------登陆后进行的操作-------------------------------*/
 
     //查找最新六条博客
@@ -211,8 +214,8 @@ public class BlogController {
         return result;
     }
 
-    @PostMapping("/getTempBlog")
     //读取暂存redis
+    @PostMapping("/getTempBlog")
     public Result getTempBlog(HttpServletRequest request) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
@@ -223,6 +226,62 @@ public class BlogController {
                 Myblog myblog = blogService.getTempBlog(userid);
                 result.setCodeState(CodeState.success);
                 map.put("myblog", myblog);
+            }
+            else {
+                result.setCodeState(CodeState.tokenError);
+                map.put("tokenError", request.getAttribute("tokenError"));
+            }
+        }
+        catch (Exception e) {
+            log.error(e);
+            result.setCodeState(CodeState.exception);
+            map.put("exception", "服务端处理错误！请稍后再试");
+        }
+        finally {
+            result.setMsg(map);
+        }
+        return result;
+    }
+
+    //获取访问人数
+    @PostMapping("/getVisitNums")
+    public Result getVisitNums(HttpServletRequest request,@RequestParam("dayNum") int dayNum) {
+        Result result = new Result();
+        HashMap<String, Object> map = new HashMap<>();
+        try {
+            Claims claims = (Claims)request.getAttribute("user_claims");
+            if(claims!=null){
+                long visitor = countUvUtil.getVisitor((int)claims.get("userid"),dayNum);
+                result.setCodeState(CodeState.success);
+                map.put("visitNums", visitor);
+            }
+            else {
+                result.setCodeState(CodeState.tokenError);
+                map.put("tokenError", request.getAttribute("tokenError"));
+            }
+        }
+        catch (Exception e) {
+            log.error(e);
+            result.setCodeState(CodeState.exception);
+            map.put("exception", "服务端处理错误！请稍后再试");
+        }
+        finally {
+            result.setMsg(map);
+        }
+        return result;
+    }
+
+    //查询博客总条数
+    @PostMapping("/selectTotalBlogNums")
+    public Result selectTotalBlogNums(HttpServletRequest request) {
+        Result result = new Result();
+        HashMap<String, Object> map = new HashMap<>();
+        try {
+            Claims claims = (Claims)request.getAttribute("user_claims");
+            if(claims!=null){
+                int totalBlogNums = blogService.selectTotalBlogNums((int)claims.get("userid"));
+                result.setCodeState(CodeState.success);
+                map.put("totalBlogNums", totalBlogNums);
             }
             else {
                 result.setCodeState(CodeState.tokenError);
@@ -270,6 +329,7 @@ public class BlogController {
         HashMap<String, Object> map = new HashMap<>();
         try {
             Myblog myblog = blogService.selectBlogByIdForCommon(blogid);
+            countUvUtil.setVisitor(myblog.getMyuser().getUserId());
             result.setCodeState(CodeState.success);
             map.put("myblog", myblog);
         }

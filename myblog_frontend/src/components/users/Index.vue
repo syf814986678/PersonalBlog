@@ -3,14 +3,16 @@
     <el-header style="height: 120px">
       <div class="no-hd">
         <ul>
-          <li>1234</li>
-          <li>4567</li>
+          <li>{{ this.totalBlogNums }}</li>
+          <li>{{ this.todayVisitors }}</li>
+          <li>{{ this.yesterdayVisitors }}</li>
         </ul>
       </div>
       <div class="no-bd">
         <ul>
           <li>总博客数</li>
-          <li>测试数量</li>
+          <li>今日访问人数</li>
+          <li>昨日访问人数</li>
         </ul>
       </div>
     </el-header>
@@ -38,14 +40,39 @@
         name: "Index",
         data(){
           return{
-
+            totalBlogNums:0,
+            yesterdayVisitors:0,
+            todayVisitors:0,
           }
         },
         methods:{
 
         },
         created() {
-
+          this.$http.post("/blog/selectTotalBlogNums").then(response=>{
+            if (response!=null){
+              this.totalBlogNums=response.data.msg["totalBlogNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
+            if (response!=null){
+              this.todayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
+            if (response!=null){
+              this.yesterdayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
         }
     }
 </script>
@@ -83,7 +110,7 @@ body > .el-container {
   margin-bottom: 40px;
 }
 .no-hd{
-  background: rgba(101, 132, 226, 0.1);
+  background: rgba(101, 132, 226, 0.2);
   position: relative;
   border: 1px solid rgba(25, 186, 139, 0.17);
   margin: 0 -20px;
@@ -97,17 +124,19 @@ body > .el-container {
   left: 0;
   content: "";
   width: 30px;
-  height: 10px;
+  height: 70px;
   border-top: 2px solid #01e1f8;
   border-left: 2px solid #01e1f8;
+  border-bottom: 2px solid #01e1f8;
 }
 .no-hd:after{
   position: absolute;
-  bottom: 0;
+  top: 0;
   right: 0;
   content: "";
   width: 30px;
-  height: 10px;
+  height: 70px;
+  border-top: 2px solid #01e1f8;
   border-right: 2px solid #01e1f8;
   border-bottom: 2px solid #01e1f8;
 }
@@ -130,12 +159,22 @@ body > .el-container {
   width: 1px;
   background: rgba(255, 255, 255, 0.2);
 }
+.no-hd>ul>li:nth-child(2):after{
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -30%;
+  height: 170%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
 .no-bd>ul>li{
   flex: 1;
   line-height: 10px;
   font-size: 18px;
   text-align: center;
   list-style: none;
+  color: #02f5a8;
 }
 
 </style>

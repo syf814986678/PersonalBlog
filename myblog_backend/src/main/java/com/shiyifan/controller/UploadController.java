@@ -25,7 +25,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/upload")
 @Log4j2
-@CrossOrigin
 public class UploadController {
 
     @Autowired

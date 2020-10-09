@@ -113,7 +113,7 @@
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
               this.myblogs=this.$store.state.myblogs
               this.total=this.$store.state.total
-              if (this.total>1){
+              if (this.total>2){
                 setTimeout(() => {
                   this.disabled=false
                 }, 500)
@@ -134,7 +134,7 @@
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
               this.myblogs=this.$store.state.myblogs
               this.total=this.$store.state.total
-              if (this.total>1){
+              if (this.total>2){
                 setTimeout(() => {
                   this.disabled=false
                 }, 500)
@@ -155,7 +155,7 @@
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
               this.myblogs=this.$store.state.myblogs
               this.total=this.$store.state.total
-              if (this.total>1){
+              if (this.total>2){
                 setTimeout(() => {
                   this.disabled=false
                 }, 500)
@@ -221,6 +221,7 @@
         this.$store.commit('setHeight',0)
         this.refresh(this.currentPage)
         setTimeout(() => {
+          document.documentElement.scrollTop=0
           document.getElementById("myelmain").scrollTop=1
         }, 100)
       }

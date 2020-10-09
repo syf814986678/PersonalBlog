@@ -229,6 +229,12 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.loading=true
+            this.$notify({
+              title: '发布中',
+              message: "发布中，请稍等！",
+              type: 'warning',
+              duration: 1000
+            });
             this.$http.post("/blog/addBlog",this.form).then(response=>{
               if (response!=null){
                 this.$notify({

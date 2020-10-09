@@ -68,8 +68,8 @@
           //   window.open("/#/index/blog/"+id)
           // },
           handleCurrentChange(page){
-            document.getElementById("myelmain").scrollTop=1
             document.documentElement.scrollTop=0
+            document.getElementById("myelmain").scrollTop=1
             this.pageNow=page;
             this.results=this.allresults.slice((this.pageNow-1)*this.pageSize,this.pageNow*this.pageSize);
           },

@@ -52,7 +52,7 @@
       </el-pagination>
     </el-col>
 
-    <el-dialog id="eldialog" width="90%" title="修改博客" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+    <el-dialog v-loading="dialogloading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" id="eldialog" width="90%" title="修改博客" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-form inline-message :model="formdata" :rules="rules" ref="form" @submit.native.prevent>
         <el-row :gutter="20">
           <el-col :span="12">
@@ -198,6 +198,7 @@
             options: [],
             search: '',
             loading: true,
+            dialogloading: true,
             selectloading: false,
             dialogFormVisible: false,
             currentPage: this.$store.state.currentPage,
@@ -331,6 +332,7 @@
               this.formdata=response.data.msg["myblog"];
               this.options=response.data.msg["mycategories"];
               this.dialogFormVisible=true;
+              this.dialogloading=false;
               this.gettoken();
               setTimeout(() => {
                 document.getElementById("eldialog").scrollTop=143
@@ -344,7 +346,14 @@
         submitForm(formName) {
           this.$refs[formName].validate((valid) => {
             if (valid) {
-               this.$http.post("/blog/updateBlog",this.formdata).then(response=>{
+              this.dialogloading=true;
+              this.$notify({
+                title: '更新中',
+                message: "更新中，请稍等！",
+                type: 'warning',
+                duration: 1000
+              });
+              this.$http.post("/blog/updateBlog",this.formdata).then(response=>{
                  if (response!=null){
                    this.$notify({
                      title: '更新成功',
@@ -358,7 +367,7 @@
               }).catch(error=> {
                  console.log(error)
                  this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-               })
+              })
             }
             else {
               return false;

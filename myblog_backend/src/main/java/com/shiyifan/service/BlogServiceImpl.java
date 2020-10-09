@@ -83,34 +83,31 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     @Retryable(value = Exception.class)
     private void addElasticsearchBlog(String blogId){
         try {
+            log.warn("添加ElasticsearchBlog开始");
             ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(blogId);
             IndexRequest indexRequest = new IndexRequest("blogindex");
+            indexRequest.timeout("2s");
             Gson gson = new Gson();
             indexRequest.id(blog.getBlogId());
             indexRequest.source(gson.toJson(blog), XContentType.JSON);
             restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+            log.warn("添加ElasticsearchBlog成功");
         } catch (Exception e) {
             log.error(e);
         }
     }
 
     @Override
-    public Myblog selectBlogById(int userid, String blogid) {
-        Myblog myblog = blogMapper.selectBlogById(userid, blogid);
-        return myblog;
-    }
-
-    @Override
-    public void deleteBlogById(int userid, String blogid, int categoryid) {
-        blogMapper.deleteBlogById(userid, blogid);
-        categoryMapper.deleteCategoryRank(userid, categoryid);
-        ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+userid+"-myblogs", 0, -1);
+    public void deleteBlogById(int userId, String blogId, int categoryId) {
+        blogMapper.deleteBlogById(userId, blogId);
+        categoryMapper.deleteCategoryRank(userId, categoryId);
+        ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+ userId +"-myblogs", 0, -1);
         Iterator<Object> iterator = myblogs.iterator();
         while (iterator.hasNext()){
             Myblog myblog = (Myblog) iterator.next();
-            if(myblog.getBlogId().equals(blogid)){
-                redisUtil.lRemove("user-"+userid+"-myblogs",1,myblog);
-                redisUtil.decr("user-"+userid+"myblogsTotal",1);
+            if(myblog.getBlogId().equals(blogId)){
+                redisUtil.lRemove("user-"+ userId +"-myblogs",1,myblog);
+                redisUtil.decr("user-"+ userId +"myblogsTotal",1);
                 log.info("redis删除成功");
                 break;
             }
@@ -119,19 +116,26 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         iterator = myblogs.iterator();
         while (iterator.hasNext()){
             Myblog myblog = (Myblog) iterator.next();
-            if(myblog.getBlogId().equals(blogid)){
+            if(myblog.getBlogId().equals(blogId)){
                 redisUtil.lRemove("myblogsForCommon",1,myblog);
                 redisUtil.decr("myblogsForCommonTotal",1);
-                redisUtil.lRemove("category-"+categoryid+"-myblogsForCommon",1,myblog);
-                redisUtil.decr("category-"+categoryid+"-myblogsForCommonTotal",1);
+                redisUtil.lRemove("category-"+ categoryId +"-myblogsForCommon",1,myblog);
+                redisUtil.decr("category-"+ categoryId +"-myblogsForCommonTotal",1);
                 log.info("redis删除成功");
                 break;
             }
         }
+        deleteElasticsearchBlog(blogId);
+    }
+
+    @Retryable(value = Exception.class)
+    private void deleteElasticsearchBlog(String blogId){
         try {
-            DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogid);
-            deleteRequest.timeout("1s");
+            log.warn("删除ElasticsearchBlog开始");
+            DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
+            deleteRequest.timeout("2s");
             restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+            log.warn("删除ElasticsearchBlog成功");
         } catch (Exception e) {
             log.error(e);
         }
@@ -179,19 +183,33 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             index++;
         }
         redisUtil.del(myblog.getBlogId());
+        updateElasticsearchBlog(myblog.getBlogId());
+    }
+
+    @Retryable(value = Exception.class)
+    private void updateElasticsearchBlog(String blogId){
         try {
-            DeleteRequest deleteRequest = new DeleteRequest("blogindex", myblog.getBlogId());
-            deleteRequest.timeout("1s");
+            log.warn("更新ElasticsearchBlog开始");
+            DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
+            deleteRequest.timeout("2s");
             restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
-            ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(myblog.getBlogId());
+            ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(blogId);
             IndexRequest indexRequest = new IndexRequest("blogindex");
+            indexRequest.timeout("2s");
             Gson gson = new Gson();
             indexRequest.id(blog.getBlogId());
             indexRequest.source(gson.toJson(blog), XContentType.JSON);
             restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+            log.warn("更新ElasticsearchBlog成功");
         } catch (Exception e) {
             log.error(e);
         }
+    }
+
+    @Override
+    public Myblog selectBlogById(int userId, String blogId) {
+        Myblog myblog = blogMapper.selectBlogById(userId, blogId);
+        return myblog;
     }
 
     @Override
@@ -342,7 +360,9 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         searchRequest.source(searchSourceBuilder);
         SearchResponse search = null;
         try {
+            log.warn("搜索博客开始");
             search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            log.warn("搜索博客成功");
         } catch (IOException e) {
             log.error(e);
         }
@@ -404,7 +424,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     @Recover
     public void recover(Exception e){
-        log.warn("搜索重试失败;"+e);
+        log.error("搜索重试失败;"+e);
     }
 }
 

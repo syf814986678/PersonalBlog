@@ -1,5 +1,6 @@
 package com.shiyifan.utils;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@Log4j2
 public class RedisUtil {
     @Autowired
     @Qualifier("myredisTemplate")
@@ -25,7 +27,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -44,7 +46,7 @@ public class RedisUtil {
         try {
             return myredisTemplate.hasKey(key);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -86,7 +88,7 @@ public class RedisUtil {
             myredisTemplate.opsForValue().set(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -109,7 +111,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -172,7 +174,7 @@ public class RedisUtil {
             myredisTemplate.opsForHash().putAll(key, map);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -193,7 +195,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -211,7 +213,7 @@ public class RedisUtil {
             myredisTemplate.opsForHash().put(key, item, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -233,7 +235,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -290,7 +292,7 @@ public class RedisUtil {
         try {
             return myredisTemplate.opsForSet().members(key);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return null;
         }
     }
@@ -306,7 +308,7 @@ public class RedisUtil {
         try {
             return myredisTemplate.opsForSet().isMember(key, value);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -322,7 +324,7 @@ public class RedisUtil {
         try {
             return myredisTemplate.opsForSet().add(key, values);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return 0;
         }
     }
@@ -343,7 +345,7 @@ public class RedisUtil {
             }
             return count;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return 0;
         }
     }
@@ -357,7 +359,7 @@ public class RedisUtil {
         try {
             return myredisTemplate.opsForSet().size(key);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return 0;
         }
     }
@@ -374,7 +376,7 @@ public class RedisUtil {
             Long count = myredisTemplate.opsForSet().remove(key, values);
             return count;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return 0;
         }
     }
@@ -391,7 +393,7 @@ public class RedisUtil {
         try {
             return myredisTemplate.opsForList().range(key, start, end);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return null;
         }
     }
@@ -405,7 +407,7 @@ public class RedisUtil {
         try {
             return myredisTemplate.opsForList().size(key);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return 0;
         }
     }
@@ -420,7 +422,7 @@ public class RedisUtil {
         try {
             return myredisTemplate.opsForList().index(key, index);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return null;
         }
     }
@@ -436,7 +438,7 @@ public class RedisUtil {
             myredisTemplate.opsForList().rightPush(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -445,7 +447,7 @@ public class RedisUtil {
             myredisTemplate.opsForList().leftPush(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -465,7 +467,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -482,7 +484,7 @@ public class RedisUtil {
             myredisTemplate.opsForList().leftPushAll(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -503,7 +505,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -521,7 +523,7 @@ public class RedisUtil {
             myredisTemplate.opsForList().set(key, index, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }
@@ -539,16 +541,66 @@ public class RedisUtil {
             Long remove = myredisTemplate.opsForList().remove(key, count, value);
             return remove;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return 0;
         }
     }
+
+
+    // ===============================Hyperloglog=================================
+    public long addHyperloglog(String key,Object... values){
+        try {
+            Long add = myredisTemplate.opsForHyperLogLog().add(key, values);
+            return add;
+        }
+        catch (Exception e){
+            log.error(e);
+            return 0;
+        }
+    }
+
+    public boolean deleteHyperloglog(String key){
+        try {
+            myredisTemplate.opsForHyperLogLog().delete(key);
+            return true;
+        }
+        catch (Exception e){
+            log.error(e);
+            return false;
+        }
+    }
+
+    public long unionHyperloglog(String destinationKey,String... sourceKeys){
+        try {
+            Long union = myredisTemplate.opsForHyperLogLog().union(destinationKey, sourceKeys);
+            return union;
+        }
+        catch (Exception e){
+            log.error(e);
+            return 0;
+        }
+    }
+
+    public long getHyperloglogSize(String...Keys){
+        try {
+            Long size = myredisTemplate.opsForHyperLogLog().size(Keys);
+            return size;
+        }
+        catch (Exception e){
+            log.error(e);
+            return 0;
+        }
+    }
+
+
+
+
     public Boolean flushDb(){
         try {
             myredisTemplate.getConnectionFactory().getConnection().flushDb();
             return true;
         }catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             return false;
         }
     }

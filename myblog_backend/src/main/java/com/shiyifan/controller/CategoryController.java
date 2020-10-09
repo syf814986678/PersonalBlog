@@ -16,7 +16,6 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/category")
 @Log4j2
-@CrossOrigin
 public class CategoryController {
 
     @Autowired

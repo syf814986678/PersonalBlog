@@ -35,10 +35,8 @@ public class MyJwtInterceptor extends HandlerInterceptorAdapter {
             }
         }
         catch (io.jsonwebtoken.MalformedJwtException | io.jsonwebtoken.SignatureException e){
-            System.out.println("进入catch1");
             request.setAttribute("tokenError","token验证非法！请重新登录");
         } catch (io.jsonwebtoken.ExpiredJwtException e){
-            System.out.println("进入catch2");
             request.setAttribute("tokenError","token已过期！请重新登录");
         }
         return true;
