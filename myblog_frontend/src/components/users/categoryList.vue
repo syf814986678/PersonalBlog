@@ -1,13 +1,13 @@
 <template>
-    <div style="width: 1500px;margin: 0 auto;">
+    <div style="margin: 0 auto;">
       <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="padding: 0 10px" border :data="mydata.filter(data => !search || data.categoryName.toLowerCase().includes(search.toLowerCase()))" :row-class-name="tableRowClassName">
         <el-table-column :resizable="false" type="index" :index="indexMethod" align="center" label="编号" width="50"></el-table-column>
-        <el-table-column :resizable="false" align="center" label="类别ID" width="200"><template slot-scope="scope"><el-tag style="font-size: 15px" effect="dark">{{scope.row.categoryId}}</el-tag></template></el-table-column>
-        <el-table-column show-overflow-tooltip align="center" label="类别名称" width="230"><template slot-scope="scope"><el-tag effect="dark" type="danger">{{scope.row.categoryName}}</el-tag></template></el-table-column>
-        <el-table-column :resizable="false" align="center" label="类别权重" width="80"><template slot-scope="scope"><el-tag effect="dark" type="warning">{{scope.row.categoryRank}}</el-tag></template></el-table-column>
-        <el-table-column :resizable="false" sortable align="center" label="创建时间" width="320"><template slot-scope="scope"><el-tag effect="dark" type="success">{{scope.row.createGmt}}</el-tag></template></el-table-column>
-        <el-table-column :resizable="false" sortable align="center" label="更新时间" width="320"><template slot-scope="scope"><el-tag effect="dark" type="success">{{scope.row.updateGmt}}</el-tag></template></el-table-column>
-        <el-table-column :resizable="false" align="center" width="275">
+        <el-table-column :resizable="false" align="center" label="类别ID"><template slot-scope="scope"><el-tag style="font-size: 15px" effect="dark">{{scope.row.categoryId}}</el-tag></template></el-table-column>
+        <el-table-column show-overflow-tooltip align="center" label="类别名称"><template slot-scope="scope"><el-tag effect="dark" type="danger">{{scope.row.categoryName}}</el-tag></template></el-table-column>
+        <el-table-column :resizable="false" align="center" label="类别权重"><template slot-scope="scope"><el-tag effect="dark" type="warning">{{scope.row.categoryRank}}</el-tag></template></el-table-column>
+        <el-table-column :resizable="false" sortable align="center" label="创建时间"><template slot-scope="scope"><el-tag effect="dark" type="success">{{scope.row.createGmt}}</el-tag></template></el-table-column>
+        <el-table-column :resizable="false" sortable align="center" label="更新时间"><template slot-scope="scope"><el-tag effect="dark" type="success">{{scope.row.updateGmt}}</el-tag></template></el-table-column>
+        <el-table-column :resizable="false" align="center">
           <template slot="header" slot-scope="scope">
             <el-input
               size="medium"
@@ -49,13 +49,13 @@
         </el-col>
       </el-row>
 
-      <el-dialog width="50%" :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
-        <el-row :gutter="20">
+      <el-dialog :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+        <el-row>
           <el-col :span="2">
-            <el-tag type="danger" effect="dark" style="margin-left: -13px;height: 40px;font-size: 13px;padding-top: 4px">类别名称</el-tag>
+            <el-tag type="danger" effect="dark"  style="margin-left: -13px;height: 40px;font-size: 13px;padding-top: 4px">类别名称</el-tag>
           </el-col>
           <el-col :span="20">
-            <el-input v-model="cagetoryname" placeholder="输入类别名称" style="margin-left: -10px"></el-input>
+            <el-input v-model="cagetoryname" placeholder="输入类别名称" style="margin-left:10px;width: 95%"></el-input>
           </el-col>
           <el-col :span="2">
             <el-button type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
@@ -71,11 +71,20 @@
         data(){
           return{
             addOrUpdate: true,//true为添加,false为更新
-            mydata: [],
+            mydata: [
+              {
+                categoryId:12,
+                categoryName:"LeetCode题解(Easy)",
+                categoryRank:8,
+                categoryUserId:1,
+                createGmt:"2020-10-10 24:24:24",
+                updateGmt:"2020-10-10 24:24:24"
+              }
+            ],
             cagetoryname: '',
             categoryId: '',
             search: '',
-            loading: true,
+            loading: false,
             dialogFormVisible: false,
             currentPage: 1,
             pagesize: 11,

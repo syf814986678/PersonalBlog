@@ -1,15 +1,14 @@
 <template>
-  <div style="width: 1680px;margin: 0 auto">
+  <div style="margin: 0 auto">
     <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="padding: 0 10px" border :row-class-name="tableRowClassName" :data="mydata.filter(data => !search || data.blogTitle.toLowerCase().includes(search.toLowerCase()))">
       <el-table-column :resizable="false" type="index" :index="indexMethod" align="center" label="编号" width="50"></el-table-column>
-      <el-table-column align="center" label="博客ID" width="285" v-slot="scope"><el-tag effect="dark">{{scope.row.blogId}}</el-tag></el-table-column>
-      <el-table-column show-overflow-tooltip align="center" label="博客标题" width="220" v-slot="scope"><el-tag effect="dark" type="danger">{{scope.row.blogTitle}}</el-tag></el-table-column>
-      <el-table-column align="center" label="封面图片" width="350" v-slot="scope"><el-image style="width: 240px;height: 100px" :src="scope.row.blogCoverImage" fit="fill"></el-image></el-table-column>
-      <el-table-column sortable align="center" prop="mycategory.categoryName" label="博客类别" width="110" v-slot="scope"><el-tag effect="dark" type="warning">{{scope.row.mycategory.categoryName}}</el-tag></el-table-column>
-      <el-table-column align="center" label="类别权重" width="80" v-slot="scope"><el-tag effect="dark" type="warning">{{scope.row.mycategory.categoryRank}}</el-tag></el-table-column>
-      <el-table-column sortable align="center" prop="createGmt" label="创建时间" width="170" v-slot="scope"><el-tag effect="dark" type="success">{{scope.row.createGmt}}</el-tag></el-table-column>
-      <el-table-column sortable align="center" prop="updateGmt" label="更新时间" width="170" v-slot="scope"><el-tag effect="dark" type="success">{{scope.row.updateGmt}}</el-tag></el-table-column>
-      <el-table-column align="center" width="230">
+      <el-table-column show-overflow-tooltip align="center" label="博客标题" width="230" v-slot="scope"><el-tag effect="dark"  type="danger">{{scope.row.blogTitle}}</el-tag></el-table-column>
+      <el-table-column align="center" label="封面图片" width="270" v-slot="scope"><el-image style="width: 240px;height: 100px" :src="scope.row.blogCoverImage" fit="fill"></el-image></el-table-column>
+      <el-table-column sortable align="center" prop="mycategory.categoryName" label="博客类别" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="warning">{{scope.row.mycategory.categoryName}}</el-tag></el-table-column>
+      <el-table-column align="center" label="类别权重" width="78" v-slot="scope"><el-tag effect="dark" type="warning">{{scope.row.mycategory.categoryRank}}</el-tag></el-table-column>
+      <el-table-column sortable align="center" prop="createGmt" label="创建时间" v-slot="scope"><el-tag effect="dark" type="success">{{scope.row.createGmt}}</el-tag></el-table-column>
+      <el-table-column sortable align="center" prop="updateGmt" label="更新时间" v-slot="scope"><el-tag effect="dark" type="success">{{scope.row.updateGmt}}</el-tag></el-table-column>
+      <el-table-column align="center" width="250">
         <template slot="header" slot-scope="scope">
           <el-input
             v-model="search"
@@ -185,7 +184,17 @@
                 ],
               },
             },
-            mydata: [],
+            mydata: [{
+              blogId:"679138360c9f47a9b05f323477701378",
+              blogTitle:"删除排序数组中的重复项(七)",
+              blogCoverImage:"https://chardance-picture.oss-cn-shanghai.aliyuncs.com/myblog/Random/14.jpg",
+              mycategory:{
+                categoryName:"Leetcode题解(Easy)",
+                categoryRank:12,
+              },
+              createGmt:"2020-24-24 24:24:24",
+              updateGmt:"2020-24-24 24:24:24"
+            }],
             formdata: {
               blogTitle: '',
               blogCoverImage: '',
@@ -197,7 +206,7 @@
             },
             options: [],
             search: '',
-            loading: true,
+            loading: false,
             dialogloading: true,
             selectloading: false,
             dialogFormVisible: false,
