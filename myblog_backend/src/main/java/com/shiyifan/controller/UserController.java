@@ -14,6 +14,7 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/user")
 @Log4j2
+@CrossOrigin
 public class UserController {
 
     @Autowired

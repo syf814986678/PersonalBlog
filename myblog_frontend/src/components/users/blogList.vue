@@ -2,8 +2,8 @@
   <div style="margin: 0 auto">
     <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" style="padding: 0 10px" border :row-class-name="tableRowClassName" :data="mydata.filter(data => !search || data.blogTitle.toLowerCase().includes(search.toLowerCase()))">
       <el-table-column :resizable="false" type="index" :index="indexMethod" align="center" label="编号" width="50"></el-table-column>
-      <el-table-column show-overflow-tooltip align="center" label="博客标题" width="230" v-slot="scope"><el-tag effect="dark"  type="danger">{{scope.row.blogTitle}}</el-tag></el-table-column>
-      <el-table-column align="center" label="封面图片" width="270" v-slot="scope"><el-image style="width: 240px;height: 100px" :src="scope.row.blogCoverImage" fit="fill"></el-image></el-table-column>
+      <el-table-column show-overflow-tooltip align="center" label="博客标题" width="270" v-slot="scope"><el-tag effect="dark"  type="danger">{{scope.row.blogTitle}}</el-tag></el-table-column>
+      <el-table-column align="center" label="封面图片" width="290" v-slot="scope"><el-image style="width: 250px;height: 100px" :src="scope.row.blogCoverImage" fit="fill"></el-image></el-table-column>
       <el-table-column sortable align="center" prop="mycategory.categoryName" label="博客类别" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="warning">{{scope.row.mycategory.categoryName}}</el-tag></el-table-column>
       <el-table-column align="center" label="类别权重" width="78" v-slot="scope"><el-tag effect="dark" type="warning">{{scope.row.mycategory.categoryRank}}</el-tag></el-table-column>
       <el-table-column sortable align="center" prop="createGmt" label="创建时间" v-slot="scope"><el-tag effect="dark" type="success">{{scope.row.createGmt}}</el-tag></el-table-column>
@@ -15,25 +15,28 @@
             size="medium"
             placeholder="输入关键字搜索"/>
         </template>
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="primary"
-            plain
-            @click="showBlog(scope.row)"
-          >查看</el-button>
-          <el-button
-            size="mini"
-            type="success"
-            plain
-            @click="selectblog(scope.$index, scope.row)"
-          >编辑</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            plain
-            @click="showdeletedialog(scope.$index, scope.row)"
-          >删除</el-button>
+        <template slot-scope="scope" >
+          <el-row style="margin-left: -20px">
+            <el-button
+              size="mini"
+              type="primary"
+              plain
+              @click="showBlog(scope.row)"
+            >查看</el-button>
+            <el-button
+              size="mini"
+              type="success"
+              plain
+              @click="selectblog(scope.$index, scope.row)"
+            >编辑</el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              plain
+              @click="showdeletedialog(scope.$index, scope.row)"
+            >删除</el-button>
+          </el-row>
+
         </template>
       </el-table-column>
     </el-table>
