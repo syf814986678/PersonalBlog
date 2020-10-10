@@ -184,17 +184,7 @@
                 ],
               },
             },
-            mydata: [{
-              blogId:"679138360c9f47a9b05f323477701378",
-              blogTitle:"删除排序数组中的重复项(七)",
-              blogCoverImage:"https://chardance-picture.oss-cn-shanghai.aliyuncs.com/myblog/Random/14.jpg",
-              mycategory:{
-                categoryName:"Leetcode题解(Easy)",
-                categoryRank:12,
-              },
-              createGmt:"2020-24-24 24:24:24",
-              updateGmt:"2020-24-24 24:24:24"
-            }],
+            mydata: [],
             formdata: {
               blogTitle: '',
               blogCoverImage: '',
@@ -206,7 +196,7 @@
             },
             options: [],
             search: '',
-            loading: false,
+            loading: true,
             dialogloading: true,
             selectloading: false,
             dialogFormVisible: false,

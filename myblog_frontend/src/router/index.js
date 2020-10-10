@@ -121,17 +121,17 @@ const router=new Router({
 })
 router.beforeEach((to, from, next) => {
   window.document.title = to.meta.title
-  // if (to.meta.requiresAuth && (store.state.token==='' || store.state.myuser.userid==='' || store.state.myuser.username==='')){
-  //   const allcookie = document.cookie.split(';')
-  //   if (allcookie!=""){
-  //     store.commit('setmyuserid',allcookie[0].trim().substring(9,allcookie[0].trim().length))
-  //     store.commit('setmyusername',allcookie[1].trim().substring(11,allcookie[1].trim().length))
-  //     store.commit('settoken',allcookie[2].trim().substring(6,allcookie[2].trim().length))
-  //     return next()
-  //   }
-  //   store.commit('logout')
-  //   return next("/login")
-  // }
+  if (to.meta.requiresAuth && (store.state.token==='' || store.state.myuser.userid==='' || store.state.myuser.username==='')){
+    const allcookie = document.cookie.split(';')
+    if (allcookie!=""){
+      store.commit('setmyuserid',allcookie[0].trim().substring(9,allcookie[0].trim().length))
+      store.commit('setmyusername',allcookie[1].trim().substring(11,allcookie[1].trim().length))
+      store.commit('settoken',allcookie[2].trim().substring(6,allcookie[2].trim().length))
+      return next()
+    }
+    store.commit('logout')
+    return next("/login")
+  }
   next()
 })
 export default router

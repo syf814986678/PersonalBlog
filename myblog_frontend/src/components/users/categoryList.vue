@@ -51,14 +51,14 @@
 
       <el-dialog :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
         <el-row>
-          <el-col :span="2">
-            <el-tag type="danger" effect="dark"  style="margin-left: -13px;height: 40px;font-size: 13px;padding-top: 4px">类别名称</el-tag>
+          <el-col :span="2" >
+            <el-tag type="danger" effect="dark"  style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.8);margin-left: -13px;height: 40px;font-size: 13px;padding-top: 4px">类别名称</el-tag>
           </el-col>
           <el-col :span="20">
-            <el-input v-model="cagetoryname" placeholder="输入类别名称" style="margin-left:10px;width: 95%"></el-input>
+            <el-input v-model="cagetoryname" placeholder="输入类别名称" style="border-radius: 4px;margin-left:10px;width: 95%;box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.8);"></el-input>
           </el-col>
           <el-col :span="2">
-            <el-button type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
+            <el-button style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.8);" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
           </el-col>
         </el-row>
       </el-dialog>
@@ -71,20 +71,11 @@
         data(){
           return{
             addOrUpdate: true,//true为添加,false为更新
-            mydata: [
-              {
-                categoryId:12,
-                categoryName:"LeetCode题解(Easy)",
-                categoryRank:8,
-                categoryUserId:1,
-                createGmt:"2020-10-10 24:24:24",
-                updateGmt:"2020-10-10 24:24:24"
-              }
-            ],
+            mydata: [],
             cagetoryname: '',
             categoryId: '',
             search: '',
-            loading: false,
+            loading: true,
             dialogFormVisible: false,
             currentPage: 1,
             pagesize: 11,
