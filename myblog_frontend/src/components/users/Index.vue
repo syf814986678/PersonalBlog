@@ -3,12 +3,12 @@
     <el-header style="height: 120px">
       <div class="no-hd">
         <ul>
-<!--          <li>{{ this.totalBlogNums }}</li>-->
-<!--          <li>{{ this.todayVisitors }}</li>-->
-<!--          <li>{{ this.yesterdayVisitors }}</li>-->
-          <li>1234</li>
-          <li>3456</li>
-          <li>5678</li>
+          <li>{{ this.totalBlogNums }}</li>
+          <li>{{ this.todayVisitors }}</li>
+          <li>{{ this.yesterdayVisitors }}</li>
+<!--          <li>1234</li>-->
+<!--          <li>3456</li>-->
+<!--          <li>5678</li>-->
         </ul>
       </div>
       <div class="no-bd">
@@ -52,30 +52,30 @@
 
         },
         created() {
-          // this.$http.post("/blog/selectTotalBlogNums").then(response=>{
-          //   if (response!=null){
-          //     this.totalBlogNums=response.data.msg["totalBlogNums"];
-          //   }
-          // }).catch(error=> {
-          //   console.log(error)
-          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          // })
-          // this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
-          //   if (response!=null){
-          //     this.todayVisitors=response.data.msg["visitNums"];
-          //   }
-          // }).catch(error=> {
-          //   console.log(error)
-          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          // })
-          // this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
-          //   if (response!=null){
-          //     this.yesterdayVisitors=response.data.msg["visitNums"];
-          //   }
-          // }).catch(error=> {
-          //   console.log(error)
-          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          // })
+          this.$http.post("/blog/selectTotalBlogNums").then(response=>{
+            if (response!=null){
+              this.totalBlogNums=response.data.msg["totalBlogNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
+            if (response!=null){
+              this.todayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
+            if (response!=null){
+              this.yesterdayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
         }
     }
 </script>

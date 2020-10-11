@@ -5,7 +5,7 @@ import com.shiyifan.pojo.Myblog;
 import com.shiyifan.pojo.Mycategory;
 import com.shiyifan.service.BlogService;
 import com.shiyifan.service.CategoryService;
-import com.shiyifan.utils.CountUvUtil;
+import com.shiyifan.utils.VisitCountUtil;
 import com.shiyifan.vo.Result;
 import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j2;
@@ -34,7 +34,7 @@ public class BlogController {
     private CategoryService categoryService;
 
     @Autowired
-    private CountUvUtil countUvUtil;
+    private VisitCountUtil VisitCountUtil;
     /*------------------------------登陆后进行的操作-------------------------------*/
 
     //查找最新六条博客
@@ -252,7 +252,7 @@ public class BlogController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                long visitor = countUvUtil.getVisitor((int)claims.get("userid"),dayNum);
+                long visitor = VisitCountUtil.getVisitCount((int)claims.get("userid"),dayNum);
                 result.setCodeState(CodeState.success);
                 map.put("visitNums", visitor);
             }
@@ -302,6 +302,27 @@ public class BlogController {
     /*---------------------------------------------------------------------------*/
 
     /*------------------------------公共操作-------------------------------*/
+    //获取所有访问人数
+    @PostMapping("/getAllVisitNums")
+    public Result getAllVisitNums() {
+        Result result = new Result();
+        HashMap<String, Object> map = new HashMap<>();
+        try {
+            long visitCount = VisitCountUtil.getVisitCount(0, 2);
+            result.setCodeState(CodeState.success);
+            map.put("visitAllNums", visitCount);
+        }
+        catch (Exception e) {
+            log.error(e);
+            result.setCodeState(CodeState.exception);
+            map.put("exception", "服务端处理错误！请稍后再试");
+        }
+        finally {
+            result.setMsg(map);
+        }
+        return result;
+    }
+
     //暂存redis
     @PostMapping("/setTempBlog")
     public Result setTempBlog(@RequestBody Myblog myblog) {
@@ -325,12 +346,12 @@ public class BlogController {
 
     //根据博客ID查找博客
     @PostMapping("/selectBlogByIdForCommon")
-    public Result selectBlogByIdForCommon(@RequestParam("blogid") String blogid) {
+    public Result selectBlogByIdForCommon(HttpServletRequest request,@RequestParam("blogid") String blogid) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
             Myblog myblog = blogService.selectBlogByIdForCommon(blogid);
-            countUvUtil.setVisitor(myblog.getMyuser().getUserId());
+            VisitCountUtil.setVisitCount(request,myblog.getMyuser().getUserId());
             result.setCodeState(CodeState.success);
             map.put("myblog", myblog);
         }
@@ -347,12 +368,13 @@ public class BlogController {
 
     //分页查找最新博客
     @PostMapping("/selectLastestBlogByPagForCommon")
-    public Result selectLastestBlogByPagForCommon(@RequestParam("pageNow") int pageNow, @RequestParam("pageSize") int pageSize) {
+    public Result selectLastestBlogByPagForCommon(HttpServletRequest request,@RequestParam("pageNow") int pageNow, @RequestParam("pageSize") int pageSize) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
             ArrayList<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(0,pageNow, pageSize);
             int nums = blogService.selectTotalBlogNumsForCommon(0);
+            VisitCountUtil.setVisitCount(request);
             result.setCodeState(CodeState.success);
             map.put("myblogs", myblogs);
             map.put("nums",nums);

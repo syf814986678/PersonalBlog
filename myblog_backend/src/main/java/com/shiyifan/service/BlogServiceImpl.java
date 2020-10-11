@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@Transactional
 @Order
 @Log4j2
 public class BlogServiceImpl implements BlogService,ApplicationRunner {
@@ -63,6 +63,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     /*----------------登陆后进行的操作----------------*/
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addBlog(Myblog myblog) {
         int categoryRank = categoryMapper.getCategoryRank(myblog.getMyuser().getUserId(), myblog.getMycategory().getCategoryId());
         myblog.setBlogTitle(myblog.getBlogTitle()+"("+ numUtil.arabicNumToChineseNum(++categoryRank) +")");
@@ -80,8 +81,8 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         addElasticsearchBlog(myblog.getBlogId());
     }
 
-    @Retryable(value = Exception.class)
-    private void addElasticsearchBlog(String blogId){
+    @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
+    public void addElasticsearchBlog(String blogId){
         try {
             log.warn("添加ElasticsearchBlog开始");
             ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(blogId);
@@ -98,6 +99,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteBlogById(int userId, String blogId, int categoryId) {
         blogMapper.deleteBlogById(userId, blogId);
         categoryMapper.deleteCategoryRank(userId, categoryId);
@@ -128,8 +130,8 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         deleteElasticsearchBlog(blogId);
     }
 
-    @Retryable(value = Exception.class)
-    private void deleteElasticsearchBlog(String blogId){
+    @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
+    public void deleteElasticsearchBlog(String blogId){
         try {
             log.warn("删除ElasticsearchBlog开始");
             DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
@@ -142,6 +144,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateBlog(Myblog myblog) {
         int categoryidInDB = categoryMapper.getCategoryid(myblog.getMyuser().getUserId(), myblog.getBlogId());
         if(categoryidInDB!=myblog.getMycategory().getCategoryId()){
@@ -186,8 +189,8 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         updateElasticsearchBlog(myblog.getBlogId());
     }
 
-    @Retryable(value = Exception.class)
-    private void updateElasticsearchBlog(String blogId){
+    @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
+    public void updateElasticsearchBlog(String blogId){
         try {
             log.warn("更新ElasticsearchBlog开始");
             DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
@@ -218,14 +221,14 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         int end = (pageNow*pageSize)-1;
         ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+userid+"-myblogs", start, end);
         if(myblogs.size()==0){
-            log.info("初始化redis,redis中不存在");
+            log.info("初始化redis-> selectBlogByPage");
             Iterator<Myblog> iterator = blogMapper.selectBlogAll(userid).iterator();
             while (iterator.hasNext()){
                 redisUtil.RSet("user-"+userid+"-myblogs", iterator.next());
             }
             myblogs= (ArrayList<Object>) redisUtil.lGet("user-"+userid+"-myblogs", start, end);
         }
-        log.info("redis中存在");
+        log.info("redis中存在selectBlogByPage-> start:"+start+"<=>"+"end:"+end);
         return (ArrayList<Myblog>)(Object)myblogs;
     }
 
@@ -233,11 +236,11 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     public int selectTotalBlogNums(int userid) {
         Object myblogsTotal = redisUtil.get("user-"+userid+"myblogsTotal");
         if(myblogsTotal==null){
-            log.info("初始化redis,redis中不存在");
+            log.info("初始化redis-> selectTotalBlogNums");
             redisUtil.set("user-"+userid+"myblogsTotal", blogMapper.selectTotalBlogNums(userid));
             myblogsTotal=redisUtil.get("user-"+userid+"myblogsTotal");
         }
-        log.info("redis中存在");
+        log.info("redis中存在selectTotalBlogNums-> nums:"+(int) myblogsTotal);
         return (int) myblogsTotal;
     }
 
@@ -283,11 +286,11 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     public Myblog selectBlogByIdForCommon(String blogid) {
         Myblog myblog = (Myblog) redisUtil.get(blogid);
         if(myblog==null){
-            log.info("初始化redis,redis中不存在");
+            log.info("初始化redis-> selectBlogByIdForCommon");
             redisUtil.set(blogid, blogMapper.selectBlogByIdForCommon(blogid));
             myblog = (Myblog) redisUtil.get(blogid);
         }
-        log.info("redis中存在");
+        log.info("redis中存在selectBlogByIdForCommon-> blogid:"+blogid);
         return myblog;
     }
 
@@ -304,14 +307,14 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             myblogs = (ArrayList<Object>) redisUtil.lGet("category-"+categoryid+"-myblogsForCommon", start, end);
         }
         if(myblogs.size()==0){
-            log.info("初始化redis,redis中不存在");
+            log.info("初始化redis-> selectBlogAllByPageForCommon");
             Iterator<Myblog> iterator = blogMapper.selectBlogAllForCommon(0).iterator();
             while (iterator.hasNext()){
                 redisUtil.RSet("myblogsForCommon", iterator.next());
             }
             myblogs= (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
         }
-        log.info("redis中存在");
+        log.info("redis中存在selectBlogAllByPageForCommon-> categoryid:"+categoryid+"<=>"+"start:"+start+"<=>"+"end:"+end);
         return (ArrayList<Myblog>)(Object)myblogs;
     }
 
@@ -325,11 +328,11 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             myblogsTotal = redisUtil.get("category-"+categoryid+"-myblogsForCommonTotal");
         }
         if(myblogsTotal==null){
-            log.info("初始化redis,redis中不存在");
+            log.info("初始化redis-> selectTotalBlogNumsForCommon");
             redisUtil.set("myblogsForCommonTotal", blogMapper.selectTotalBlogNumsForCommon(0));
             myblogsTotal=redisUtil.get("myblogsForCommonTotal");
         }
-        log.info("redis中存在");
+        log.info("redis中存在selectTotalBlogNumsForCommon-> categoryid:"+categoryid+"<=>"+"nums:"+myblogsTotal);
         return (int) myblogsTotal;
     }
 
@@ -347,7 +350,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     /*------------------------------搜索操作-------------------------------*/
 
     @Override
-    @Retryable(value = Exception.class)
+    @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
     public ArrayList<Map<String, Object>> searchContentPage(String keyword, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
         SearchRequest searchRequest = new SearchRequest("blogindex");
@@ -404,7 +407,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args){
-        log.info("初始化redis,redis中不存在");
+        log.info("<--------------------初始化redis-------------------->");
         try {
             redisUtil.flushDb();
             ArrayList<Mycategory> mycategories = categoryMapper.selectAllCategoryForCommon();
@@ -424,7 +427,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     @Recover
     public void recover(Exception e){
-        log.error("搜索重试失败;"+e);
+        log.error("重试错误，请查看详细日志;"+e);
     }
 }
 

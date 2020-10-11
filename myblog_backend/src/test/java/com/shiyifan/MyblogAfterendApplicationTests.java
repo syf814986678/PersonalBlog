@@ -1,12 +1,14 @@
 package com.shiyifan;
 
-import com.shiyifan.dao.BlogMapper;
+import com.shiyifan.service.UserServiceImpl;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
 
 @SpringBootTest
 @Log4j2
@@ -16,13 +18,12 @@ class MyblogAfterendApplicationTests {
     private RestHighLevelClient restHighLevelClient;
 
     @Autowired
-    private BlogMapper blogMapper;
+    private UserServiceImpl userService;
 
     @Test
     public void test(){
-        log.error("----------------------- error-----------------------");
-        log.warn("----------------------- warn-----------------------");
-        log.info("----------------------- info-----------------------");
+        ArrayList<Integer> allId = userService.getAllId();
+        System.out.println(allId.toString());
     }
 
 //    @Test

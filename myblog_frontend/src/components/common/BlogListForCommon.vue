@@ -76,7 +76,7 @@
     },
     computed:{
       calcScreen(){
-        return window.screen.width>=1920
+        return window.screen.width>=1080
       }
     },
     methods:{
@@ -105,7 +105,6 @@
       select(id){
         this.$router.push("/index/bloglist/category/"+id)
       },
-
       refresh(page){
         if (this.$route.params.bloglist==="all" && this.$route.params.bloglist2==="all"){
           this.$http.post("/blog/selectLastestBlogByPagForCommon","pageNow="+page+"&pageSize="+this.pageSize).then(response=>{
@@ -184,7 +183,7 @@
         this.total = this.$store.state.total
       }
       if(this.$store.state.height===0){
-        if (this.total>1){
+        if (this.total>2){
           setTimeout(() => {
             document.getElementById("myelmain").scrollTop=1
             this.disabled=false
@@ -195,7 +194,7 @@
         }
       }
       else {
-        if (this.total>1){
+        if (this.total>2){
           setTimeout(() => {
             document.getElementById("myelmain").scrollTop=this.$store.state.height
             this.disabled=false
@@ -242,7 +241,7 @@
   border-radius: 20px
 }
 
-.maoboli::before{
+.maoboli:before{
   margin: 10px;
   content: '';
   position: absolute;
@@ -261,6 +260,11 @@
   -o-filter: blur(20px);
   filter: blur(10px);
   box-shadow: 0 0 12px 15px rgba(0, 0, 0, 0.8);
+}
+
+.maoboli:hover:before{
+  background: linear-gradient(90deg, #ddf864, #05ddfa, #070707,#05ddfa, #ddf864);
+  opacity: 0.4;
 }
 
 .maoboli2{

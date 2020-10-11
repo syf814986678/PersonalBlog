@@ -43,7 +43,7 @@
 
               <el-col :xl="3" :xs="0" style="max-width: 235px;">
                 <el-aside
-                  style="height: 815px"
+                  style="height: 830px;width: 235px"
                   class="myaside"
                   v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
                   <div class="mydiv2">
@@ -127,7 +127,9 @@
           }
         },
         select(id){
-          document.documentElement.scrollTop=0
+          setTimeout(() => {
+            document.documentElement.scrollTop=0
+          }, 500)
           this.$router.push("/index/bloglist/category/"+id)
           this.$store.commit('clearMyBlogs')
           this.$store.commit('setMyBlogsTotal',null)
@@ -206,6 +208,8 @@
     line-height: 60px;
     margin-top: 6px;
     margin-bottom: -10px;
+    height: 48px !important;
+
   }
   .footer {
     background-color: #333;
@@ -235,13 +239,12 @@
   .mymain {
     background-size: cover;
     padding: 0px 1px;
-    height: 815px;
+    height: 830px;
     margin: 5px auto;
   }
   .myaside {
     background-image: url("https://picture.chardance.cloud/myblog/bg/bg2.png");
     background-size: cover;
-    color: #333;
     text-align: center;
     margin: 5px auto;
     max-width: 235px;
@@ -258,6 +261,7 @@
       margin: 20px 10px;
       text-align: center;
       background-color: rgba(255, 234, 216, 0.63);
+      border-radius: 10px
     }
     .mydiv2{
       display: none !important;
@@ -283,6 +287,7 @@
       margin: 20px 10px;
       text-align: center;
       background-color: rgba(255, 234, 216, 0.63);
+      border-radius: 10px
     }
   }
 
