@@ -34,6 +34,12 @@ public interface BlogService {
     //读取暂存redis
     Myblog getTempBlog(int userid);
 
+    void addElasticsearchBlog(String blogId);
+
+    void deleteElasticsearchBlog(String blogId);
+
+    void updateElasticsearchBlog(String blogId);
+
     /*---------------------------------------------------------------------------*/
 
     /*------------------------------公共操作-------------------------------*/

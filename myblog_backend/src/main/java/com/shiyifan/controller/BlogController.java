@@ -139,6 +139,7 @@ public class BlogController {
             if(claims!=null){
                 myblog.setBlogId(UUID.randomUUID().toString().replaceAll("-", ""));
                 blogService.addBlog(myblog);
+                blogService.addElasticsearchBlog(myblog.getBlogId());
                 result.setCodeState(CodeState.success);
                 map.put("add", "发布成功");
             }
@@ -167,6 +168,7 @@ public class BlogController {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
                 blogService.updateBlog(myblog);
+                blogService.updateElasticsearchBlog(myblog.getBlogId());
                 result.setCodeState(CodeState.success);
                 map.put("update", "更新成功");
             }
@@ -196,6 +198,7 @@ public class BlogController {
             if(claims!=null){
                 int userid = (int)claims.get("userid");
                 blogService.deleteBlogById(userid, blogid,categoryid);
+                blogService.deleteElasticsearchBlog(blogid);
                 result.setCodeState(CodeState.success);
                 map.put("delete", "删除成功");
             }

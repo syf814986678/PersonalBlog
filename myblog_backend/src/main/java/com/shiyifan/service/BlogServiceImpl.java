@@ -78,9 +78,9 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         redisUtil.lSet("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommon",mynewblog);
         redisUtil.incr("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommonTotal",1);
         log.info("redis添加成功");
-        addElasticsearchBlog(myblog.getBlogId());
     }
 
+    @Override
     @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
     public void addElasticsearchBlog(String blogId){
         try {
@@ -127,9 +127,9 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
                 break;
             }
         }
-        deleteElasticsearchBlog(blogId);
     }
 
+    @Override
     @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
     public void deleteElasticsearchBlog(String blogId){
         try {
@@ -186,9 +186,9 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             index++;
         }
         redisUtil.del(myblog.getBlogId());
-        updateElasticsearchBlog(myblog.getBlogId());
     }
 
+    @Override
     @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
     public void updateElasticsearchBlog(String blogId){
         try {
