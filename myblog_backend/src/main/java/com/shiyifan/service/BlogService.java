@@ -11,28 +11,28 @@ public interface BlogService {
     void addBlog(Myblog myblog);
 
     //根据博客ID和用户ID查找博客
-    Myblog selectBlogById(int userid,String blogid);
+    Myblog selectBlogById(int userId, String blogId);
 
     //根据博客ID删除博客
-    void deleteBlogById(int userid, String blogid, int categoryid);
+    void deleteBlogById(int userId, String blogId, int categoryId);
 
     //更新博客
     void updateBlog(Myblog myblog);
 
     //分页查询博客
-    ArrayList<Myblog> selectBlogByPage(int userid, int pageNow, int pageSize);
+    ArrayList<Myblog> selectBlogByPage(int userId, int pageNow, int pageSize);
 
     //查询总条数
-    int selectTotalBlogNums(int userid);
+    int selectTotalBlogNums(int userId);
 
     //根据种类ID查找博客
-    ArrayList<Myblog> selectBlogByCategoryIdAndPage(int userid,int categoryid,int pageNow,int pageSize);
+    ArrayList<Myblog> selectBlogByCategoryIdAndPage(int userId, int categoryId, int pageNow, int pageSize);
 
     //暂存redis
     Boolean setTempBlog(Myblog myblog);
 
     //读取暂存redis
-    Myblog getTempBlog(int userid);
+    Myblog getTempBlog(int userId);
 
     void addElasticsearchBlog(String blogId);
 
@@ -44,16 +44,16 @@ public interface BlogService {
 
     /*------------------------------公共操作-------------------------------*/
     //根据博客ID查找博客
-    Myblog selectBlogByIdForCommon(String blogid);
+    Myblog selectBlogByIdForCommon(String blogId);
 
     //分页查询博客selectBlogByPage
-    ArrayList<Myblog> selectBlogAllByPageForCommon(int categoryid,int pageNow, int pageSize);
+    ArrayList<Myblog> selectBlogAllByPageForCommon(int categoryId, int pageNow, int pageSize);
 
     //查询全部总条数
-    int selectTotalBlogNumsForCommon(int categoryid);
+    int selectTotalBlogNumsForCommon(int categoryId);
 
     //根据作者查找博客
-    ArrayList<Myblog> selectBlogByAuthorForCommon(int userid,int pageNow,int pageSize);
+    ArrayList<Myblog> selectBlogByAuthorForCommon(int userId, int pageNow, int pageSize);
 
     /*---------------------------------------------------------------------------*/
 

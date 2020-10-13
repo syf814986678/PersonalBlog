@@ -115,7 +115,7 @@ export default {
       if (this.cagetoryname===''){
         return this.$store.commit('errorMsg',"请输入类别名称")
       }
-      this.$http.post("/category/addCategory","categoryname="+this.cagetoryname).then(response=>{
+      this.$http.post("/category/addCategory","categoryName="+this.cagetoryname).then(response=>{
         if (response!=null){
           this.$notify({
             title: '添加成功',
@@ -136,7 +136,7 @@ export default {
       if (this.cagetoryname===''){
         return this.$store.commit('errorMsg',"请输入类别名称")
       }
-      this.$http.post("/category/updateCategory","categoryname="+this.cagetoryname+"&categoryid="+this.categoryId).then(response=>{
+      this.$http.post("/category/updateCategory","categoryName="+this.cagetoryname+"&categoryid="+this.categoryId).then(response=>{
         if (response!=null){
           this.$notify({
             title: '修改成功',
@@ -158,7 +158,7 @@ export default {
       this.cagetoryname=''
       this.categoryId=''
       this.addOrUpdate=false
-      this.$http.post("/category/selectCategoryById","categoryid="+row.categoryId).then(response=>{
+      this.$http.post("/category/selectCategoryById","categoryId="+row.categoryId).then(response=>{
         if (response!=null){
           this.cagetoryname=response.data.msg["mycategory"].categoryName;
           this.categoryId=response.data.msg["mycategory"].categoryId;
@@ -191,7 +191,7 @@ export default {
       });
     },
     deletecategory(categoryid) {
-      this.$http.post("/category/deleteCategory","categoryid="+categoryid).then(response=>{
+      this.$http.post("/category/deleteCategory","categoryId="+categoryid).then(response=>{
         if (response!=null){
           this.$notify({
             title: '删除成功',

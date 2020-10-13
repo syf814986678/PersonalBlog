@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+/**
+ * @author 81498
+ */
 @Component
 public class JwtUtil {
 
@@ -18,11 +21,11 @@ public class JwtUtil {
     @Autowired
     private MyConstant myConstant;
 
-    public String createToken(int userid,String username){
+    public String createToken(int userId, String userName){
         Long exp=System.currentTimeMillis()+myConstant.getTtl();
         //创建token
-        return Jwts.builder().claim("userid", userid)
-                .claim("username", username)
+        return Jwts.builder().claim("userId", userId)
+                .claim("userName", userName)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(exp))
                 .signWith(SignatureAlgorithm.HS256, myConstant.getKey())

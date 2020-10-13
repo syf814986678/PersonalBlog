@@ -17,44 +17,44 @@ public class CategoryServiceImpl implements CategoryService {
 
 
     @Override
-    public ArrayList<Mycategory> selectAllCategoryByPage(int userid, int pageNow, int pageSize) {
+    public ArrayList<Mycategory> selectAllCategoryByPage(int userId, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
-        return categoryMapper.selectAllCategoryByPage(userid, start, pageSize);
+        return categoryMapper.selectAllCategoryByPage(userId, start, pageSize);
     }
 
     @Override
-    public ArrayList<Mycategory> selectAllCategoryForBlog(int userid) {
-        return categoryMapper.selectAllCategoryForBlog(userid);
+    public ArrayList<Mycategory> selectAllCategoryForBlog(int userId) {
+        return categoryMapper.selectAllCategoryForBlog(userId);
     }
 
     @Override
-    public int selectTotalCategoryNums(int userid) {
-        return categoryMapper.selectTotalCategoryNums(userid);
+    public int selectTotalCategoryNums(int userId) {
+        return categoryMapper.selectTotalCategoryNums(userId);
     }
 
     @Override
-    public void addCategory(int userid,String categoryname) {
-        categoryMapper.addCategory(userid,categoryname);
+    public void addCategory(int userId, String categoryName) {
+        categoryMapper.addCategory(userId, categoryName);
     }
 
     @Override
-    public Mycategory selectCategoryById(int userid, int categoryid) {
-        return categoryMapper.selectCategoryById(userid, categoryid);
+    public Mycategory selectCategoryById(int userId, int categoryId) {
+        return categoryMapper.selectCategoryById(userId, categoryId);
     }
 
     @Override
-    public void updateCategory(int userid,String categoryname,int categoryid) {
-        categoryMapper.updateCategory(userid, categoryname, categoryid);
+    public void updateCategory(int userId, String categoryName, int categoryId) {
+        categoryMapper.updateCategory(userId, categoryName, categoryId);
     }
 
     @Override
-    public void deleteCategory(int userid, int categoryid) {
-        categoryMapper.deleteCategory(userid,categoryid);
+    public void deleteCategory(int userId, int categoryId) {
+        categoryMapper.deleteCategory(userId, categoryId);
     }
 
     @Override
-    public int getCategoryRank(int userid, int categoryid) {
-        return categoryMapper.getCategoryRank(userid, categoryid);
+    public int getCategoryRank(int userId, int categoryId) {
+        return categoryMapper.getCategoryRank(userId, categoryId);
     }
 
 

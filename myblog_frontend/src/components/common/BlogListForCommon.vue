@@ -4,19 +4,18 @@
       :infinite-scroll-disabled="disabled">
       <div class="all" v-if="calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 95%;">
           <div class="maoboli">
-            <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 20px">{{blog.blogTitle}}</el-tag>
-            <el-row style="margin-top: 10px">
-              <el-col :span="6">
-                <el-tag effect="dark" type="warning" @click="selectauthor(blog.myuser.userId)" style="cursor:pointer;font-size: 14px ">作者：{{blog.myuser.userName}}</el-tag>
+            <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
+            <el-row style="margin-top: 10px;margin-bottom: 0">
+              <el-col :span="24">
+                <p class="blogCategory" @click="select(blog.mycategory.categoryId)"><i class="el-icon-collection-tag" style="margin-right: 5px"></i>{{blog.mycategory.categoryName}}</p>
               </el-col>
-              <el-col :span="6">
-                <el-tag effect="dark" type="success" @click="select(blog.mycategory.categoryId)" style="cursor:pointer;font-size: 14px">类别：{{blog.mycategory.categoryName}}</el-tag>
+            </el-row>
+            <el-row style="margin-top: 5px">
+              <el-col :span="12">
+                <p class="blogCreateGmt"><i class="el-icon-date" style="margin-right: 5px"></i>{{blog.createGmt}}</p>
               </el-col>
-              <el-col :span="6">
-                <el-tag effect="dark" type="primary" style="font-size: 14px">发布时间：{{blog.createGmt}}</el-tag>
-              </el-col>
-              <el-col :span="6">
-                <el-tag effect="dark" type="primary" style="font-size: 14px">修改时间：{{blog.updateGmt}}</el-tag>
+              <el-col :span="12">
+                <p class="blogCreateGmt"><i class="el-icon-edit" style="margin-right: 5px"></i>{{blog.updateGmt}}</p>
               </el-col>
             </el-row>
             <el-image
@@ -32,21 +31,18 @@
 
       <div v-if="!calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 5px auto;width: 98%">
         <div class="maoboli2">
-          <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 13px">{{blog.blogTitle}}</el-tag>
-          <el-row style="margin-top: 10px;margin-bottom: 3px">
-            <el-col :span="12">
-              <el-tag effect="dark" type="warning" @click="selectauthor(blog.myuser.userId)" style="cursor:pointer;font-size: 11px;">作者:{{blog.myuser.userName}}</el-tag>
-            </el-col>
-            <el-col :span="12">
-              <el-tag effect="dark" type="success" @click="select(blog.mycategory.categoryId)" style="cursor:pointer;font-size: 11px;">类别:{{blog.mycategory.categoryName}}</el-tag>
+          <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
+          <el-row style="margin-top: 10px;margin-bottom: 0px">
+            <el-col :span="24">
+              <p class="blogCategory2" @click="select(blog.mycategory.categoryId)"><i class="el-icon-collection-tag" style="margin-right: 5px;color: black"></i>{{blog.mycategory.categoryName}}</p>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row style="margin-top: 5px">
             <el-col :span="12">
-              <el-tag effect="dark" type="primary" style="font-size: 11px;width: 95%;margin-right: -6px;">Create:{{blog.createGmt}}</el-tag>
+              <p class="blogCreateGmt2"><i class="el-icon-date" style="margin-right: 5px"></i>{{blog.createGmt}}</p>
             </el-col>
             <el-col :span="12">
-              <el-tag effect="dark" type="primary" style="font-size: 11px;width: 95%;margin-left: -6px;">Update:{{blog.updateGmt}}</el-tag>
+              <p class="blogCreateGmt2"><i class="el-icon-edit" style="margin-right: 5px"></i>{{blog.updateGmt}}</p>
             </el-col>
           </el-row>
           <el-image
@@ -55,6 +51,11 @@
           :lazy="lazy"
           @click="showBlog(blog.blogId)"
           fit="fill" ></el-image>
+          <el-row style="margin-bottom: 7px">
+            <el-col :span="24">
+                <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 10px;width: 95%;border-radius: 15px">阅读全文</el-tag>
+            </el-col>
+          </el-row>
         </div>
         <el-divider></el-divider>
       </div>
@@ -128,7 +129,7 @@
           })
         }
         else if (this.$route.params.bloglist==="category"){
-          this.$http.post("/blog/selectBlogByCategoryIdAndPageForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&categoryid="+this.$route.params.bloglist2).then(response=>{
+          this.$http.post("/blog/selectBlogByCategoryIdAndPageForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&categoryId="+this.$route.params.bloglist2).then(response=>{
             if (response!=null){
               this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
@@ -149,7 +150,7 @@
           })
         }
         else if (this.$route.params.bloglist==="author"){
-          this.$http.post("/blog/selectBlogByAuthorForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&userid="+this.$route.params.bloglist2).then(response=>{
+          this.$http.post("/blog/selectBlogByAuthorForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&userId="+this.$route.params.bloglist2).then(response=>{
             if (response!=null){
               this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
@@ -263,10 +264,9 @@
 }
 
 .maoboli:hover:before{
-  background: linear-gradient(90deg, #ddf864, #05ddfa, #070707,#05ddfa, #ddf864);
+  background: linear-gradient(90deg, #070707,#ddf864,#05ddfa,#05ddfa,#ddf864,#070707);
   opacity: 0.4;
 }
-
 .maoboli2{
   position: relative;
   z-index: 1;
@@ -299,7 +299,114 @@
   box-shadow: 0 0 12px 15px rgba(0, 0, 0, 0.8);
 
 }
-  .el-divider--horizontal{
+
+.blogTitle{
+  text-align: center;
+  font-size: 30px;
+  color: #ae02f8;
+  cursor:pointer;
+  -webkit-transition: all 1.5s ease;
+  transition: all 1.5s ease;
+  margin: 0 auto;
+  padding: 0 10px;
+  width: fit-content;
+}
+.blogTitle:hover{
+  color: #fff;
+  -webkit-animation: Glow 1.5s ease infinite alternate;
+  animation: Glow 1.5s ease infinite alternate;
+  background: none;
+}
+@-webkit-keyframes Glow {
+  from {
+    text-shadow: 0 0 10px #fff,
+    0 0 20px #fff,
+    0 0 30px #fff,
+    0 0 40px #05ddfa,
+    0 0 70px #05ddfa,
+    0 0 80px #05ddfa,
+    0 0 100px #05ddfa,
+    0 0 150px #05ddfa;
+  }
+  to {
+    text-shadow: 0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 15px #fff,
+    0 0 20px #05ddfa,
+    0 0 35px #05ddfa,
+    0 0 40px #05ddfa,
+    0 0 50px #05ddfa,
+    0 0 75px #05ddfa;
+  }
+}
+@keyframes Glow {
+  from {
+    text-shadow: 0 0 10px #fff,
+    0 0 20px #fff,
+    0 0 30px #fff,
+    0 0 40px #05ddfa,
+    0 0 70px #05ddfa,
+    0 0 80px #05ddfa,
+    0 0 100px #05ddfa,
+    0 0 150px #05ddfa;
+  }
+  to {
+    text-shadow: 0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 15px #fff,
+    0 0 20px #05ddfa,
+    0 0 35px #05ddfa,
+    0 0 40px #05ddfa,
+    0 0 50px #05ddfa,
+    0 0 75px #05ddfa;
+  }
+}
+
+.blogCategory{
+  background: #333331;
+  font-weight: bold;
+  color: #ffffff;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor:pointer;
+  font-size: 14px;
+}
+.blogCategory:hover{
+  background: #fa5979;
+  transition: 0.3s;
+}
+.blogCreateGmt{
+  font-weight: bold;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor:default;
+  font-size: 15px;
+}
+
+.blogCategory2{
+  color: #fa0e0e;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor:pointer;
+  font-size: 16px;
+}
+.blogCreateGmt2{
+  width: fit-content;
+  margin: 0 auto;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor:pointer;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.el-divider--horizontal{
     background: #02f5c4;
   }
 </style>

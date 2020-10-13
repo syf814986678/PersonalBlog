@@ -309,7 +309,7 @@ export default {
       });
     },
     deleteblog(blogid,categoryid) {
-      this.$http.post("/blog/deleteBlog","blogid="+blogid+"&categoryid="+categoryid).then(response=>{
+      this.$http.post("/blog/deleteBlog","blogId="+blogid+"&categoryId="+categoryid).then(response=>{
         if (response!=null){
           this.$notify({
             title: '删除成功',
@@ -328,7 +328,7 @@ export default {
       this.dialogFormVisible=false;
     },
     selectblog(index, row) {
-      this.$http.post("/blog/selectBlogById","blogid="+row.blogId).then(response=>{
+      this.$http.post("/blog/selectBlogById","blogId="+row.blogId).then(response=>{
         if (response!=null){
           this.formdata=response.data.msg["myblog"];
           this.options=response.data.msg["mycategories"];

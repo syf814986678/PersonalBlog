@@ -10,8 +10,12 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 import java.util.HashMap;
 
+/**
+ * @author 81498
+ */
 @Configuration
 public class MyDruidConfig {
+
     @ConfigurationProperties(prefix = "spring.datasource")
     @Bean
     public DataSource druidDatasource(){

@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
+/**
+ * @author 81498
+ */
 @RestController
 @RequestMapping("/user")
 @Log4j2
-@CrossOrigin
 public class UserController {
 
     @Autowired

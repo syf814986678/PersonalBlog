@@ -70,7 +70,7 @@
             });
           },
           refresh(){
-            this.$http.post("/blog/selectBlogByIdForCommon","blogid="+this.$route.params.blogid).then(response=>{
+            this.$http.post("/blog/selectBlogByIdForCommon","blogId="+this.$route.params.blogid).then(response=>{
               if (response!=null){
                 this.myblog=response.data.msg["myblog"]
                 document.title=this.myblog.blogTitle

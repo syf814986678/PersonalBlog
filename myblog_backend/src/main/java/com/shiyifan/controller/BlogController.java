@@ -22,11 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * @author 81498
+ */
 @RestController
 @RequestMapping("/blog")
 @Log4j2
-@CrossOrigin
 public class BlogController {
+
     @Autowired
     private BlogService blogService;
 
@@ -45,9 +48,9 @@ public class BlogController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                int userid = (int)claims.get("userid");
-                ArrayList<Myblog> myblogs = blogService.selectBlogByPage(userid,1,5);
-                blogService.selectTotalBlogNums(userid);
+                int userId = (int)claims.get("userId");
+                ArrayList<Myblog> myblogs = blogService.selectBlogByPage(userId,1,5);
+                blogService.selectTotalBlogNums(userId);
                 result.setCodeState(CodeState.success);
                 map.put("myblogs", myblogs);
             }
@@ -69,15 +72,15 @@ public class BlogController {
 
     //根据博客ID和用户ID查找博客
     @PostMapping("/selectBlogById")
-    public Result selectBlogById(HttpServletRequest request, @RequestParam("blogid") String blogid) {
+    public Result selectBlogById(HttpServletRequest request, @RequestParam("blogId") String blogId) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                int userid = (int)claims.get("userid");
-                Myblog myblog = blogService.selectBlogById(userid, blogid);
-                ArrayList<Mycategory> mycategories = categoryService.selectAllCategoryForBlog(userid);
+                int userId = (int)claims.get("userId");
+                Myblog myblog = blogService.selectBlogById(userId, blogId);
+                ArrayList<Mycategory> mycategories = categoryService.selectAllCategoryForBlog(userId);
                 result.setCodeState(CodeState.success);
                 map.put("myblog", myblog);
                 map.put("mycategories", mycategories);
@@ -106,9 +109,9 @@ public class BlogController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                int userid = (int)claims.get("userid");
-                ArrayList<Myblog> myblogs = blogService.selectBlogByPage(userid, pageNow, pageSize);
-                int totalBlogNums = blogService.selectTotalBlogNums(userid);
+                int userId = (int)claims.get("userId");
+                ArrayList<Myblog> myblogs = blogService.selectBlogByPage(userId, pageNow, pageSize);
+                int totalBlogNums = blogService.selectTotalBlogNums(userId);
                 result.setCodeState(CodeState.success);
                 map.put("myblogs", myblogs);
                 map.put("totalBlogNums", totalBlogNums);
@@ -190,15 +193,15 @@ public class BlogController {
 
     //根据ID删除博客
     @PostMapping("/deleteBlog")
-    public Result deleteBlog(HttpServletRequest request, @RequestParam("blogid") String blogid, @RequestParam("categoryid") int categoryid) {
+    public Result deleteBlog(HttpServletRequest request, @RequestParam("blogId") String blogId, @RequestParam("categoryId") int categoryId) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                int userid = (int)claims.get("userid");
-                blogService.deleteBlogById(userid, blogid,categoryid);
-                blogService.deleteElasticsearchBlog(blogid);
+                int userId = (int)claims.get("userId");
+                blogService.deleteBlogById(userId, blogId,categoryId);
+                blogService.deleteElasticsearchBlog(blogId);
                 result.setCodeState(CodeState.success);
                 map.put("delete", "删除成功");
             }
@@ -226,8 +229,8 @@ public class BlogController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                int userid = (int)claims.get("userid");
-                Myblog myblog = blogService.getTempBlog(userid);
+                int userId = (int)claims.get("userId");
+                Myblog myblog = blogService.getTempBlog(userId);
                 result.setCodeState(CodeState.success);
                 map.put("myblog", myblog);
             }
@@ -255,7 +258,7 @@ public class BlogController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                long visitor = VisitCountUtil.getVisitCount((int)claims.get("userid"),dayNum);
+                long visitor = VisitCountUtil.getVisitCount((int)claims.get("userId"),dayNum);
                 result.setCodeState(CodeState.success);
                 map.put("visitNums", visitor);
             }
@@ -283,7 +286,7 @@ public class BlogController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                int totalBlogNums = blogService.selectTotalBlogNums((int)claims.get("userid"));
+                int totalBlogNums = blogService.selectTotalBlogNums((int)claims.get("userId"));
                 result.setCodeState(CodeState.success);
                 map.put("totalBlogNums", totalBlogNums);
             }
@@ -349,11 +352,11 @@ public class BlogController {
 
     //根据博客ID查找博客
     @PostMapping("/selectBlogByIdForCommon")
-    public Result selectBlogByIdForCommon(HttpServletRequest request,@RequestParam("blogid") String blogid) {
+    public Result selectBlogByIdForCommon(HttpServletRequest request,@RequestParam("blogId") String blogId) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
-            Myblog myblog = blogService.selectBlogByIdForCommon(blogid);
+            Myblog myblog = blogService.selectBlogByIdForCommon(blogId);
             VisitCountUtil.setVisitCount(request,myblog.getMyuser().getUserId());
             result.setCodeState(CodeState.success);
             map.put("myblog", myblog);
@@ -395,12 +398,12 @@ public class BlogController {
 
     //根据种类ID查找博客
     @PostMapping("/selectBlogByCategoryIdAndPageForCommon")
-    public Result selectBlogByCategoryIdAndPageForCommon(@RequestParam("categoryid")int categoryid, @RequestParam("pageNow")int pageNow, @RequestParam("pageSize")int pageSize){
+    public Result selectBlogByCategoryIdAndPageForCommon(@RequestParam("categoryId")int categoryId, @RequestParam("pageNow")int pageNow, @RequestParam("pageSize")int pageSize){
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
-            ArrayList<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(categoryid, pageNow, pageSize);
-            int nums = blogService.selectTotalBlogNumsForCommon(categoryid);
+            ArrayList<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(categoryId, pageNow, pageSize);
+            int nums = blogService.selectTotalBlogNumsForCommon(categoryId);
             result.setCodeState(CodeState.success);
             map.put("myblogs", myblogs);
             map.put("nums",nums);
@@ -418,12 +421,12 @@ public class BlogController {
 
     //根据作者查找博客
     @PostMapping("/selectBlogByAuthorForCommon")
-    public Result selectBlogByAuthorForCommon(@RequestParam("userid")int userid, @RequestParam("pageNow")int pageNow, @RequestParam("pageSize")int pageSize){
+    public Result selectBlogByAuthorForCommon(@RequestParam("userId")int userId, @RequestParam("pageNow")int pageNow, @RequestParam("pageSize")int pageSize){
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
-            ArrayList<Myblog> myblogs = blogService.selectBlogByAuthorForCommon(userid, pageNow, pageSize);
-            int nums = blogService.selectTotalBlogNums(userid);
+            ArrayList<Myblog> myblogs = blogService.selectBlogByAuthorForCommon(userId, pageNow, pageSize);
+            int nums = blogService.selectTotalBlogNums(userId);
             result.setCodeState(CodeState.success);
             map.put("myblogs", myblogs);
             map.put("nums",nums);

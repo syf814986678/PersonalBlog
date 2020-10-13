@@ -10,6 +10,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * @author 81498
+ */
 @Component
 public class MyJwtInterceptor extends HandlerInterceptorAdapter {
 

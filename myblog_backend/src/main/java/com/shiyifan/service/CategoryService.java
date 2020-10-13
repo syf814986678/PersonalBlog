@@ -7,28 +7,28 @@ import java.util.ArrayList;
 public interface CategoryService {
     /*------------------------------登陆后进行的操作-------------------------------*/
     //分页查询所有种类
-    ArrayList<Mycategory> selectAllCategoryByPage(int userid, int pageNow, int pageSize);
+    ArrayList<Mycategory> selectAllCategoryByPage(int userId, int pageNow, int pageSize);
 
     //查询添加博客种类
-    ArrayList<Mycategory> selectAllCategoryForBlog(int userid);
+    ArrayList<Mycategory> selectAllCategoryForBlog(int userId);
 
     //查询总条数
-    int selectTotalCategoryNums(int userid);
+    int selectTotalCategoryNums(int userId);
 
     //添加种类
-    void addCategory(int userid,String categoryname);
+    void addCategory(int userId, String categoryName);
 
     //根据种类ID和用户ID查找一个种类
-    Mycategory selectCategoryById(int userid,int categoryid);
+    Mycategory selectCategoryById(int userId, int categoryId);
 
     //根据种类ID和用户ID更新种类
-    void updateCategory(int userid,String categoryname,int categoryid);
+    void updateCategory(int userId, String categoryName, int categoryId);
 
     //根据种类ID和用户ID删除种类
-    void deleteCategory(int userid,int categoryid);
+    void deleteCategory(int userId, int categoryId);
 
     //根据种类ID和用户ID查找种类Rank
-    int getCategoryRank(int userid,int categoryid);
+    int getCategoryRank(int userId, int categoryId);
     /*---------------------------------------------------------------------------*/
     /*------------------------------公共操作-------------------------------*/
     //查找所有的种类

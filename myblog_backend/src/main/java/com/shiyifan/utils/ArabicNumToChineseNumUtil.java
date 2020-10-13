@@ -2,6 +2,9 @@ package com.shiyifan.utils;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * @author 81498
+ */
 @Component
 public class ArabicNumToChineseNumUtil {
     static char[] cnArr = new char [] {'一','二','三','四','五','六','七','八','九'};
@@ -20,7 +23,7 @@ public class ArabicNumToChineseNumUtil {
             sd += cnArr[intInput - 1];
             return sd;
         } else if (si.length() == 2) {
-            if (si.substring(0, 1).equals("1")) {
+            if ("1".equals(si.substring(0, 1))) {
                 sd += "十";
                 if (intInput % 10 == 0) {
                     return sd;

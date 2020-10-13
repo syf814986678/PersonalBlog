@@ -9,10 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.shiyifan</groupId>
-    <artifactId>myblog_afterend</artifactId>
+    <artifactId>myblog_backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>myblog_afterend</name>
-    <description>Demo project for Spring Boot</description>
+    <name>myblog_backend</name>
 
     <properties>
         <java.version>11</java.version>

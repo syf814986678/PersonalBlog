@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @author 81498
+ */
 @RestController
 @RequestMapping("/upload")
 @Log4j2
-@CrossOrigin
 public class UploadController {
 
     @Autowired
@@ -42,9 +44,9 @@ public class UploadController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                int userid = (int)claims.get("userid");
-                String username=(String)claims.get("username");
-                String key="myblog/BlogCoverImage/"+ userid+"-"+username+"/"+ UUID.randomUUID().toString().replaceAll("-", "")+".jpg";
+                int userId = (int)claims.get("userId");
+                String userName=(String)claims.get("userName");
+                String key="myblog/BlogCoverImage/"+ userId+"-"+userName+"/"+ UUID.randomUUID().toString().replaceAll("-", "")+".jpg";
                 PutObjectRequest putObjectRequest = new PutObjectRequest(myConstant.getBucket(), key, new ByteArrayInputStream(file.getBytes()));
                 ossClient.putObject(putObjectRequest);
                 result.setCodeState(CodeState.success);
@@ -110,9 +112,9 @@ public class UploadController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                int userid = (int)claims.get("userid");
-                String username=(String)claims.get("username");
-                dir="myblog/BlogContentImage/"+ userid+"-"+username+"/";
+                int userId = (int)claims.get("userId");
+                String userName=(String)claims.get("userName");
+                dir="myblog/BlogContentImage/"+ userId+"-"+userName+"/";
                 // host的格式为 bucketname.endpoint
                 String host = "https://" + myConstant.getBucket() + "." + myConstant.getEndpoint();
                 // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。

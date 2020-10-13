@@ -83,17 +83,17 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     @Override
     @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
     public void addElasticsearchBlog(String blogId){
-        try {
-            log.warn("添加ElasticsearchBlog开始");
             ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(blogId);
             IndexRequest indexRequest = new IndexRequest("blogindex");
             indexRequest.timeout("2s");
             Gson gson = new Gson();
             indexRequest.id(blog.getBlogId());
             indexRequest.source(gson.toJson(blog), XContentType.JSON);
+        try {
+            log.warn("添加ElasticsearchBlog开始");
             restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
             log.warn("添加ElasticsearchBlog成功");
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error(e);
         }
     }
@@ -132,13 +132,13 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     @Override
     @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
     public void deleteElasticsearchBlog(String blogId){
+        DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
+        deleteRequest.timeout("2s");
         try {
             log.warn("删除ElasticsearchBlog开始");
-            DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
-            deleteRequest.timeout("2s");
             restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
             log.warn("删除ElasticsearchBlog成功");
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.error(e);
         }
     }
@@ -191,20 +191,26 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     @Override
     @Retryable(value = Exception.class,backoff = @Backoff(delay = 500L))
     public void updateElasticsearchBlog(String blogId){
+        DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
+        deleteRequest.timeout("2s");
         try {
-            log.warn("更新ElasticsearchBlog开始");
-            DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
-            deleteRequest.timeout("2s");
+            log.warn("更新ElasticsearchBlog(删除)开始");
             restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
-            ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(blogId);
-            IndexRequest indexRequest = new IndexRequest("blogindex");
-            indexRequest.timeout("2s");
-            Gson gson = new Gson();
-            indexRequest.id(blog.getBlogId());
-            indexRequest.source(gson.toJson(blog), XContentType.JSON);
+            log.warn("更新ElasticsearchBlog(删除)成功");
+        } catch (IOException e) {
+            log.error(e);
+        }
+        ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(blogId);
+        IndexRequest indexRequest = new IndexRequest("blogindex");
+        indexRequest.timeout("2s");
+        Gson gson = new Gson();
+        indexRequest.id(blog.getBlogId());
+        indexRequest.source(gson.toJson(blog), XContentType.JSON);
+        try {
+            log.warn("更新ElasticsearchBlog(添加)开始");
             restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
-            log.warn("更新ElasticsearchBlog成功");
-        } catch (Exception e) {
+            log.warn("更新ElasticsearchBlog(添加)成功");
+        } catch (IOException e) {
             log.error(e);
         }
     }
@@ -216,29 +222,29 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     }
 
     @Override
-    public ArrayList<Myblog> selectBlogByPage(int userid, int pageNow, int pageSize) {
+    public ArrayList<Myblog> selectBlogByPage(int userId, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
         int end = (pageNow*pageSize)-1;
-        ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+userid+"-myblogs", start, end);
+        ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+ userId +"-myblogs", start, end);
         if(myblogs.size()==0){
             log.info("初始化redis-> selectBlogByPage");
-            Iterator<Myblog> iterator = blogMapper.selectBlogAll(userid).iterator();
+            Iterator<Myblog> iterator = blogMapper.selectBlogAll(userId).iterator();
             while (iterator.hasNext()){
-                redisUtil.RSet("user-"+userid+"-myblogs", iterator.next());
+                redisUtil.RSet("user-"+ userId +"-myblogs", iterator.next());
             }
-            myblogs= (ArrayList<Object>) redisUtil.lGet("user-"+userid+"-myblogs", start, end);
+            myblogs= (ArrayList<Object>) redisUtil.lGet("user-"+ userId +"-myblogs", start, end);
         }
         log.info("redis中存在selectBlogByPage-> start:"+start+"<=>"+"end:"+end);
         return (ArrayList<Myblog>)(Object)myblogs;
     }
 
     @Override
-    public int selectTotalBlogNums(int userid) {
-        Object myblogsTotal = redisUtil.get("user-"+userid+"myblogsTotal");
+    public int selectTotalBlogNums(int userId) {
+        Object myblogsTotal = redisUtil.get("user-"+ userId +"myblogsTotal");
         if(myblogsTotal==null){
             log.info("初始化redis-> selectTotalBlogNums");
-            redisUtil.set("user-"+userid+"myblogsTotal", blogMapper.selectTotalBlogNums(userid));
-            myblogsTotal=redisUtil.get("user-"+userid+"myblogsTotal");
+            redisUtil.set("user-"+ userId +"myblogsTotal", blogMapper.selectTotalBlogNums(userId));
+            myblogsTotal=redisUtil.get("user-"+ userId +"myblogsTotal");
         }
         log.info("redis中存在selectTotalBlogNums-> nums:"+(int) myblogsTotal);
         return (int) myblogsTotal;
@@ -247,8 +253,8 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 //   todo
 //   未使用
     @Override
-    public ArrayList<Myblog> selectBlogByCategoryIdAndPage(int userid, int categoryid, int pageNow, int pageSize) {
-        return blogMapper.selectBlogByCategoryIdAndPage(userid,categoryid,pageNow,pageSize);
+    public ArrayList<Myblog> selectBlogByCategoryIdAndPage(int userId, int categoryId, int pageNow, int pageSize) {
+        return blogMapper.selectBlogByCategoryIdAndPage(userId, categoryId,pageNow,pageSize);
     }
 
     @Override
@@ -266,11 +272,11 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     }
 
     @Override
-    public Myblog getTempBlog(int userid) {
+    public Myblog getTempBlog(int userId) {
         try {
-            Myblog myblog = (Myblog) redisUtil.get("user-" + userid + "-TempBlog");
+            Myblog myblog = (Myblog) redisUtil.get("user-" + userId + "-TempBlog");
             log.info("读取暂存博客成功");
-            redisUtil.del("user-" + userid + "-TempBlog");
+            redisUtil.del("user-" + userId + "-TempBlog");
             return myblog;
         }
         catch (Exception e){
@@ -283,28 +289,28 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     /*------------------------------公共操作-------------------------------*/
     @Override
-    public Myblog selectBlogByIdForCommon(String blogid) {
-        Myblog myblog = (Myblog) redisUtil.get(blogid);
+    public Myblog selectBlogByIdForCommon(String blogId) {
+        Myblog myblog = (Myblog) redisUtil.get(blogId);
         if(myblog==null){
             log.info("初始化redis-> selectBlogByIdForCommon");
-            redisUtil.set(blogid, blogMapper.selectBlogByIdForCommon(blogid));
-            myblog = (Myblog) redisUtil.get(blogid);
+            redisUtil.set(blogId, blogMapper.selectBlogByIdForCommon(blogId));
+            myblog = (Myblog) redisUtil.get(blogId);
         }
-        log.info("redis中存在selectBlogByIdForCommon-> blogid:"+blogid);
+        log.info("redis中存在selectBlogByIdForCommon-> blogId:"+ blogId);
         return myblog;
     }
 
 
     @Override
-    public ArrayList<Myblog> selectBlogAllByPageForCommon(int categoryid,int pageNow,int pageSize) {
+    public ArrayList<Myblog> selectBlogAllByPageForCommon(int categoryId, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
         int end = (pageNow*pageSize)-1;
         ArrayList<Object> myblogs=null;
-        if(categoryid==0){
+        if(categoryId ==0){
             myblogs = (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
         }
         else {
-            myblogs = (ArrayList<Object>) redisUtil.lGet("category-"+categoryid+"-myblogsForCommon", start, end);
+            myblogs = (ArrayList<Object>) redisUtil.lGet("category-"+ categoryId +"-myblogsForCommon", start, end);
         }
         if(myblogs.size()==0){
             log.info("初始化redis-> selectBlogAllByPageForCommon");
@@ -314,33 +320,33 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             }
             myblogs= (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
         }
-        log.info("redis中存在selectBlogAllByPageForCommon-> categoryid:"+categoryid+"<=>"+"start:"+start+"<=>"+"end:"+end);
+        log.info("redis中存在selectBlogAllByPageForCommon-> categoryId:"+ categoryId +"<=>"+"start:"+start+"<=>"+"end:"+end);
         return (ArrayList<Myblog>)(Object)myblogs;
     }
 
     @Override
-    public int selectTotalBlogNumsForCommon(int categoryid) {
+    public int selectTotalBlogNumsForCommon(int categoryId) {
         Object myblogsTotal =null;
-        if(categoryid==0){
+        if(categoryId ==0){
             myblogsTotal = redisUtil.get("myblogsForCommonTotal");
         }
         else {
-            myblogsTotal = redisUtil.get("category-"+categoryid+"-myblogsForCommonTotal");
+            myblogsTotal = redisUtil.get("category-"+ categoryId +"-myblogsForCommonTotal");
         }
         if(myblogsTotal==null){
             log.info("初始化redis-> selectTotalBlogNumsForCommon");
             redisUtil.set("myblogsForCommonTotal", blogMapper.selectTotalBlogNumsForCommon(0));
             myblogsTotal=redisUtil.get("myblogsForCommonTotal");
         }
-        log.info("redis中存在selectTotalBlogNumsForCommon-> categoryid:"+categoryid+"<=>"+"nums:"+myblogsTotal);
+        log.info("redis中存在selectTotalBlogNumsForCommon-> categoryId:"+ categoryId +"<=>"+"nums:"+myblogsTotal);
         return (int) myblogsTotal;
     }
 
 
     @Override
-    public ArrayList<Myblog> selectBlogByAuthorForCommon(int userid, int pageNow, int pageSize) {
+    public ArrayList<Myblog> selectBlogByAuthorForCommon(int userId, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
-        return blogMapper.selectBlogByAuthorForCommon(userid,start,pageSize);
+        return blogMapper.selectBlogByAuthorForCommon(userId,start,pageSize);
     }
 
 

@@ -12,9 +12,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author 81498
+ */
 @Component
 @Log4j2
 public class RedisUtil {
+
     @Autowired
     @Qualifier("myredisTemplate")
     private RedisTemplate<String, Object> myredisTemplate;
