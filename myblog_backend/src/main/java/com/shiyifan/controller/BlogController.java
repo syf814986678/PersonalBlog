@@ -28,6 +28,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/blog")
 @Log4j2
+@CrossOrigin
 public class BlogController {
 
     @Autowired

@@ -2,7 +2,7 @@
   <div
       v-infinite-scroll="load"
       :infinite-scroll-disabled="disabled">
-      <div class="all" v-if="calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 95%;">
+      <div v-if="calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 95%;">
           <div class="maoboli">
             <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
             <el-row style="margin-top: 10px;margin-bottom: 0">
@@ -31,8 +31,8 @@
 
       <div v-if="!calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 5px auto;width: 98%">
         <div class="maoboli2">
-          <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
-          <el-row style="margin-top: 10px;margin-bottom: 0px">
+          <h2 class="blogTitle2" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
+          <el-row style="margin-top: 10px;margin-bottom: 0">
             <el-col :span="24">
               <p class="blogCategory2" @click="select(blog.mycategory.categoryId)"><i class="el-icon-collection-tag" style="margin-right: 5px;color: black"></i>{{blog.mycategory.categoryName}}</p>
             </el-col>
@@ -91,13 +91,23 @@
             });
           }
           else {
-            this.$message({
-              message: '博客加载中',
-              type: 'warning',
-              duration: 500
-            });
-            this.$store.commit('setCommonCurrentPage',++this.currentPage)
-            this.refresh(this.currentPage)
+            if (this.$route.params.bloglist==="all" && this.myblogs.length>=20){
+              this.$message({
+                message: '请选择右侧类型查看更多博客！',
+                type: 'error',
+                duration: 2500,
+                center: true
+              });
+            }
+            else {
+              this.$message({
+                message: '博客加载中',
+                type: 'warning',
+                duration: 500
+              });
+              this.$store.commit('setCommonCurrentPage',++this.currentPage)
+              this.refresh(this.currentPage)
+            }
           }
       },
       selectauthor(id){
@@ -109,6 +119,7 @@
       refresh(page){
         if (this.$route.params.bloglist==="all" && this.$route.params.bloglist2==="all"){
           this.$http.post("/blog/selectLastestBlogByPagForCommon","pageNow="+page+"&pageSize="+this.pageSize).then(response=>{
+            console.log(response)
             if (response!=null){
               this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
@@ -230,7 +241,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 .maoboli{
   position: relative;
   z-index: 1;
@@ -241,7 +252,6 @@
   padding-bottom: 15px;
   border-radius: 20px
 }
-
 .maoboli:before{
   margin: 10px;
   content: '';
@@ -262,11 +272,11 @@
   filter: blur(10px);
   box-shadow: 0 0 12px 15px rgba(0, 0, 0, 0.8);
 }
-
 .maoboli:hover:before{
   background: linear-gradient(90deg, #070707,#ddf864,#05ddfa,#05ddfa,#ddf864,#070707);
   opacity: 0.4;
 }
+
 .maoboli2{
   position: relative;
   z-index: 1;
@@ -277,7 +287,6 @@
   padding-bottom: 5px;
   border-radius: 20px;
 }
-
 .maoboli2::before{
   margin: 10px;
   content: '';
@@ -305,16 +314,16 @@
   font-size: 30px;
   color: #ae02f8;
   cursor:pointer;
-  -webkit-transition: all 1.5s ease;
-  transition: all 1.5s ease;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
   margin: 0 auto;
   padding: 0 10px;
   width: fit-content;
 }
 .blogTitle:hover{
   color: #fff;
-  -webkit-animation: Glow 1.5s ease infinite alternate;
-  animation: Glow 1.5s ease infinite alternate;
+  -webkit-animation: Glow 0.3s ease infinite alternate;
+  animation: Glow 1s ease infinite alternate;
   background: none;
 }
 @-webkit-keyframes Glow {
@@ -362,6 +371,16 @@
   }
 }
 
+.blogTitle2{
+  text-align: center;
+  font-size: 30px;
+  color: #ae02f8;
+  cursor:pointer;
+  margin: 0 auto;
+  padding: 0 10px;
+  width: fit-content;
+}
+
 .blogCategory{
   background: #333331;
   font-weight: bold;
@@ -371,7 +390,7 @@
   padding: 5px 10px;
   border-radius: 10px;
   cursor:pointer;
-  font-size: 14px;
+  font-size: 16px;
 }
 .blogCategory:hover{
   background: #fa5979;
@@ -384,7 +403,7 @@
   padding: 5px 10px;
   border-radius: 10px;
   cursor:default;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .blogCategory2{

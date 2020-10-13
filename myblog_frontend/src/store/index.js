@@ -24,7 +24,6 @@ export default new Vuex.Store({
     },
     commonCurrentPage: 1,
     currentPage: 1,
-    // reload: false
     myblogs:[],
     total: null,
     height:0,
