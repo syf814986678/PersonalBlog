@@ -20,7 +20,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @author 81498
@@ -28,7 +27,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/blog")
 @Log4j2
-@CrossOrigin
 public class BlogController {
 
     @Autowired
@@ -134,6 +132,7 @@ public class BlogController {
     }
 
     //添加博客
+    //,@RequestBody Myblog myblog
     @PostMapping("/addBlog")
     public Result addBlog(HttpServletRequest request,@RequestBody Myblog myblog) {
         Result result = new Result();
@@ -141,9 +140,9 @@ public class BlogController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-                myblog.setBlogId(UUID.randomUUID().toString().replaceAll("-", ""));
-                blogService.addBlog(myblog);
-                blogService.addElasticsearchBlog(myblog.getBlogId());
+//                myblog.setBlogId(UUID.randomUUID().toString().replaceAll("-", ""));
+//                blogService.addBlog(myblog);
+                blogService.addElasticsearchBlog("fc6af7045e3f4a8c8807d6cad2ecaf46");
                 result.setCodeState(CodeState.success);
                 map.put("add", "发布成功");
             }

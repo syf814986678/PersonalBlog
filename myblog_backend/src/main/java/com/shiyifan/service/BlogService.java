@@ -2,9 +2,13 @@ package com.shiyifan.service;
 
 import com.shiyifan.pojo.Myblog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * @author 81498
+ */
 public interface BlogService {
     /*------------------------------登陆后进行的操作-------------------------------*/
     //添加博客
@@ -34,11 +38,11 @@ public interface BlogService {
     //读取暂存redis
     Myblog getTempBlog(int userId);
 
-    void addElasticsearchBlog(String blogId);
+    void addElasticsearchBlog(String blogId) throws IOException;
 
-    void deleteElasticsearchBlog(String blogId);
+    void deleteElasticsearchBlog(String blogId) throws IOException;
 
-    void updateElasticsearchBlog(String blogId);
+    void updateElasticsearchBlog(String blogId) throws IOException;
 
     /*---------------------------------------------------------------------------*/
 

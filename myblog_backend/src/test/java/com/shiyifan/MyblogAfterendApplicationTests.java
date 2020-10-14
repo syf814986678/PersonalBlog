@@ -1,30 +1,29 @@
 package com.shiyifan;
 
-import com.shiyifan.service.UserServiceImpl;
+import com.shiyifan.service.BlogService;
 import lombok.extern.log4j.Log4j2;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-
 @SpringBootTest
 @Log4j2
 class MyblogAfterendApplicationTests {
 
-    @Autowired
-    private RestHighLevelClient restHighLevelClient;
+//    @Autowired
+//    private RestHighLevelClient restHighLevelClient;
+//
+//    @Autowired
+//    private UserServiceImpl userService;
 
     @Autowired
-    private UserServiceImpl userService;
+    private BlogService blogService;
 
-    @Test
-    public void test(){
-        ArrayList<Integer> allId = userService.getAllId();
-        System.out.println(allId.toString());
-    }
+//    @Test
+//    public void test(){
+//        blogService.addElasticsearchBlog("09c6a23a220a41ee896784355a7777b9");
+//    }
 
 //    @Test
 //    public void testindex() throws IOException {
