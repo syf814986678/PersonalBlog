@@ -5,6 +5,7 @@ import com.shiyifan.dao.BlogMapper;
 import com.shiyifan.dao.CategoryMapper;
 import com.shiyifan.pojo.ElasticSearchBlog;
 import com.shiyifan.pojo.Myblog;
+import com.shiyifan.pojo.Mycategory;
 import com.shiyifan.utils.ArabicNumToChineseNumUtil;
 import com.shiyifan.utils.RedisUtil;
 import lombok.extern.log4j.Log4j2;
@@ -25,8 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +82,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     }
 
     @Override
-    @Retryable
+    @Retryable(value = IOException.class)
     public void addElasticsearchBlog(String blogId) throws IOException {
         ElasticSearchBlog blog = blogMapper.selectElasticSearchBlogByIdForCommon(blogId);
         IndexRequest indexRequest = new IndexRequest("blogindex");
@@ -128,7 +127,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     }
 
     @Override
-    @Retryable
+    @Retryable(value = IOException.class)
     public void deleteElasticsearchBlog(String blogId) throws IOException {
         DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
         deleteRequest.timeout("2s");
@@ -183,7 +182,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     }
 
     @Override
-    @Retryable
+    @Retryable(value = IOException.class)
     public void updateElasticsearchBlog(String blogId)throws IOException{
         DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
         deleteRequest.timeout("2s");
@@ -342,8 +341,8 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     /*------------------------------搜索操作-------------------------------*/
 
     @Override
-    @Retryable(value = IOException.class,backoff = @Backoff(delay = 500L))
-    public ArrayList<Map<String, Object>> searchContentPage(String keyword, int pageNow, int pageSize) {
+    @Retryable(value = IOException.class)
+    public ArrayList<Map<String, Object>> searchContentPage(String keyword, int pageNow, int pageSize) throws IOException {
         int start = (pageNow-1)*pageSize;
         SearchRequest searchRequest = new SearchRequest("blogindex");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -354,13 +353,9 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         searchSourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
         searchRequest.source(searchSourceBuilder);
         SearchResponse search = null;
-        try {
-            log.warn("搜索博客开始");
-            search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-            log.warn("搜索博客成功");
-        } catch (IOException e) {
-            log.error(e);
-        }
+        log.warn("搜索博客开始");
+        search = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+        log.warn("搜索博客成功");
         ArrayList<Map<String, Object>> list = new ArrayList<>();
         for (SearchHit hit : search.getHits().getHits()) {
             Map<String, HighlightField> highlightFields = hit.getHighlightFields();
@@ -399,27 +394,22 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args){
-//        log.info("<--------------------初始化redis-------------------->");
-//        try {
-//            redisUtil.flushDb();
-//            ArrayList<Mycategory> mycategories = categoryMapper.selectAllCategoryForCommon();
-//            Iterator<Mycategory> iterator = mycategories.iterator();
-//            while (iterator.hasNext()){
-//                Mycategory mycategory = iterator.next();
-//                Iterator<Myblog> iteratorMyblog = blogMapper.selectBlogAllForCommon(mycategory.getCategoryId()).iterator();
-//                while (iteratorMyblog.hasNext()){
-//                    redisUtil.RSet("category-"+mycategory.getCategoryId()+"-myblogsForCommon", iteratorMyblog.next());
-//                }
-//                redisUtil.set("category-"+mycategory.getCategoryId()+"-myblogsForCommonTotal", blogMapper.selectTotalBlogNumsForCommon(mycategory.getCategoryId()));            }
-//        }
-//        catch (Exception e){
-//            log.error(e);
-//        }
-    }
-
-    @Recover
-    public void recover(Exception e){
-        log.error("重试错误，请查看详细日志;"+e);
+        log.info("<--------------------初始化redis-------------------->");
+        try {
+            redisUtil.flushDb();
+            ArrayList<Mycategory> mycategories = categoryMapper.selectAllCategoryForCommon();
+            Iterator<Mycategory> iterator = mycategories.iterator();
+            while (iterator.hasNext()){
+                Mycategory mycategory = iterator.next();
+                Iterator<Myblog> iteratorMyblog = blogMapper.selectBlogAllForCommon(mycategory.getCategoryId()).iterator();
+                while (iteratorMyblog.hasNext()){
+                    redisUtil.RSet("category-"+mycategory.getCategoryId()+"-myblogsForCommon", iteratorMyblog.next());
+                }
+                redisUtil.set("category-"+mycategory.getCategoryId()+"-myblogsForCommonTotal", blogMapper.selectTotalBlogNumsForCommon(mycategory.getCategoryId()));            }
+        }
+        catch (Exception e){
+            log.error(e);
+        }
     }
 }
 

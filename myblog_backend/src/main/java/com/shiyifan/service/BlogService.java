@@ -62,5 +62,5 @@ public interface BlogService {
     /*---------------------------------------------------------------------------*/
 
     /*------------------------------搜索操作-------------------------------*/
-    ArrayList<Map<String, Object>> searchContentPage(String keyword, int pageNo, int pageSize);
+    ArrayList<Map<String, Object>> searchContentPage(String keyword, int pageNo, int pageSize) throws IOException;
 }

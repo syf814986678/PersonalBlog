@@ -61,9 +61,10 @@
     margin-left: -5px
   }
   .my-el-main {
-    background-color: rgb(255, 215, 180);
+    /*background-color: rgb(255, 215, 180);*/
+    background: url("../assets/images/bg.png");
+    background-size: cover;
     color: #333;
-    height: 815px;
     padding-bottom: 0
   }
 </style>

@@ -3,12 +3,12 @@
     <el-header style="height: 120px">
       <div class="no-hd">
         <ul>
-          <li>{{ this.totalBlogNums }}</li>
-          <li>{{ this.todayVisitors }}</li>
-          <li>{{ this.yesterdayVisitors }}</li>
-<!--          <li>1234</li>-->
-<!--          <li>3456</li>-->
-<!--          <li>5678</li>-->
+<!--          <li>{{ this.totalBlogNums }}</li>-->
+<!--          <li>{{ this.todayVisitors }}</li>-->
+<!--          <li>{{ this.yesterdayVisitors }}</li>-->
+          <li>1234</li>
+          <li>3456</li>
+          <li>5678</li>
         </ul>
       </div>
       <div class="no-bd">
@@ -19,20 +19,11 @@
         </ul>
       </div>
     </el-header>
-    <el-container>
-      <el-aside width="200px">Aside1</el-aside>
-      <el-main>
-        <el-container>
-          <el-header>header1</el-header>
-          <el-container>
-            <el-aside width="200px">aside1</el-aside>
-            <el-main>main1</el-main>
-            <el-aside width="200px">aside2</el-aside>
-          </el-container>
-          <el-footer>footer1</el-footer>
-        </el-container>
-      </el-main>
-      <el-aside width="200px">Aside2</el-aside>
+    <el-container class="map">
+        <div class="map_bg"></div>
+        <div class="map_bg2"></div>
+        <div class="map_bg3"></div>
+        <div class="chart"></div>
     </el-container>
     <el-footer>Fotter</el-footer>
   </el-container>
@@ -51,36 +42,102 @@
         methods:{
 
         },
-        created() {
-          this.$http.post("/blog/selectTotalBlogNums").then(response=>{
-            if (response!=null){
-              this.totalBlogNums=response.data.msg["totalBlogNums"];
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-          this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
-            if (response!=null){
-              this.todayVisitors=response.data.msg["visitNums"];
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-          this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
-            if (response!=null){
-              this.yesterdayVisitors=response.data.msg["visitNums"];
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-        }
+        // created() {
+        //   this.$http.post("/blog/selectTotalBlogNums").then(response=>{
+        //     if (response!=null){
+        //       this.totalBlogNums=response.data.msg["totalBlogNums"];
+        //     }
+        //   }).catch(error=> {
+        //     console.log(error)
+        //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        //   })
+        //   this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
+        //     if (response!=null){
+        //       this.todayVisitors=response.data.msg["visitNums"];
+        //     }
+        //   }).catch(error=> {
+        //     console.log(error)
+        //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        //   })
+        //   this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
+        //     if (response!=null){
+        //       this.yesterdayVisitors=response.data.msg["visitNums"];
+        //     }
+        //   }).catch(error=> {
+        //     console.log(error)
+        //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        //   })
+        // }
     }
 </script>
 
 <style scoped>
+.chart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30.375rem;
+}
+
+.map{
+  position: relative;
+  height: 30.375rem;
+  margin-top: 60px;
+}
+.map_bg {
+  width: 25.9rem;
+  height: 25.9rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: url("../../assets/images/map_bg.png");
+  background-size: 100% 100%;
+  opacity: 0.7;
+}
+.map_bg2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32.13125rem;
+  height: 32.13125rem;
+  background: url("../../assets/images/map_bg2.png");
+  animation: rotate1 15s linear infinite;
+  opacity: 0.8;
+  background-size: 100% 100%;
+}
+.map_bg3{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28.2rem;
+  height: 28.2rem;
+  background: url("../../assets/images/map_bg3.png");
+  animation: rotate2 10s linear infinite;
+  opacity: 0.6;
+  background-size: 100% 100%;
+}
+
+@keyframes rotate2 {
+  form {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@keyframes rotate1 {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
 
 @font-face {
   font-family: 'electronicFont';
@@ -89,29 +146,12 @@
   font-style: normal;
 }
 
-.el-header, .el-footer {
-  background-color: #10125b;
+.el-header{
+  background-color: #1e2064;
   color: #333;
   text-align: center;
 }
 
-.el-aside {
-  background-color: #D3DCE6;
-  color: #333;
-  text-align: center;
-  line-height: 200px;
-}
-
-.el-main {
-  background-color: #E9EEF3;
-  color: #333;
-  text-align: center;
-  line-height: 160px;
-}
-
-body > .el-container {
-  margin-bottom: 40px;
-}
 .no-hd{
   background: rgba(101, 132, 226, 0.2);
   position: relative;

@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author 81498
@@ -140,9 +141,9 @@ public class BlogController {
         try {
             Claims claims = (Claims)request.getAttribute("user_claims");
             if(claims!=null){
-//                myblog.setBlogId(UUID.randomUUID().toString().replaceAll("-", ""));
-//                blogService.addBlog(myblog);
-                blogService.addElasticsearchBlog("fc6af7045e3f4a8c8807d6cad2ecaf46");
+                myblog.setBlogId(UUID.randomUUID().toString().replaceAll("-", ""));
+                blogService.addBlog(myblog);
+                blogService.addElasticsearchBlog(myblog.getBlogId());
                 result.setCodeState(CodeState.success);
                 map.put("add", "发布成功");
             }
