@@ -62,7 +62,7 @@
   }
   .my-el-main {
     /*background-color: rgb(255, 215, 180);*/
-    background: url("../assets/images/bg.png");
+    background: url("https://picture.chardance.cloud/myblog/frontResource/images/bg.png");
     background-size: cover;
     color: #333;
     padding-bottom: 0

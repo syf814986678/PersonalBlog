@@ -1,6 +1,6 @@
 <template>
   <div style="margin: 0 auto">
-    <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" border :row-class-name="tableRowClassName" :data="mydata.filter(data => !search || data.blogTitle.toLowerCase().includes(search.toLowerCase()))">
+    <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" border :row-class-name="tableRowClassName" :data="mydata">
       <el-table-column :resizable="false" type="index" :index="indexMethod" align="center" label="编号" width="50"></el-table-column>
       <el-table-column show-overflow-tooltip align="center" label="博客标题" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px"  type="danger">{{scope.row.blogTitle}}</el-tag></el-table-column>
       <el-table-column align="center" label="封面图片" width="275" v-slot="scope"><el-image style="width: 250px;height: 100px" :src="scope.row.blogCoverImage" fit="fill"></el-image></el-table-column>
@@ -10,10 +10,21 @@
       <el-table-column sortable align="center" prop="updateGmt" label="更新时间" width="150" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{scope.row.updateGmt}}</el-tag></el-table-column>
       <el-table-column align="center">
         <template slot="header" slot-scope="scope">
-          <el-input
+          <el-autocomplete
+            id="myinput1"
+            :minlength="1"
+            :maxlength="30"
             v-model="search"
-            size="medium"
-            placeholder="输入关键字搜索"/>
+            :fetch-suggestions="querySearchAsync"
+            placeholder="请输入搜索内容"
+            @select="handleSelect"
+            suffix-icon=" el-icon-s-opportunity"
+            prefix-icon="el-icon-search">
+            <template slot-scope="{ item }">
+              <span class="addr">{{ item.value }}</span>
+              <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
+            </template>
+          </el-autocomplete>
         </template>
         <template slot-scope="scope" >
           <el-button
@@ -225,6 +236,34 @@ export default {
     }
   },
   methods:{
+    querySearchAsync(queryString,cb){
+      this.$http.post("/blog/hotkeys").then(response=>{
+        if (response!=null){
+          this.hotkeys=response.data.msg["hotkeys"]
+          cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
+        }
+      }).catch(error=> {
+        console.log(error)
+        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      })
+      cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
+    },
+    createStateFilter(queryString) {
+      return (input) => {
+        return (input.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+    handleSelect(){
+      this.searchblog()
+    },
+    searchblog(){
+      console.log(this.search.length)
+      console.log(this.$route.params.whatsearch)
+      if (this.search.length>=1  && (this.$route.params.whatsearch!==this.search)){
+        this.$router.push("/index/search/"+this.input)
+        document.documentElement.scrollTop=0
+      }
+    },
     handleCopyCodeSuccess(){
       this.$message({
         message: '代码复制成功',

@@ -28,6 +28,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/blog")
 @Log4j2
+@CrossOrigin
 public class BlogController {
 
     @Autowired
@@ -477,7 +478,7 @@ public class BlogController {
         BufferedReader br=null;
         try {
             String s = "";
-            in = new InputStreamReader(new FileInputStream("/home/syf/myblog/remote.txt"), "UTF-8");
+            in = new InputStreamReader(new FileInputStream("C:\\Users\\81498\\Desktop\\remote.txt"), "UTF-8");
             br = new BufferedReader(in);
             ArrayList<HashMap<String, String>> hotkeys = new ArrayList<>();
             while ((s = br.readLine()) != null) {

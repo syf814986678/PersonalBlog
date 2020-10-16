@@ -28,8 +28,12 @@ export default new Vuex.Store({
     total: null,
     height:0,
     mainloading:true,
+    whatsearch:''
   },
   mutations:{
+    setwhatsearch(state,whatsearch){
+      state.whatsearch=whatsearch;
+    },
     setmainloading(state,status){
       state.mainloading=status
     },

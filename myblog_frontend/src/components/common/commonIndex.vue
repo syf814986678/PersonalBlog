@@ -120,9 +120,10 @@
           this.search()
         },
         search(){
-          if (this.input.length>=1  && (this.$route.params.whatsearch!==this.input)){
+          if (this.input.length>=1  && (this.$store.state.whatsearch!==this.input)){
             this.$router.push("/index/search/"+this.input)
             this.$store.commit('setmainloading',true)
+            this.$store.commit('setwhatsearch',this.input)
             document.documentElement.scrollTop=0
           }
         },
@@ -139,8 +140,8 @@
       },
       created() {
         const that =this;
-        if (this.$route.params.whatsearch!=null){
-          this.input=this.$route.params.whatsearch
+        if (this.$store.state.whatsearch!=null){
+          this.input=this.$store.state.whatsearch
         }
         this.$http.post("/category/selectAllCategoryForCommon").then(response=>{
           if (response!=null){

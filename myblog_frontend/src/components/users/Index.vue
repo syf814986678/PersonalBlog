@@ -3,12 +3,12 @@
     <el-header style="height: 120px">
       <div class="no-hd">
         <ul>
-<!--          <li>{{ this.totalBlogNums }}</li>-->
-<!--          <li>{{ this.todayVisitors }}</li>-->
-<!--          <li>{{ this.yesterdayVisitors }}</li>-->
-          <li>1234</li>
-          <li>3456</li>
-          <li>5678</li>
+          <li>{{ this.totalBlogNums }}</li>
+          <li>{{ this.todayVisitors }}</li>
+          <li>{{ this.yesterdayVisitors }}</li>
+<!--          <li>1234</li>-->
+<!--          <li>3456</li>-->
+<!--          <li>5678</li>-->
         </ul>
       </div>
       <div class="no-bd">
@@ -42,32 +42,44 @@
         methods:{
 
         },
-        // created() {
-        //   this.$http.post("/blog/selectTotalBlogNums").then(response=>{
-        //     if (response!=null){
-        //       this.totalBlogNums=response.data.msg["totalBlogNums"];
-        //     }
-        //   }).catch(error=> {
-        //     console.log(error)
-        //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-        //   })
-        //   this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
-        //     if (response!=null){
-        //       this.todayVisitors=response.data.msg["visitNums"];
-        //     }
-        //   }).catch(error=> {
-        //     console.log(error)
-        //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-        //   })
-        //   this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
-        //     if (response!=null){
-        //       this.yesterdayVisitors=response.data.msg["visitNums"];
-        //     }
-        //   }).catch(error=> {
-        //     console.log(error)
-        //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-        //   })
-        // }
+        created() {
+          this.$http.post("/blog/selectTotalBlogNums").then(response=>{
+            if (response!=null){
+              this.totalBlogNums=response.data.msg["totalBlogNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
+            if (response!=null){
+              this.todayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
+            if (response!=null){
+              this.yesterdayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/selectBlogByPage","pageNow=0"+"&pageSize=5").then(response=>{
+            if (response!=null){
+              this.$notify({
+                title: '欢迎',
+                message: "欢迎登录本博客",
+                type: 'success',
+                duration: 2500
+              });
+            }
+          }).catch(error=> {
+            console.log(error);
+          })
+        }
     }
 </script>
 
@@ -92,7 +104,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: url("../../assets/images/map_bg.png");
+  background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg.png");
   background-size: 100% 100%;
   opacity: 0.7;
 }
@@ -103,7 +115,7 @@
   transform: translate(-50%, -50%);
   width: 32.13125rem;
   height: 32.13125rem;
-  background: url("../../assets/images/map_bg2.png");
+  background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg2.png");
   animation: rotate1 15s linear infinite;
   opacity: 0.8;
   background-size: 100% 100%;
@@ -115,7 +127,7 @@
   transform: translate(-50%, -50%);
   width: 28.2rem;
   height: 28.2rem;
-  background: url("../../assets/images/map_bg3.png");
+  background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg3.png");
   animation: rotate2 10s linear infinite;
   opacity: 0.6;
   background-size: 100% 100%;
@@ -141,7 +153,7 @@
 
 @font-face {
   font-family: 'electronicFont';
-  src: url("../../assets/font/DS-DIGIB-2.ttf");
+  src: url("https://picture.chardance.cloud/myblog/frontResource/font/DS-DIGIB-2.ttf");
   font-weight: normal;
   font-style: normal;
 }

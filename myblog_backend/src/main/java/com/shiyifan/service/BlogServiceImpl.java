@@ -5,7 +5,6 @@ import com.shiyifan.dao.BlogMapper;
 import com.shiyifan.dao.CategoryMapper;
 import com.shiyifan.pojo.ElasticSearchBlog;
 import com.shiyifan.pojo.Myblog;
-import com.shiyifan.pojo.Mycategory;
 import com.shiyifan.utils.ArabicNumToChineseNumUtil;
 import com.shiyifan.utils.RedisUtil;
 import lombok.extern.log4j.Log4j2;
@@ -394,22 +393,22 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args){
-        log.info("<--------------------初始化redis-------------------->");
-        try {
-            redisUtil.flushDb();
-            ArrayList<Mycategory> mycategories = categoryMapper.selectAllCategoryForCommon();
-            Iterator<Mycategory> iterator = mycategories.iterator();
-            while (iterator.hasNext()){
-                Mycategory mycategory = iterator.next();
-                Iterator<Myblog> iteratorMyblog = blogMapper.selectBlogAllForCommon(mycategory.getCategoryId()).iterator();
-                while (iteratorMyblog.hasNext()){
-                    redisUtil.RSet("category-"+mycategory.getCategoryId()+"-myblogsForCommon", iteratorMyblog.next());
-                }
-                redisUtil.set("category-"+mycategory.getCategoryId()+"-myblogsForCommonTotal", blogMapper.selectTotalBlogNumsForCommon(mycategory.getCategoryId()));            }
-        }
-        catch (Exception e){
-            log.error(e);
-        }
+//        log.info("<--------------------初始化redis-------------------->");
+//        try {
+//            redisUtil.flushDb();
+//            ArrayList<Mycategory> mycategories = categoryMapper.selectAllCategoryForCommon();
+//            Iterator<Mycategory> iterator = mycategories.iterator();
+//            while (iterator.hasNext()){
+//                Mycategory mycategory = iterator.next();
+//                Iterator<Myblog> iteratorMyblog = blogMapper.selectBlogAllForCommon(mycategory.getCategoryId()).iterator();
+//                while (iteratorMyblog.hasNext()){
+//                    redisUtil.RSet("category-"+mycategory.getCategoryId()+"-myblogsForCommon", iteratorMyblog.next());
+//                }
+//                redisUtil.set("category-"+mycategory.getCategoryId()+"-myblogsForCommonTotal", blogMapper.selectTotalBlogNumsForCommon(mycategory.getCategoryId()));            }
+//        }
+//        catch (Exception e){
+//            log.error(e);
+//        }
     }
 }
 
