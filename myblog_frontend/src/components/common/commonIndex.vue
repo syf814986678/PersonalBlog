@@ -17,7 +17,7 @@
                   <div class="mydiv" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
                     <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px; font-family: Arial;margin-top: 10px">TOP10类型</el-tag></el-row>
                     <el-row style="margin-top: 10px">
-                      <el-button round class="mybutton" v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId)">{{item.categoryName}}({{item.categoryRank}})</el-button>
+                      <el-button round class="mybutton" v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
                     </el-row>
                     <el-autocomplete
                       style="width: 80%;margin: 10px auto"
@@ -32,7 +32,7 @@
                       suffix-icon=" el-icon-s-opportunity"
                       prefix-icon="el-icon-search">
                       <template slot-scope="{ item }">
-                        <span class="addr">{{ item.value }}</span>
+                        <span>{{ item.value }}</span>
                         <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
                       </template>
                     </el-autocomplete>
@@ -58,7 +58,7 @@
                       suffix-icon=" el-icon-s-opportunity"
                       prefix-icon="el-icon-search">
                       <template slot-scope="{ item }">
-                        <span class="addr">{{ item.value }}</span>
+                        <span>{{ item.value }}</span>
                         <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
                       </template>
                     </el-autocomplete>
@@ -66,7 +66,7 @@
                   <div class="mydiv2">
                     <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px; font-family: Arial;margin-top: 10px">TOP10类型</el-tag></el-row>
                     <el-row style="margin-top: 10px">
-                      <el-button round class="mybutton" v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId)">{{item.categoryName}}({{item.categoryRank}})</el-button>
+                      <el-button round class="mybutton" v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
                     </el-row>
                   </div>
 
@@ -120,28 +120,25 @@
           this.search()
         },
         search(){
-          if (this.input.length>=1  && (this.$store.state.whatsearch!==this.input)){
+          if (this.input.length>=1 && (this.$route.params.whatsearch!==this.input)){
             this.$router.push("/index/search/"+this.input)
             this.$store.commit('setmainloading',true)
-            this.$store.commit('setwhatsearch',this.input)
+            this.$store.commit('setsearch',this.input)
             document.documentElement.scrollTop=0
+            document.body.scrollTop=0
           }
         },
-        select(id){
-          setTimeout(() => {
-            document.documentElement.scrollTop=0
-          }, 500)
+        select(id,name){
           this.$router.push("/index/bloglist/category/"+id)
-          this.$store.commit('clearMyBlogs')
-          this.$store.commit('setMyBlogsTotal',null)
-          this.$store.commit('setCommonCurrentPage',1)
-          this.$store.commit('setHeight',0)
+          this.$store.commit('setcategoryName',name)
+          document.documentElement.scrollTop=0
+          document.body.scrollTop=0
         },
       },
       created() {
         const that =this;
-        if (this.$store.state.whatsearch!=null){
-          this.input=this.$store.state.whatsearch
+        if (this.$route.params.whatsearch!=null){
+          this.input=this.$route.params.whatsearch
         }
         this.$http.post("/category/selectAllCategoryForCommon").then(response=>{
           if (response!=null){

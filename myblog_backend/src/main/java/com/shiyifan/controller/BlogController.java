@@ -134,7 +134,6 @@ public class BlogController {
     }
 
     //添加博客
-    //,@RequestBody Myblog myblog
     @PostMapping("/addBlog")
     public Result addBlog(HttpServletRequest request,@RequestBody Myblog myblog) {
         Result result = new Result();

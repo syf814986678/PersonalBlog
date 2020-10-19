@@ -208,8 +208,6 @@
         formdata.append('signature', this.$store.state.OSS.signature);
         formdata.append('file', files[0]);
         await this.getupload(formdata)
-        // this.$refs.md.$img2Url(pos,this.filename)
-        // 此处只做示例
         insertImage({
           url:this.filename,
           desc: '博客图片',
@@ -396,7 +394,7 @@
 </script>
 <style>
   .avatar-uploader .el-upload {
-    border: 2px solid #45ef27;
+    border: 2px solid #fd1e01;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
@@ -405,7 +403,7 @@
     height: 120px;
   }
   .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
+    border-color: #45ef27;
   }
 
 </style>
@@ -428,7 +426,7 @@
   }
   .avatar-uploader-icon {
     font-size: 28px;
-    color: #1369e3;
+    color: #45ef27;
     margin-top: 45px;
   }
 </style>

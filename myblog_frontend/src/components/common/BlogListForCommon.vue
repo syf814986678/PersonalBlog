@@ -7,7 +7,7 @@
             <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
             <el-row style="margin-top: 10px;margin-bottom: 0">
               <el-col :span="24">
-                <p class="blogCategory" @click="select(blog.mycategory.categoryId)"><i class="el-icon-collection-tag" style="margin-right: 5px"></i>{{blog.mycategory.categoryName}}</p>
+                <p class="blogCategory" @click="select(blog.mycategory.categoryId,blog.mycategory.categoryName)"><i class="el-icon-collection-tag" style="margin-right: 5px"></i>{{blog.mycategory.categoryName}}</p>
               </el-col>
             </el-row>
             <el-row style="margin-top: 5px">
@@ -34,7 +34,7 @@
           <h2 class="blogTitle2" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
           <el-row style="margin-top: 10px;margin-bottom: 0">
             <el-col :span="24">
-              <p class="blogCategory2" @click="select(blog.mycategory.categoryId)"><i class="el-icon-collection-tag" style="margin-right: 5px;color: black"></i>{{blog.mycategory.categoryName}}</p>
+              <p class="blogCategory2" @click="select(blog.mycategory.categoryId,blog.mycategory.categoryName)"><i class="el-icon-collection-tag" style="margin-right: 5px;color: black"></i>{{blog.mycategory.categoryName}}</p>
             </el-col>
           </el-row>
           <el-row style="margin-top: 5px">
@@ -72,7 +72,8 @@
         pageSize: 5,
         total: null,
         disabled: true,
-        lazy: true
+        lazy: true,
+        categoryName:''
       }
     },
     computed:{
@@ -110,16 +111,14 @@
             }
           }
       },
-      selectauthor(id){
-        this.$router.push("/index/bloglist/author/"+id)
-      },
-      select(id){
+      select(id,name){
         this.$router.push("/index/bloglist/category/"+id)
+        this.$store.commit('setcategoryName',name)
       },
       refresh(page){
         if (this.$route.params.bloglist==="all" && this.$route.params.bloglist2==="all"){
+          this.$store.commit('setcategoryName','')
           this.$http.post("/blog/selectLastestBlogByPagForCommon","pageNow="+page+"&pageSize="+this.pageSize).then(response=>{
-            console.log(response)
             if (response!=null){
               this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
               this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
@@ -140,6 +139,9 @@
           })
         }
         else if (this.$route.params.bloglist==="category"){
+          if (this.$store.state.categoryName!==''){
+            window.document.title = '博客类别: '+this.$store.state.categoryName
+          }
           this.$http.post("/blog/selectBlogByCategoryIdAndPageForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&categoryId="+this.$route.params.bloglist2).then(response=>{
             if (response!=null){
               this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
@@ -160,27 +162,27 @@
             this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
           })
         }
-        else if (this.$route.params.bloglist==="author"){
-          this.$http.post("/blog/selectBlogByAuthorForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&userId="+this.$route.params.bloglist2).then(response=>{
-            if (response!=null){
-              this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
-              this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
-              this.myblogs=this.$store.state.myblogs
-              this.total=this.$store.state.total
-              if (this.total>2){
-                setTimeout(() => {
-                  this.disabled=false
-                }, 500)
-              }
-              else {
-                this.lazy=false
-              }
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-        }
+        // else if (this.$route.params.bloglist==="author"){
+        //   this.$http.post("/blog/selectBlogByAuthorForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&userId="+this.$route.params.bloglist2).then(response=>{
+        //     if (response!=null){
+        //       this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
+        //       this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
+        //       this.myblogs=this.$store.state.myblogs
+        //       this.total=this.$store.state.total
+        //       if (this.total>2){
+        //         setTimeout(() => {
+        //           this.disabled=false
+        //         }, 500)
+        //       }
+        //       else {
+        //         this.lazy=false
+        //       }
+        //     }
+        //   }).catch(error=> {
+        //     console.log(error)
+        //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        //   })
+        // }
       },
       showBlog(blogId){
         this.$router.push("/index/blog/"+blogId)
@@ -193,38 +195,63 @@
       else {
         this.myblogs = this.$store.state.myblogs
         this.total = this.$store.state.total
-      }
-      if(this.$store.state.height===0){
-        if (this.total>2){
+        if (this.$store.state.height===0 && this.total>2){
           setTimeout(() => {
-            document.getElementById("myelmain").scrollTop=1
+            document.getElementById("myelmain").scrollTop=5
+            document.getElementById("myelmain").scrollTop=0
             this.disabled=false
           }, 500)
         }
-        else {
+        else if (this.$store.state.height===0 && this.total<=2) {
           this.lazy=false
         }
-      }
-      else {
-        if (this.total>2){
+        else {
           setTimeout(() => {
             document.getElementById("myelmain").scrollTop=this.$store.state.height
             this.disabled=false
           }, 500)
         }
-        else {
-          this.lazy=false
-        }
       }
+      // if(this.$store.state.height===0){
+      //   if (this.total>2){
+      //     setTimeout(() => {
+      //       document.getElementById("myelmain").scrollTop=1
+      //       this.disabled=false
+      //       alert("1")
+      //     }, 500)
+      //   }
+      //   else {
+      //     this.lazy=false
+      //     alert("2")
+      //   }
+      // }
+      // else {
+      //   if (this.total>2){
+      //     setTimeout(() => {
+      //       document.getElementById("myelmain").scrollTop=this.$store.state.height
+      //       this.disabled=false
+      //       alert("3")
+      //     }, 500)
+      //   }
+      //   else {
+      //     this.lazy=false
+      //     alert("4")
+      //   }
+      // }
       this.$store.commit('setmainloading',false)
+      if (this.$store.state.categoryName!==''){
+        window.document.title = '博客类别: '+this.$store.state.categoryName
+      }
     },
     beforeRouteLeave (to, from, next) {
       this.disabled= true
-      this.$store.commit('setHeight',document.getElementById("myelmain").scrollTop)
+      if(this.$store.state.height!==1){
+        this.$store.commit('setHeight',document.getElementById("myelmain").scrollTop)
+      }
       next()
     },
     watch: {
-      '$route': function (to, from) {
+      '$route.params.bloglist2': function (to, from) {
         this.disabled=true
         this.currentPage=1
         this.$store.commit('clearMyBlogs')
@@ -234,6 +261,7 @@
         this.refresh(this.currentPage)
         setTimeout(() => {
           document.documentElement.scrollTop=0
+          document.body.scrollTop=0
           document.getElementById("myelmain").scrollTop=1
         }, 100)
       }

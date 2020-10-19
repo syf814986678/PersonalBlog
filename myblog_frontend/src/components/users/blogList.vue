@@ -257,11 +257,8 @@ export default {
       this.searchblog()
     },
     searchblog(){
-      console.log(this.search.length)
-      console.log(this.$route.params.whatsearch)
-      if (this.search.length>=1  && (this.$route.params.whatsearch!==this.search)){
-        this.$router.push("/index/search/"+this.input)
-        document.documentElement.scrollTop=0
+      if (this.search.length>=1){
+        window.open("/#/index/search/"+this.search)
       }
     },
     handleCopyCodeSuccess(){

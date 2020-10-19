@@ -95,7 +95,7 @@
 .map{
   position: relative;
   height: 30.375rem;
-  margin-top: 60px;
+  top: 60px;
 }
 .map_bg {
   width: 25.9rem;
