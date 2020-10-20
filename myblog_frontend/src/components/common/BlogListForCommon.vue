@@ -2,12 +2,12 @@
   <div
       v-infinite-scroll="load"
       :infinite-scroll-disabled="disabled">
-      <div v-if="calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 95%;">
+      <div v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 95%;">
           <div class="maoboli">
             <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
             <el-row style="margin-top: 10px;margin-bottom: 0">
               <el-col :span="24">
-                <p class="blogCategory" @click="select(blog.mycategory.categoryId,blog.mycategory.categoryName)"><i class="el-icon-collection-tag" style="margin-right: 5px"></i>{{blog.mycategory.categoryName}}</p>
+                <p class="blogCategory" @click="select(blog.mycategory.categoryId,blog.mycategory.categoryName)"><i class="el-icon-collection-tag myi"></i>{{blog.mycategory.categoryName}}</p>
               </el-col>
             </el-row>
             <el-row style="margin-top: 5px">
@@ -19,44 +19,17 @@
               </el-col>
             </el-row>
             <el-image
-              style="height: 640px;width: 95%;cursor:pointer;margin-top: 5px;border-radius: 20px"
+              class="myimage"
               :src="blog.blogCoverImage"
               :lazy="lazy"
               @click="showBlog(blog.blogId)"
               fit="fill" ></el-image>
-          </div>
-        <el-divider></el-divider>
-
-      </div>
-
-      <div v-if="!calcScreen" v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 5px auto;width: 98%">
-        <div class="maoboli2">
-          <h2 class="blogTitle2" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
-          <el-row style="margin-top: 10px;margin-bottom: 0">
-            <el-col :span="24">
-              <p class="blogCategory2" @click="select(blog.mycategory.categoryId,blog.mycategory.categoryName)"><i class="el-icon-collection-tag" style="margin-right: 5px;color: black"></i>{{blog.mycategory.categoryName}}</p>
-            </el-col>
-          </el-row>
-          <el-row style="margin-top: 5px">
-            <el-col :span="12">
-              <p class="blogCreateGmt2"><i class="el-icon-date" style="margin-right: 5px"></i>{{blog.createGmt}}</p>
-            </el-col>
-            <el-col :span="12">
-              <p class="blogCreateGmt2"><i class="el-icon-edit" style="margin-right: 5px"></i>{{blog.updateGmt}}</p>
-            </el-col>
-          </el-row>
-          <el-image
-          style="height: 180px;width: 95%;cursor:pointer;margin-top: 5px;border-radius: 20px"
-          :src="blog.blogCoverImage"
-          :lazy="lazy"
-          @click="showBlog(blog.blogId)"
-          fit="fill" ></el-image>
-          <el-row style="margin-bottom: 7px">
-            <el-col :span="24">
+            <el-row style="margin-bottom: 7px" class="myrow">
+              <el-col :span="24">
                 <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 10px;width: 95%;border-radius: 15px">阅读全文</el-tag>
-            </el-col>
-          </el-row>
-        </div>
+              </el-col>
+            </el-row>
+          </div>
         <el-divider></el-divider>
       </div>
     </div>
@@ -72,11 +45,6 @@
         total: null,
         disabled: true,
         lazy: true,
-      }
-    },
-    computed:{
-      calcScreen(){
-        return window.screen.width>=1080
       }
     },
     methods:{
@@ -110,12 +78,13 @@
           }
       },
       select(id,name){
+        this.$store.commit('setCategory',id,name)
         this.$router.push("/index/bloglist/category/"+id)
-        // this.$store.commit('setcategoryName',name)
+        alert(id+name)
+        // && this.$route.params.bloglist2==="all"
       },
       refresh(page){
-        if (this.$route.params.bloglist==="all" && this.$route.params.bloglist2==="all"){
-          // this.$store.commit('setcategoryName','')
+        if (this.$route.params.bloglist==="all"){
           this.$http.post("/blog/selectLastestBlogByPageForCommon","pageNow="+page+"&pageSize="+this.pageSize).then(response=>{
             if (response!=null){
               // this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
@@ -138,9 +107,6 @@
           })
         }
         else if (this.$route.params.bloglist==="category"){
-          // if (this.$store.state.categoryName!==''){
-          //   window.document.title = '博客类别: '+this.$store.state.categoryName
-          // }
           this.$http.post("/blog/selectBlogByCategoryIdAndPageForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&categoryId="+this.$route.params.bloglist2).then(response=>{
             if (response!=null){
               // this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
@@ -220,6 +186,7 @@
         // this.$store.commit('setHeight',0)
         this.$store.commit('setCommonCurrentPage',1)
         this.refresh(this.$store.state.commonCurrentPage)
+
         setTimeout(() => {
           document.documentElement.scrollTop=0
           document.body.scrollTop=0
@@ -232,189 +199,208 @@
 </script>
 
 <style scoped>
-.maoboli{
-  position: relative;
-  z-index: 1;
-  background-position: center top;
-  background-size: cover;
-  overflow: hidden;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  border-radius: 20px
-}
-.maoboli:before{
-  margin: 10px;
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 0;
-  right: 0;
-  bottom: -10px;
-  background-color: rgba(255, 255, 255, 0.5);
-  z-index: -1;
-  background-position: center top;
-  background-size: cover;
-  background-attachment: fixed;
-  -webkit-filter: blur(20px);
-  -moz-filter: blur(20px);
-  -ms-filter: blur(20px);
-  -o-filter: blur(20px);
-  filter: blur(10px);
-  box-shadow: 0 0 12px 15px rgba(0, 0, 0, 0.8);
-}
-.maoboli:hover:before{
-  background: linear-gradient(90deg, #070707,#ddf864,#05ddfa,#05ddfa,#ddf864,#070707);
-  opacity: 0.4;
-}
+@media only screen and (max-width: 767px) {
+  .maoboli{
+    position: relative;
+    z-index: 1;
+    background-position: center top;
+    background-size: cover;
+    overflow: hidden;
+    padding-top: 15px;
+    padding-bottom: 5px;
+    border-radius: 20px;
+  }
+  .maoboli::before{
+    margin: 10px;
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: -1;
+    background-position: center top;
+    background-size: cover;
+    background-attachment: fixed;
+    -webkit-filter: blur(20px);
+    -moz-filter: blur(20px);
+    -ms-filter: blur(20px);
+    -o-filter: blur(20px);
+    filter: blur(10px);
+    box-shadow: 0 0 12px 15px rgba(0, 0, 0, 0.8);
 
-.maoboli2{
-  position: relative;
-  z-index: 1;
-  background-position: center top;
-  background-size: cover;
-  overflow: hidden;
-  padding-top: 15px;
-  padding-bottom: 5px;
+  }
+  .blogTitle{
+    text-align: center;
+    font-size: 30px;
+    color: #ae02f8;
+    cursor:pointer;
+    margin: 0 auto;
+    padding: 0 10px;
+    width: fit-content;
+  }
+  .blogCategory{
+    color: #fa0e0e;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor:pointer;
+    font-size: 16px;
+  }
+  .blogCreateGmt{
+    width: fit-content;
+    margin: 0 auto;
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor:pointer;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .myimage{
+    height: 180px;
+  }
+  .myi{
+    color: black;
+  }
+}
+@media only screen and (min-width: 768px) {
+  .maoboli{
+    position: relative;
+    z-index: 1;
+    background-position: center top;
+    background-size: cover;
+    overflow: hidden;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 20px
+  }
+  .maoboli:before{
+    margin: 10px;
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    bottom: -10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: -1;
+    background-position: center top;
+    background-size: cover;
+    background-attachment: fixed;
+    -webkit-filter: blur(20px);
+    -moz-filter: blur(20px);
+    -ms-filter: blur(20px);
+    -o-filter: blur(20px);
+    filter: blur(10px);
+    box-shadow: 0 0 12px 15px rgba(0, 0, 0, 0.8);
+  }
+  .maoboli:hover:before{
+    background: linear-gradient(90deg, #070707,#ddf864,#05ddfa,#05ddfa,#ddf864,#070707);
+    opacity: 0.4;
+  }
+  .blogTitle{
+    text-align: center;
+    font-size: 30px;
+    color: #ae02f8;
+    cursor:pointer;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+    padding: 0 10px;
+    width: fit-content;
+  }
+  .blogTitle:hover{
+    color: #fff;
+    -webkit-animation: Glow 0.3s ease infinite alternate;
+    animation: Glow 1s ease infinite alternate;
+    background: none;
+  }
+  @-webkit-keyframes Glow {
+    from {
+      text-shadow: 0 0 10px #fff,
+      0 0 20px #fff,
+      0 0 30px #fff,
+      0 0 40px #05ddfa,
+      0 0 70px #05ddfa,
+      0 0 80px #05ddfa,
+      0 0 100px #05ddfa,
+      0 0 150px #05ddfa;
+    }
+    to {
+      text-shadow: 0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 15px #fff,
+      0 0 20px #05ddfa,
+      0 0 35px #05ddfa,
+      0 0 40px #05ddfa,
+      0 0 50px #05ddfa,
+      0 0 75px #05ddfa;
+    }
+  }
+  @keyframes Glow {
+    from {
+      text-shadow: 0 0 10px #fff,
+      0 0 20px #fff,
+      0 0 30px #fff,
+      0 0 40px #05ddfa,
+      0 0 70px #05ddfa,
+      0 0 80px #05ddfa,
+      0 0 100px #05ddfa,
+      0 0 150px #05ddfa;
+    }
+    to {
+      text-shadow: 0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 15px #fff,
+      0 0 20px #05ddfa,
+      0 0 35px #05ddfa,
+      0 0 40px #05ddfa,
+      0 0 50px #05ddfa,
+      0 0 75px #05ddfa;
+    }
+  }
+  .blogCategory{
+    background: #333331;
+    font-weight: bold;
+    color: #ffffff;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor:pointer;
+    font-size: 16px;
+  }
+  .blogCategory:hover{
+    background: #fa5979;
+    transition: 0.3s;
+  }
+  .blogCreateGmt{
+    font-weight: bold;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor:default;
+    font-size: 16px;
+  }
+  .myimage{
+    height: 640px;
+  }
+  .myrow{
+    display: none;
+  }
+}
+.myimage{
+  width: 95%;
+  cursor:pointer;
+  margin-top: 5px;
   border-radius: 20px;
 }
-.maoboli2::before{
-  margin: 10px;
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  background-color: rgba(255, 255, 255, 0.7);
-  z-index: -1;
-  background-position: center top;
-  background-size: cover;
-  background-attachment: fixed;
-  -webkit-filter: blur(20px);
-  -moz-filter: blur(20px);
-  -ms-filter: blur(20px);
-  -o-filter: blur(20px);
-  filter: blur(10px);
-  box-shadow: 0 0 12px 15px rgba(0, 0, 0, 0.8);
-
+.myi{
+  margin-right: 5px;
 }
-
-.blogTitle{
-  text-align: center;
-  font-size: 30px;
-  color: #ae02f8;
-  cursor:pointer;
-  -webkit-transition: all 0.3s ease;
-  transition: all 0.3s ease;
-  margin: 0 auto;
-  padding: 0 10px;
-  width: fit-content;
-}
-.blogTitle:hover{
-  color: #fff;
-  -webkit-animation: Glow 0.3s ease infinite alternate;
-  animation: Glow 1s ease infinite alternate;
-  background: none;
-}
-@-webkit-keyframes Glow {
-  from {
-    text-shadow: 0 0 10px #fff,
-    0 0 20px #fff,
-    0 0 30px #fff,
-    0 0 40px #05ddfa,
-    0 0 70px #05ddfa,
-    0 0 80px #05ddfa,
-    0 0 100px #05ddfa,
-    0 0 150px #05ddfa;
-  }
-  to {
-    text-shadow: 0 0 5px #fff,
-    0 0 10px #fff,
-    0 0 15px #fff,
-    0 0 20px #05ddfa,
-    0 0 35px #05ddfa,
-    0 0 40px #05ddfa,
-    0 0 50px #05ddfa,
-    0 0 75px #05ddfa;
-  }
-}
-@keyframes Glow {
-  from {
-    text-shadow: 0 0 10px #fff,
-    0 0 20px #fff,
-    0 0 30px #fff,
-    0 0 40px #05ddfa,
-    0 0 70px #05ddfa,
-    0 0 80px #05ddfa,
-    0 0 100px #05ddfa,
-    0 0 150px #05ddfa;
-  }
-  to {
-    text-shadow: 0 0 5px #fff,
-    0 0 10px #fff,
-    0 0 15px #fff,
-    0 0 20px #05ddfa,
-    0 0 35px #05ddfa,
-    0 0 40px #05ddfa,
-    0 0 50px #05ddfa,
-    0 0 75px #05ddfa;
-  }
-}
-
-.blogTitle2{
-  text-align: center;
-  font-size: 30px;
-  color: #ae02f8;
-  cursor:pointer;
-  margin: 0 auto;
-  padding: 0 10px;
-  width: fit-content;
-}
-
-.blogCategory{
-  background: #333331;
-  font-weight: bold;
-  color: #ffffff;
-  width: fit-content;
-  margin: 0 auto;
-  padding: 5px 10px;
-  border-radius: 10px;
-  cursor:pointer;
-  font-size: 16px;
-}
-.blogCategory:hover{
-  background: #fa5979;
-  transition: 0.3s;
-}
-.blogCreateGmt{
-  font-weight: bold;
-  width: fit-content;
-  margin: 0 auto;
-  padding: 5px 10px;
-  border-radius: 10px;
-  cursor:default;
-  font-size: 16px;
-}
-
-.blogCategory2{
-  color: #fa0e0e;
-  width: fit-content;
-  margin: 0 auto;
-  padding: 5px 10px;
-  border-radius: 10px;
-  cursor:pointer;
-  font-size: 16px;
-}
-.blogCreateGmt2{
-  width: fit-content;
-  margin: 0 auto;
-  padding: 5px 10px;
-  border-radius: 10px;
-  cursor:pointer;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
 .el-divider--horizontal{
     background: #02f5c4;
   }

@@ -28,15 +28,15 @@ export default new Vuex.Store({
     total: null,
     height:0,
     mainloading:true,
-    categoryName:'',
+    category: {},
     whatsearch:'',
   },
   mutations:{
     setsearch(state,search){
       state.whatsearch=search
     },
-    setcategoryName(state,categoryName){
-      state.categoryName = categoryName
+    setCategory(state,categoryId,categoryName){
+      state.category[categoryId] = categoryName
     },
     setmainloading(state,status){
       state.mainloading=status

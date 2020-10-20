@@ -131,6 +131,7 @@
         select(id,name){
           this.$store.commit('setHeight',0)
           this.$store.commit('setCommonCurrentPage',1)
+          this.$store.commit('setCategory',id,name)
           this.$router.push("/index/bloglist/category/"+id)
           document.documentElement.scrollTop=0
           document.body.scrollTop=0
