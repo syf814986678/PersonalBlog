@@ -148,7 +148,8 @@
         from myblog blog
         where is_deleted =0
         and blog_id =#{blogid}
-        ORDER BY create_gmt DESC;
+        ORDER BY create_gmt DESC
+        limit 0,19;
     </select>
 
     <!--查询全部总条数-->

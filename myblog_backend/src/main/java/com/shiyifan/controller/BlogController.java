@@ -374,8 +374,8 @@ public class BlogController {
     }
 
     //分页查找最新博客
-    @PostMapping("/selectLastestBlogByPagForCommon")
-    public Result selectLastestBlogByPagForCommon(HttpServletRequest request,@RequestParam("pageNow") int pageNow, @RequestParam("pageSize") int pageSize) {
+    @PostMapping("/selectLastestBlogByPageForCommon")
+    public Result selectLastestBlogByPageForCommon(HttpServletRequest request,@RequestParam("pageNow") int pageNow, @RequestParam("pageSize") int pageSize) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         try {
@@ -387,6 +387,7 @@ public class BlogController {
             map.put("nums",nums);
         }
         catch (Exception e) {
+            e.printStackTrace();
             log.error(e);
             result.setCodeState(CodeState.exception);
             map.put("exception", "服务端处理错误！请稍后再试");

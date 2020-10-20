@@ -129,8 +129,9 @@
           }
         },
         select(id,name){
+          this.$store.commit('setHeight',0)
+          this.$store.commit('setCommonCurrentPage',1)
           this.$router.push("/index/bloglist/category/"+id)
-          this.$store.commit('setcategoryName',name)
           document.documentElement.scrollTop=0
           document.body.scrollTop=0
         },

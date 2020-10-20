@@ -288,24 +288,29 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     @Override
     public ArrayList<Myblog> selectBlogAllByPageForCommon(int categoryId, int pageNow, int pageSize) {
-        int start = (pageNow-1)*pageSize;
-        int end = (pageNow*pageSize)-1;
-        ArrayList<Object> myblogs=null;
-        if(categoryId ==0){
-            myblogs = (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
-        }
-        else {
-            myblogs = (ArrayList<Object>) redisUtil.lGet("category-"+ categoryId +"-myblogsForCommon", start, end);
-        }
-        if(myblogs.size()==0){
-            log.info("初始化redis-> selectBlogAllByPageForCommon");
-            Iterator<Myblog> iterator = blogMapper.selectBlogAllForCommon(0).iterator();
-            while (iterator.hasNext()){
-                redisUtil.RSet("myblogsForCommon", iterator.next());
+        ArrayList<Object> myblogs=new ArrayList<>();
+        for (int i = 1; i <= pageNow; i++) {
+            int start = (i-1)*pageSize;
+            int end = (i*pageSize)-1;
+            ArrayList<Object> blogs=null;
+            if(categoryId == 0){
+                blogs = (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
             }
-            myblogs= (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
+            else {
+                blogs = (ArrayList<Object>) redisUtil.lGet("category-"+ categoryId +"-myblogsForCommon", start, end);
+            }
+            if(blogs.size()==0){
+                log.info("初始化redis-> selectBlogAllByPageForCommon");
+                Iterator<Myblog> iterator = blogMapper.selectBlogAllForCommon(0).iterator();
+                while (iterator.hasNext()){
+                    redisUtil.RSet("myblogsForCommon", iterator.next());
+                }
+                blogs= (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
+            }
+            myblogs.addAll(blogs);
+            System.out.println(blogs.toString());
+            log.info("redis中存在selectBlogAllByPageForCommon-> categoryId:"+ categoryId +"<=>"+"start:"+start+"<=>"+"end:"+end);
         }
-        log.info("redis中存在selectBlogAllByPageForCommon-> categoryId:"+ categoryId +"<=>"+"start:"+start+"<=>"+"end:"+end);
         return (ArrayList<Myblog>)(Object)myblogs;
     }
 
