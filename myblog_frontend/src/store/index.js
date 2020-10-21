@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from "vuex-persistedstate"
 import router from "../router";
+import ca from "element-ui/src/locale/lang/ca";
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -24,8 +25,6 @@ export default new Vuex.Store({
     },
     commonCurrentPage: 1,
     currentPage: 1,
-    myblogs:[],
-    total: null,
     height:0,
     mainloading:true,
     category: {},
@@ -35,25 +34,14 @@ export default new Vuex.Store({
     setsearch(state,search){
       state.whatsearch=search
     },
-    setCategory(state,categoryId,categoryName){
-      state.category[categoryId] = categoryName
+    setCategory(state,category){
+      state.category[category[0]] = category[1]
     },
     setmainloading(state,status){
       state.mainloading=status
     },
     setHeight(state,height){
       state.height=height
-    },
-    setMyBlogs(state,myblogs){
-      myblogs.forEach(function (v) {
-        state.myblogs.push(v)
-      })
-    },
-    setMyBlogsTotal(state,total){
-      state.total=total
-    },
-    clearMyBlogs(state){
-      state.myblogs.length=0
     },
     setCommonCurrentPage(state,page){
       state.commonCurrentPage=page

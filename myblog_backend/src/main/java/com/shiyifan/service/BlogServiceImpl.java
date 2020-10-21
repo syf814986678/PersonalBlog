@@ -308,7 +308,6 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
                 blogs= (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
             }
             myblogs.addAll(blogs);
-            System.out.println(blogs.toString());
             log.info("redis中存在selectBlogAllByPageForCommon-> categoryId:"+ categoryId +"<=>"+"start:"+start+"<=>"+"end:"+end);
         }
         return (ArrayList<Myblog>)(Object)myblogs;

@@ -128,10 +128,9 @@
             document.body.scrollTop=0
           }
         },
-        select(id,name){
+        select(id){
           this.$store.commit('setHeight',0)
           this.$store.commit('setCommonCurrentPage',1)
-          this.$store.commit('setCategory',id,name)
           this.$router.push("/index/bloglist/category/"+id)
           document.documentElement.scrollTop=0
           document.body.scrollTop=0
@@ -146,6 +145,9 @@
           if (response!=null){
             this.mycategories=response.data.msg["mycategories"]
             this.loading=false
+            for (let i = 0; i < this.mycategories.length; i++) {
+              this.$store.commit('setCategory',[this.mycategories[i].categoryId,this.mycategories[i].categoryName])
+            }
             document.onkeydown = function (e) {
               // 回车提交表单
               // 兼容FF和IE和Opera
@@ -217,7 +219,6 @@
     display: block;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.8);
     color: #ffffff;
-    font-family: Arial;
     font-size: 15px;
     letter-spacing: 1px;
     height: 48px;

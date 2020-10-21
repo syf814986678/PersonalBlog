@@ -3,15 +3,14 @@
   <div v-for="result in results" :key="result.blogId">
     <div>
       <el-row style="margin-top: 15px">
-        <el-col :span="5" style="text-align: center">
+        <el-col :span="5"  class="myimage">
           <el-image
             :lazy="lazy"
             style="width: 90%; height: 200px;border-radius: 20px"
             :src="result.blogCoverImage"
             fit="fill"></el-image>
         </el-col>
-        <el-col :span="18" style="text-align: center;background-color: rgba(239,236,236,0.78);border-radius: 20px;">
-<!--          <h2 v-html="result.blogTitle" @click="open(result.blogId)" style="cursor:pointer;background-color: rgba(184,134,11,0.38)"></h2>-->
+        <el-col :span="18" class="mycontent1">
           <h2 style="background-color: rgba(184,134,11,0.38)"><el-link v-html="result.blogTitle" :href="'/#/index/blog/'+result.blogId" target="_blank" style="font-size: 25px"></el-link></h2>
           <div v-html="result.blogContent" style="text-align:left;overflow: auto;word-break: break-all;margin: 0 10px;font-size: 20px;line-height: 30px;height: 100px"></div>
           <el-row style="margin-bottom: 5px">
@@ -31,11 +30,31 @@
 
 
         </el-col>
+        <el-col :span="24" class="mycontent2">
+          <div style="margin: 0 5px">
+            <h2 style="background-color: rgba(184,134,11,0.38)"><el-link v-html="result.blogTitle" :href="'/#/index/blog/'+result.blogId" target="_blank" style="font-size: 25px"></el-link></h2>
+            <div v-html="result.blogContent" style="text-align:left;overflow: auto;word-break: break-all;margin: 0 10px;font-size: 20px;line-height: 30px;height: 100px"></div>
+            <el-row style="margin-bottom: 5px">
+              <el-col :span="6">
+                <span style="color: grey">Author：{{result.blogUser}}</span>
+              </el-col>
+              <el-col :span="6">
+                <span style="color: grey">Category：{{result.blogCategory}}</span>
+              </el-col>
+              <el-col :span="6">
+                <span style="color: grey">Create：{{result.createGmt}}</span>
+              </el-col>
+              <el-col :span="6">
+                <span style="color: grey">Update：{{result.updateGmt}}</span>
+              </el-col>
+            </el-row>
+          </div>
+        </el-col>
       </el-row>
       <el-divider></el-divider>
     </div>
   </div>
-  <el-col style="margin-top: 5px;margin-bottom: 5px;text-align: center">
+  <el-row style="margin-top: 5px;margin-bottom: 5px;text-align: center">
     <el-pagination
       background
       :hide-on-single-page="true"
@@ -45,7 +64,7 @@
       :total="total"
       layout="prev, pager, next, jumper, total"
     ></el-pagination>
-  </el-col>
+  </el-row>
 
 </div>
 </template>
@@ -75,7 +94,6 @@
             if (this.$store.state.whatsearch!==''){
               window.document.title = '博客搜索: '+this.$store.state.whatsearch
             }
-
             this.$http.post("/blog/search/"+this.$route.params.whatsearch).then(response=>{
               if (response!=null){
                 this.allresults=response.data.msg["results"];
@@ -115,6 +133,34 @@
 </script>
 
 <style scoped>
+@media only screen and (max-width: 767px) {
+  .myimage{
+    display: none;
+  }
+  .mycontent1{
+    display: none;
+  }
+  .mycontent2{
+    text-align: center;
+    background-color: rgba(239,236,236,0.78);
+    border-radius: 20px;
+  }
+}
+@media only screen and (min-width: 768px) {
+  .mycontent1{
+    text-align: center;
+    background-color: rgba(239,236,236,0.78);
+    border-radius: 20px;
+  }
+  .mycontent2{
+    display: none;
+  }
+}
+.myimage{
+  text-align: center;
+}
+
+
   .el-divider--horizontal{
     background: #02f5c4;
     margin: 20px 0;

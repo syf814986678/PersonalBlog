@@ -86,15 +86,6 @@
           document.body.scrollTop=0
           this.refresh();
         },
-        // beforeRouteLeave(to,from,next){
-        //   this.$store.commit('clearMyBlogs')
-        //   this.$store.commit('setMyBlogsTotal',null)
-        //   this.$store.commit('setCommonCurrentPage',1)
-        //   this.$store.commit('setHeight',0)
-        //   next()
-        // }
-
-
     }
 </script>
 

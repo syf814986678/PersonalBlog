@@ -77,18 +77,13 @@
             }
           }
       },
-      select(id,name){
-        this.$store.commit('setCategory',id,name)
+      select(id){
         this.$router.push("/index/bloglist/category/"+id)
-        alert(id+name)
-        // && this.$route.params.bloglist2==="all"
       },
       refresh(page){
         if (this.$route.params.bloglist==="all"){
           this.$http.post("/blog/selectLastestBlogByPageForCommon","pageNow="+page+"&pageSize="+this.pageSize).then(response=>{
             if (response!=null){
-              // this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
-              // this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
               this.myblogs=response.data.msg["myblogs"]
               this.total=response.data.msg["nums"]
               setTimeout(() => {
@@ -107,10 +102,9 @@
           })
         }
         else if (this.$route.params.bloglist==="category"){
+          window.document.title = '博客类别: '+this.$store.state.category[this.$route.params.bloglist2]
           this.$http.post("/blog/selectBlogByCategoryIdAndPageForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&categoryId="+this.$route.params.bloglist2).then(response=>{
             if (response!=null){
-              // this.$store.commit('setMyBlogs',response.data.msg["myblogs"])
-              // this.$store.commit('setMyBlogsTotal',response.data.msg["nums"])
               this.myblogs=response.data.msg["myblogs"]
               this.total=response.data.msg["nums"]
               setTimeout(() => {
@@ -139,37 +133,7 @@
         document.getElementById("myelmain").scrollTop=5
         document.getElementById("myelmain").scrollTop=this.$store.state.height
       }, 500)
-      // if(this.$store.state.myblogs.length===0){
-      //   this.refresh(this.currentPage)
-      //   setTimeout(() => {
-      //     document.getElementById("myelmain").scrollTop=5
-      //     document.getElementById("myelmain").scrollTop=0
-      //   }, 500)
-      // }
-      // else {
-      //   this.myblogs = this.$store.state.myblogs
-      //   this.total = this.$store.state.total
-      //   if (this.$store.state.height===0 && this.total>1){
-      //     setTimeout(() => {
-      //       document.getElementById("myelmain").scrollTop=5
-      //       document.getElementById("myelmain").scrollTop=0
-      //       this.disabled=false
-      //     }, 500)
-      //   }
-      //   else if (this.$store.state.height===0 && this.total<=2) {
-      //     this.lazy=false
-      //   }
-      //   else {
-      //     setTimeout(() => {
-      //       document.getElementById("myelmain").scrollTop=this.$store.state.height
-      //       this.disabled=false
-      //     }, 500)
-      //   }
-      // }
-      // this.$store.commit('setmainloading',false)
-      // if (this.$store.state.categoryName!==''){
-      //   window.document.title = '博客类别: '+this.$store.state.categoryName
-      // }
+
     },
     beforeRouteLeave (to, from, next) {
       this.disabled=true
@@ -179,14 +143,8 @@
     watch: {
       '$route.params.bloglist2': function (to, from) {
         this.disabled=true
-        // this.currentPage=1
-        // this.$store.commit('clearMyBlogs')
-        // this.$store.commit('setMyBlogsTotal',null)
-        // this.$store.commit('setCommonCurrentPage',1)
-        // this.$store.commit('setHeight',0)
         this.$store.commit('setCommonCurrentPage',1)
         this.refresh(this.$store.state.commonCurrentPage)
-
         setTimeout(() => {
           document.documentElement.scrollTop=0
           document.body.scrollTop=0
