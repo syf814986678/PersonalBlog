@@ -323,7 +323,6 @@
             this.filename=response.data.filename
           }
         }).catch(error=> {
-          console.log("上传oss错误")
           console.log(error)
           this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
         })

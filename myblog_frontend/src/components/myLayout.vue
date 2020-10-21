@@ -23,11 +23,11 @@
                 v-model="visible">
                 <el-row>
                   <el-col :span="12"><span style="font-size: medium">id：</span></el-col>
-                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">1</el-tag></el-col>
+                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">{{ this.$store.state.myuser.userid}}</el-tag></el-col>
                 </el-row>
                 <el-row style="margin-top: 0.5rem">
                   <el-col :span="12"><span style="font-size: medium">用户名：</span></el-col>
-                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">admin</el-tag></el-col>
+                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">{{this.$store.state.myuser.username}}</el-tag></el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="24">
@@ -43,38 +43,55 @@
         </el-row>
       </div>
     </el-header>
-            <el-container style="margin-top: 5px;margin-left: 5px">
-              <el-aside
-                class="myaside"
-                :width="this.$store.state.isCollapse?'65px':'200px'"
-                @mouseenter.native="collapseOpen"
-                @mouseleave.native="collapseClose">
-                <el-menu router :default-active="$route.path" :collapse="this.$store.state.isCollapse" :collapse-transition="false">
-                  <el-menu-item @click="reverse" style="text-align: center"><i class="el-icon-s-grid" style="font-size: 30px;margin-left: -5px"></i></el-menu-item>
-                  <el-menu-item index="/admin/index"><i class="el-icon-s-platform"></i><span>主页</span></el-menu-item>
-                  <el-submenu index="/admin/blog">
-                    <template slot="title"><i class="el-icon-data-board"></i><span>博客管理</span></template>
-                    <el-menu-item-group>
-                      <el-menu-item index="/admin/showBlogList"><template slot="title"><i class="el-icon-s-operation"></i><span>博客列表</span></template></el-menu-item>
-                      <el-menu-item index="/admin/showAddBlog"><template slot="title"><i class="el-icon-plus"></i><span>添加博客</span></template></el-menu-item>
-                    </el-menu-item-group>
-                  </el-submenu>
-                  <el-submenu index="/admin/category">
-                    <template slot="title"><i class="el-icon-collection-tag"></i><span>类别管理</span></template>
-                    <el-menu-item-group>
-                      <el-menu-item index="/admin/showCategoryList"><template slot="title"><i class="el-icon-s-operation"></i><span>类别列表</span></template></el-menu-item></el-menu-item-group>
-                  </el-submenu>
-                </el-menu>
-              </el-aside>
-              <el-main class="mymain" >
-                <transition mode="out-in"
-                            enter-active-class="animate__animated animate__bounceInDown animate__faster"
-                            leave-active-class="animate__animated animate__bounceOutDown animate__faster">
-                  <router-view/>
-                </transition>
-              </el-main>
-
-            </el-container>
+    <el-container style="margin-top: 5px;margin-left: 5px">
+      <el-aside
+        class="myaside"
+        :width="this.$store.state.isCollapse?'65px':'200px'"
+        :style="{height:this.height+'px'}"
+        @mouseenter.native="collapseOpen"
+        @mouseleave.native="collapseClose">
+        <el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router :default-active="$route.path" :collapse="this.$store.state.isCollapse" :collapse-transition="false">
+          <el-menu-item @click="reverse" style="text-align: center"><i class="el-icon-s-grid" style="font-size: 30px;margin-left: -5px"></i></el-menu-item>
+          <el-menu-item index="/admin/index"><i class="el-icon-s-platform"></i><span>主页</span></el-menu-item>
+          <el-submenu index="1">
+            <template slot="title"><i class="el-icon-data-board"></i><span>博客管理</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/admin/showBlogList"><template slot="title"><i class="el-icon-s-operation"></i><span>博客列表</span></template></el-menu-item>
+              <el-menu-item index="/admin/showAddBlog"><template slot="title"><i class="el-icon-plus"></i><span>添加博客</span></template></el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+          <el-submenu index="2">
+            <template slot="title"><i class="el-icon-collection-tag"></i><span>类别管理</span></template>
+            <el-menu-item-group>
+              <el-menu-item index="/admin/showCategoryList"><template slot="title"><i class="el-icon-s-operation"></i><span>类别列表</span></template></el-menu-item></el-menu-item-group>
+          </el-submenu>
+        </el-menu>
+      </el-aside>
+      <el-main class="mymain" :style="{height:this.height+'px'}" >
+        <div class="mobile">
+          <el-menu ref="mymenu" @select="handleSelect" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" mode="horizontal" router :default-active="$route.path">
+            <el-menu-item index="/admin/index"><i class="el-icon-s-platform"></i><span>主页</span></el-menu-item>
+            <el-submenu index="1">
+              <template slot="title"><i class="el-icon-data-board"></i><span>博客</span></template>
+              <el-menu-item-group>
+                <el-menu-item index="/admin/showBlogList"><template slot="title"><i class="el-icon-s-operation"></i><span>博客列表</span></template></el-menu-item>
+                <el-menu-item index="/admin/showAddBlog"><template slot="title"><i class="el-icon-plus"></i><span>添加博客</span></template></el-menu-item>
+              </el-menu-item-group>
+            </el-submenu>
+            <el-submenu index="2">
+              <template slot="title"><i class="el-icon-collection-tag"></i><span>类别</span></template>
+              <el-menu-item-group>
+                <el-menu-item index="/admin/showCategoryList"><template slot="title"><i class="el-icon-s-operation"></i><span>类别列表</span></template></el-menu-item></el-menu-item-group>
+            </el-submenu>
+          </el-menu>
+        </div>
+        <transition mode="out-in"
+                    enter-active-class="animate__animated animate__bounceInDown animate__faster"
+                    leave-active-class="animate__animated animate__bounceOutDown animate__faster">
+          <router-view/>
+        </transition>
+      </el-main>
+    </el-container>
     <el-footer class="myfooter">
       <div class="myfooterinfo">
         <el-link style="margin-top: -16px;margin-bottom: 0" href="https://www.chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
@@ -88,14 +105,15 @@
 </template>
 
 <script>
-import "../assets/js/calc"
 import {getHeight} from "../assets/js/calc";
+import {time} from "../assets/js/showTime"
 export default {
   name: "myLayout",
   data() {
     return {
       visible: false,
-      url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593937482731&di=bece2a0fc9049db36a1cb5324a016222&imgtype=0&src=http%3A%2F%2Fdmimg.5054399.com%2Fallimg%2Fpkm%2Fpk%2F13.jpg'
+      url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593937482731&di=bece2a0fc9049db36a1cb5324a016222&imgtype=0&src=http%3A%2F%2Fdmimg.5054399.com%2Fallimg%2Fpkm%2Fpk%2F13.jpg',
+      height: 0,
     }
   },
   // components:{
@@ -114,38 +132,23 @@ export default {
     logout() {
       this.$store.commit('logout')
     },
+    reverse(){
+      this.$store.commit('collapseReverse')
+    },
+    handleSelect(index,indexPath){
+      // console.log(indexPath)
+      // console.log(indexPath[1])
+      // this.$refs.mymenu.open(index)
+      this.$refs.mymenu.open(indexPath[1])
+
+    }
+
   },
   created() {
-    document.getElementsByClassName("mymain").style.height=getHeight();
+    this.height=getHeight()-130;
+    time()
   }
 }
-var t = null;
-t = setTimeout(time, 1000); //開始运行
-function time() {
-  clearTimeout(t); //清除定时器
-  const dt = new Date();
-  var y = dt.getFullYear();
-  var mt = dt.getMonth() + 1;
-  var day = dt.getDate();
-  var h = dt.getHours(); //获取时
-  var m = dt.getMinutes(); //获取分
-  var s = dt.getSeconds(); //获取秒
-  document.querySelector(".showTime").innerHTML =
-    y +
-    "年" +
-    mt +
-    "月" +
-    day +
-    "日" +
-    h +
-    "时" +
-    m +
-    "分" +
-    s +
-    "秒";
-  t = setTimeout(time, 1000); //设定定时器，循环运行
-}
-
 </script>
 
 <style scoped>
@@ -175,15 +178,6 @@ function time() {
   margin-right: 5px;
 }
 
-
-
-
-@media only screen and (max-width: 767px) {
-  .showTime {
-    display: none;
-  }
-}
-
 .myfooter{
   background-color: #fff;
   text-align: center;
@@ -205,29 +199,40 @@ function time() {
   margin: 0 -16px;
 }
 
-
-
-/*.my-el-aside {*/
-/*  background-color: #3a92f1;*/
-/*  color: #333;*/
-/*  text-align: left;*/
-/*}*/
-
-
-/*.my-el-main {*/
-/*  !*background-color: rgb(255, 215, 180);*!*/
-/*  background: url("https://picture.chardance.cloud/myblog/frontResource/images/bg.png");*/
-/*  background-size: cover;*/
-/*  color: #333;*/
-/*  padding-bottom: 0*/
-/*}*/
+.mymain{
+  background: url("https://picture.chardance.cloud/myblog/frontResource/images/bg.png");
+  background-size: cover;
+}
 
 
 
-/*.my-information {*/
-/*  !*浅色投影*!*/
-/*  margin-top: 10px;*/
-/*  float: right;*/
-/*}*/
+@media only screen and (max-width: 767px) {
+  .showTime {
+    display: none;
+  }
+  .myaside {
+    display: none;
+  }
+  .mobile{
+    margin-bottom: 15px;
+  }
+  .mymain{
+    padding: 10px !important;
+  }
+
+}
+@media only screen and (min-width: 768px) {
+  .myaside {
+    background-color: #545c64;
+    /*color: #333;*/
+    text-align: left;
+  }
+  .mobile{
+    display: none;
+  }
+}
+
+
+
 
 </style>

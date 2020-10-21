@@ -12,7 +12,6 @@
                       <router-view/>
                   </transition>
                 </el-main>
-
                 <el-col :xs="24" class="bordercolor">
                   <div class="mydiv" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
                     <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px; font-family: Arial;margin-top: 10px">TOP10类型</el-tag></el-row>
@@ -40,7 +39,6 @@
                 </el-col>
 
               </el-col>
-
               <el-col :xl="3" :xs="0" style="max-width: 235px;">
                 <el-aside
                   style="height: 830px;width: 235px"
@@ -88,6 +86,7 @@
 
 
 <script>
+    import {time} from "../../assets/js/showTime";
     export default {
         name: "commonIndex",
       data(){
@@ -164,37 +163,12 @@
           console.log(error)
           this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
         })
+        time()
       },
       beforeRouteLeave (to, from, next) {
         document.onkeydown = undefined
         next()
       },
-    }
-    var t = null;
-    t = setTimeout(time, 1000); //開始运行
-    function time() {
-      clearTimeout(t); //清除定时器
-      const dt = new Date();
-      var y = dt.getFullYear();
-      var mt = dt.getMonth() + 1;
-      var day = dt.getDate();
-      var h = dt.getHours(); //获取时
-      var m = dt.getMinutes(); //获取分
-      var s = dt.getSeconds(); //获取秒
-      document.querySelector(".showTime").innerHTML =
-        y +
-        "年" +
-        mt +
-        "月" +
-        day +
-        "日" +
-        h +
-        "时" +
-        m +
-        "分" +
-        s +
-        "秒";
-      t = setTimeout(time, 1000); //设定定时器，循环运行
     }
 </script>
 
