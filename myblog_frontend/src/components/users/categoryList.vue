@@ -51,17 +51,29 @@
       </el-col>
     </el-row>
 
-    <el-dialog :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+    <el-dialog class="pc" :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-row>
-        <el-col :span="2" >
-          <el-tag type="danger" effect="dark"  style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.8);margin-left: -13px;height: 40px;font-size: 13px;padding-top: 4px">类别名称</el-tag>
+        <el-col :span="3">
+          <el-tag type="danger" effect="dark"  style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);height: 38px;font-size: 13px;padding-top: 4px">类别名称</el-tag>
         </el-col>
-        <el-col :span="20">
-          <el-input v-model="cagetoryname" placeholder="输入类别名称" style="border-radius: 4px;margin-left:10px;width: 95%;box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.8);"></el-input>
+        <el-col :span="18">
+          <el-input v-model="cagetoryname" placeholder="输入类别名称" style="border-radius: 4px;box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);"></el-input>
         </el-col>
-        <el-col :span="2">
-          <el-button style="box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.8);" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
+        <el-col :span="3">
+          <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);float: right" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
         </el-col>
+      </el-row>
+    </el-dialog>
+
+    <el-dialog class="mobile" width="80%" :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+      <el-row style="text-align: center">
+          <el-tag type="danger" effect="dark"  style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width:200px;height: 38px;font-size: 13px;padding-top: 4px">类别名称</el-tag>
+      </el-row>
+      <el-row style="margin: 30px auto">
+        <el-input v-model="cagetoryname" placeholder="输入类别名称" style="border-radius: 4px;box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);"></el-input>
+      </el-row>
+      <el-row style="text-align: center">
+        <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width: 200px" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
       </el-row>
     </el-dialog>
   </div>
@@ -214,12 +226,14 @@ export default {
 </script>
 
 <style scoped>
-.el-table .warning-row {
-  background: #fce3d1;
-
+@media only screen and (max-width: 767px) {
+  .pc{
+    display: none !important;
+  }
 }
-
-.el-table .success-row {
-  background: #e6ffda;
+@media only screen and (min-width: 768px) {
+  .mobile{
+    display: none !important;
+  }
 }
 </style>

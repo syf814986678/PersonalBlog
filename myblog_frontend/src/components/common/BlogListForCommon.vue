@@ -58,7 +58,7 @@
             });
           }
           else {
-            if (this.$route.params.bloglist==="all" && this.myblogs.length>=20){
+            if (this.$route.params.bloglist==="all" && this.myblogs.length>=10){
               this.$message({
                 message: '请选择右侧类型查看更多博客！',
                 type: 'error',

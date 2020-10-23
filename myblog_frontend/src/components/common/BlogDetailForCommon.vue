@@ -13,7 +13,7 @@
         </el-image>
       </el-row>
       <el-divider></el-divider>
-      <el-row style="margin-top: 2px;box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.2);padding: 2px 0px;text-align: center">
+      <el-row style="margin-top: 2px;box-shadow: 0 0 50px 0 rgba(0,0,0,0.8);padding: 2px 0px;text-align: center">
 
         <el-col style=" font-size: medium;font-weight: bold;font-family: Arial;word-break: break-all;background-color: #ff7f50" :span="6">
           作者:{{this.myblog.myuser.userName}}

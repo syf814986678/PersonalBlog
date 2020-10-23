@@ -13,6 +13,8 @@ function getHeight(){
   }
   return winHeight
 }
+t = setTimeout(getWidth, 1000); //開始运行
+
 function getWidth(){
   var winWidth=null
 // 获取窗口宽度
@@ -26,6 +28,7 @@ function getWidth(){
   {
     winWidth = document.documentElement.clientWidth;
   }
+  t = setTimeout(getWidth, 1000); //開始运行
   return winWidth
 }
 export {

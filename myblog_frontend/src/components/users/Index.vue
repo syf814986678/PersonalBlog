@@ -1,32 +1,37 @@
 <template>
-  <el-container>
-    <el-header style="height: 120px">
-      <div class="no-hd">
-        <ul>
-<!--          <li>{{ this.totalBlogNums }}</li>-->
-<!--          <li>{{ this.todayVisitors }}</li>-->
-<!--          <li>{{ this.yesterdayVisitors }}</li>-->
-          <li>1234</li>
-          <li>3456</li>
-          <li>5678</li>
-        </ul>
-      </div>
-      <div class="no-bd">
-        <ul>
-          <li>总博客数</li>
-          <li>今日访问人数</li>
-          <li>昨日访问人数</li>
-        </ul>
-      </div>
-    </el-header>
-    <el-container class="map">
-        <div class="map_bg"></div>
-        <div class="map_bg2"></div>
-        <div class="map_bg3"></div>
-        <div class="chart"></div>
-    </el-container>
-    <el-footer>Fotter</el-footer>
-  </el-container>
+  <div>
+    <div class="no-hd">
+      <ul>
+        <!--          <li>{{ this.totalBlogNums }}</li>-->
+        <!--          <li>{{ this.todayVisitors }}</li>-->
+        <!--          <li>{{ this.yesterdayVisitors }}</li>-->
+        <li>1234</li>
+        <li>3456</li>
+        <li>5678</li>
+      </ul>
+    </div>
+    <div class="no-bd">
+      <ul>
+        <li>总博客数</li>
+        <li>今日访问人数</li>
+        <li>昨日访问人数</li>
+      </ul>
+    </div>
+    <div class="map">
+      <div class="map_bg"></div>
+      <div class="map_bg2"></div>
+      <div class="map_bg3"></div>
+    </div>
+  </div>
+
+
+<!--    <el-container class="map">-->
+<!--        <div class="map_bg"></div>-->
+<!--        <div class="map_bg2"></div>-->
+<!--        <div class="map_bg3"></div>-->
+<!--        <div class="chart"></div>-->
+<!--    </el-container>-->
+<!--    <el-footer>Fotter</el-footer>-->
 </template>
 
 <script>
@@ -84,22 +89,11 @@
 </script>
 
 <style scoped>
-.chart {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 30.375rem;
-}
 
 .map{
   position: relative;
-  height: 30.375rem;
-  top: 60px;
 }
 .map_bg {
-  width: 25.9rem;
-  height: 25.9rem;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -113,8 +107,6 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 32.13125rem;
-  height: 32.13125rem;
   background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg2.png");
   animation: rotate1 15s linear infinite;
   opacity: 0.8;
@@ -125,13 +117,21 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 28.2rem;
-  height: 28.2rem;
   background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg3.png");
   animation: rotate2 10s linear infinite;
   opacity: 0.6;
   background-size: 100% 100%;
 }
+
+.chart {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30.375rem;
+}
+
+
 
 @keyframes rotate2 {
   form {
@@ -158,20 +158,20 @@
   font-style: normal;
 }
 
-.el-header{
-  background-color: #1e2064;
-  color: #333;
-  text-align: center;
-}
+/*.el-header{*/
+/*  background-color: #1e2064;*/
+/*  color: #333;*/
+/*  text-align: center;*/
+/*}*/
 
 .no-hd{
   background: rgba(101, 132, 226, 0.2);
   position: relative;
   border: 1px solid rgba(25, 186, 139, 0.17);
-  margin: 0 -20px;
 }
 .no-hd>ul,.no-bd>ul{
   display: flex;
+  padding-left: 0 !important;
 }
 .no-hd:before{
   position: absolute;
@@ -199,7 +199,6 @@
   position: relative;
   flex: 1;
   line-height: 40px;
-  font-size: 75px;
   color: #ffeb7b;
   text-align: center;
   list-style: none;
@@ -223,6 +222,7 @@
   width: 1px;
   background: rgba(255, 255, 255, 0.2);
 }
+
 .no-bd>ul>li{
   flex: 1;
   line-height: 10px;
@@ -230,6 +230,49 @@
   text-align: center;
   list-style: none;
   color: #02f5a8;
+}
+
+
+@media only screen and (max-width: 767px) {
+  .no-hd>ul>li{
+    font-size: 40px;
+  }
+  .map{
+    height: 20.375rem;
+  }
+  .map_bg {
+    width: 15rem;
+    height: 15rem;
+  }
+  .map_bg2 {
+    width: 18rem;
+    height: 18rem;
+  }
+  .map_bg3{
+    width: 16.5rem;
+    height: 16.5rem;
+  }
+}
+@media only screen and (min-width: 768px) {
+  .no-hd>ul>li{
+    font-size: 75px;
+  }
+  .map{
+    height: 30.375rem;
+    top: 40px;
+  }
+  .map_bg {
+    width: 25.9rem;
+    height: 25.9rem;
+  }
+  .map_bg2 {
+    width: 30rem;
+    height: 30rem;
+  }
+  .map_bg3{
+    width: 28.2rem;
+    height: 28.2rem;
+  }
 }
 
 </style>

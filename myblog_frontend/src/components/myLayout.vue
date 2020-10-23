@@ -43,7 +43,7 @@
         </el-row>
       </div>
     </el-header>
-    <el-container style="margin-top: 5px;margin-left: 5px">
+    <el-container class="mycontainer" style="margin-top: 5px">
       <el-aside
         class="myaside"
         :width="this.$store.state.isCollapse?'65px':'200px'"
@@ -116,12 +116,9 @@ export default {
       height: 0,
     }
   },
-  // components:{
-  //   myheader: myHeader,
-  //   myaside: myAside,
-  //   mymain: myMain,
-  //   myfooter: myFooter
-  // },
+  computed:{
+    this.height=getHeight()-130;
+  },
   methods: {
     collapseOpen() {
       this.$store.commit('collapseOpen')
@@ -145,7 +142,6 @@ export default {
 
   },
   created() {
-    this.height=getHeight()-130;
     time()
   }
 }
@@ -159,7 +155,7 @@ export default {
 .mytitle{
   background-color: #11c69c;
   border-radius: 20px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
   margin: 3px -16px;
   padding: 5px 10px 0;
 }
@@ -168,7 +164,7 @@ export default {
   color: #fff;
   display: block;
   padding: 0 10px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.5);
   width: fit-content;
   margin-left: 5px;
   border-radius: 10px;
@@ -190,7 +186,7 @@ export default {
   background-color: #333;
   border-radius: 20px;
   display: block;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.8);
   color: #ffffff;
   font-size: 15px;
   letter-spacing: 1px;
@@ -199,14 +195,11 @@ export default {
   margin: 0 -16px;
 }
 
-.mymain{
-  background: url("https://picture.chardance.cloud/myblog/frontResource/images/bg.png");
-  background-size: cover;
-}
-
-
-
 @media only screen and (max-width: 767px) {
+  .mycontainer{
+    background-image: url("https://picture.chardance.cloud/myblog/bg/bgMobile.png");
+    background-size: cover;
+  }
   .showTime {
     display: none;
   }
@@ -215,6 +208,7 @@ export default {
   }
   .mobile{
     margin-bottom: 15px;
+    text-align: center;
   }
   .mymain{
     padding: 10px !important;
@@ -222,6 +216,10 @@ export default {
 
 }
 @media only screen and (min-width: 768px) {
+  .mycontainer{
+    background-image: url("https://picture.chardance.cloud/myblog/frontResource/images/bg.png ");
+    background-size: cover;
+  }
   .myaside {
     background-color: #545c64;
     /*color: #333;*/

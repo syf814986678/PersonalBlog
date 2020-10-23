@@ -130,7 +130,7 @@
         select *
         from myblog blog
         where blog_id =#{blogid}
-        and is_deleted =0
+        and is_deleted =0;
     </select>
 
     <!--查找最新博客-->
@@ -141,15 +141,15 @@
         <if test="categoryid != 0">
             AND blog_category_id =#{categoryid}
         </if>
-        ORDER BY create_gmt DESC;
+        ORDER BY create_gmt DESC
+        limit 0,9;
     </select>
     <select id="selectBlogForOneForCommon" resultMap="blogandcategoryandusername">
         select blog_id,blog_title,blog_cover_image,blog_category_id,blog_user_id,create_gmt,update_gmt
         from myblog blog
         where is_deleted =0
         and blog_id =#{blogid}
-        ORDER BY create_gmt DESC
-        limit 0,19;
+        ORDER BY create_gmt DESC;
     </select>
 
     <!--查询全部总条数-->
