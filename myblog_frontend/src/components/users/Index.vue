@@ -2,12 +2,12 @@
   <div>
     <div class="no-hd">
       <ul>
-        <!--          <li>{{ this.totalBlogNums }}</li>-->
-        <!--          <li>{{ this.todayVisitors }}</li>-->
-        <!--          <li>{{ this.yesterdayVisitors }}</li>-->
-        <li>1234</li>
-        <li>3456</li>
-        <li>5678</li>
+                  <li>{{ this.totalBlogNums }}</li>
+                  <li>{{ this.todayVisitors }}</li>
+                  <li>{{ this.yesterdayVisitors }}</li>
+<!--        <li>1234</li>-->
+<!--        <li>3456</li>-->
+<!--        <li>5678</li>-->
       </ul>
     </div>
     <div class="no-bd">
@@ -21,17 +21,9 @@
       <div class="map_bg"></div>
       <div class="map_bg2"></div>
       <div class="map_bg3"></div>
+      <div class="chart"></div>-->
     </div>
   </div>
-
-
-<!--    <el-container class="map">-->
-<!--        <div class="map_bg"></div>-->
-<!--        <div class="map_bg2"></div>-->
-<!--        <div class="map_bg3"></div>-->
-<!--        <div class="chart"></div>-->
-<!--    </el-container>-->
-<!--    <el-footer>Fotter</el-footer>-->
 </template>
 
 <script>
@@ -48,81 +40,47 @@
 
         },
         created() {
-          // this.$http.post("/blog/selectTotalBlogNums").then(response=>{
-          //   if (response!=null){
-          //     this.totalBlogNums=response.data.msg["totalBlogNums"];
-          //   }
-          // }).catch(error=> {
-          //   console.log(error)
-          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          // })
-          // this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
-          //   if (response!=null){
-          //     this.todayVisitors=response.data.msg["visitNums"];
-          //   }
-          // }).catch(error=> {
-          //   console.log(error)
-          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          // })
-          // this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
-          //   if (response!=null){
-          //     this.yesterdayVisitors=response.data.msg["visitNums"];
-          //   }
-          // }).catch(error=> {
-          //   console.log(error)
-          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          // })
-          // this.$http.post("/blog/selectBlogByPage","pageNow=0"+"&pageSize=5").then(response=>{
-          //   if (response!=null){
-          //     this.$notify({
-          //       title: '欢迎',
-          //       message: "欢迎登录本博客",
-          //       type: 'success',
-          //       duration: 2500
-          //     });
-          //   }
-          // }).catch(error=> {
-          //   console.log(error);
-          // })
+          this.$http.post("/blog/selectTotalBlogNums").then(response=>{
+            if (response!=null){
+              this.totalBlogNums=response.data.msg["totalBlogNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
+            if (response!=null){
+              this.todayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
+            if (response!=null){
+              this.yesterdayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/selectBlogByPage","pageNow=0"+"&pageSize=5").then(response=>{
+            if (response!=null){
+              this.$notify({
+                title: '欢迎',
+                message: "欢迎登录本博客",
+                type: 'success',
+                duration: 2500
+              });
+            }
+          }).catch(error=> {
+            console.log(error);
+          })
         }
     }
 </script>
 
 <style scoped>
-
-.map{
-  position: relative;
-}
-.map_bg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg.png");
-  background-size: 100% 100%;
-  opacity: 0.7;
-}
-.map_bg2 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg2.png");
-  animation: rotate1 15s linear infinite;
-  opacity: 0.8;
-  background-size: 100% 100%;
-}
-.map_bg3{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg3.png");
-  animation: rotate2 10s linear infinite;
-  opacity: 0.6;
-  background-size: 100% 100%;
-}
-
 .chart {
   position: absolute;
   top: 0;
@@ -131,7 +89,32 @@
   height: 30.375rem;
 }
 
-
+.map {
+  position: relative;
+}
+.map_bg {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg.png");
+  background-size: 100% 100%;
+  opacity: 0.6;
+}
+.map_bg2 {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg2.png");
+  animation: rotate1 15s linear infinite;
+  opacity: 1;
+  background-size: 100% 100%;
+}
+.map_bg3{
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: url("https://picture.chardance.cloud/myblog/frontResource/images/map_bg3.png");
+  animation: rotate2 10s linear infinite;
+  opacity: 0.8;
+  background-size: 100% 100%;
+}
 
 @keyframes rotate2 {
   form {
@@ -141,7 +124,6 @@
     transform: translate(-50%, -50%) rotate(-360deg);
   }
 }
-
 @keyframes rotate1 {
   from {
     transform: translate(-50%, -50%) rotate(0deg);
@@ -150,19 +132,12 @@
     transform: translate(-50%, -50%) rotate(360deg);
   }
 }
-
 @font-face {
   font-family: 'electronicFont';
   src: url("https://picture.chardance.cloud/myblog/frontResource/font/DS-DIGIB-2.ttf");
   font-weight: normal;
   font-style: normal;
 }
-
-/*.el-header{*/
-/*  background-color: #1e2064;*/
-/*  color: #333;*/
-/*  text-align: center;*/
-/*}*/
 
 .no-hd{
   background: rgba(101, 132, 226, 0.2);
@@ -222,7 +197,6 @@
   width: 1px;
   background: rgba(255, 255, 255, 0.2);
 }
-
 .no-bd>ul>li{
   flex: 1;
   line-height: 10px;
@@ -232,25 +206,32 @@
   color: #02f5a8;
 }
 
-
 @media only screen and (max-width: 767px) {
   .no-hd>ul>li{
     font-size: 40px;
   }
   .map{
-    height: 20.375rem;
+    height:0;
+    padding-bottom:100%;
   }
   .map_bg {
-    width: 15rem;
-    height: 15rem;
+    width: 60%;
+    height: 60%;
+    top: 45%;
+    left: 50%;
   }
   .map_bg2 {
-    width: 18rem;
-    height: 18rem;
+    width: 73%;
+    height: 73%;
+    top: 45%;
+    left: 50%;
+    opacity: 1;
   }
   .map_bg3{
-    width: 16.5rem;
-    height: 16.5rem;
+    width: 65%;
+    height: 65%;
+    top: 45%;
+    left: 50%;
   }
 }
 @media only screen and (min-width: 768px) {
@@ -264,15 +245,20 @@
   .map_bg {
     width: 25.9rem;
     height: 25.9rem;
+    top: 65%;
+    left: 50%;
   }
   .map_bg2 {
     width: 30rem;
     height: 30rem;
+    top: 65%;
+    left: 50%;
   }
   .map_bg3{
     width: 28.2rem;
     height: 28.2rem;
+    top: 65%;
+    left: 50%;
   }
 }
-
 </style>

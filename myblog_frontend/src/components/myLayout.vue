@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import {getHeight} from "../assets/js/calc";
+// import {getHeight} from "../assets/js/calc";
 import {time} from "../assets/js/showTime"
 export default {
   name: "myLayout",
@@ -115,9 +115,6 @@ export default {
       url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593937482731&di=bece2a0fc9049db36a1cb5324a016222&imgtype=0&src=http%3A%2F%2Fdmimg.5054399.com%2Fallimg%2Fpkm%2Fpk%2F13.jpg',
       height: 0,
     }
-  },
-  computed:{
-    this.height=getHeight()-130;
   },
   methods: {
     collapseOpen() {
@@ -139,9 +136,28 @@ export default {
       this.$refs.mymenu.open(indexPath[1])
 
     }
-
   },
   created() {
+    const that=this
+    let t = setTimeout(getHeight, 300);
+    function getHeight(){
+      clearTimeout(t); //清除定时器
+      var winHeight=null
+// 获取窗口高度
+      if (window.innerHeight){
+        winHeight = window.innerHeight;
+      }
+      else if ((document.body) && (document.body.clientHeight)){
+        winHeight = document.body.clientHeight;
+      }
+// 通过深入 Document 内部对 body 进行检测，获取窗口大小
+      if (document.documentElement && document.documentElement.clientHeight)
+      {
+        winHeight = document.documentElement.clientHeight;
+      }
+      that.height=winHeight-130
+      t = setTimeout(getHeight, 300); //设定定时器，循环运行
+    }
     time()
   }
 }

@@ -79,7 +79,7 @@
 
 <script>
     import {time} from "../../assets/js/showTime";
-    import {getHeight} from "../../assets/js/calc";
+    // import {getHeight} from "../../assets/js/calc";
     export default {
         name: "commonIndex",
       data(){
@@ -157,7 +157,25 @@
           console.log(error)
           this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
         })
-        this.height=getHeight()-135;
+        let t = setTimeout(getHeight, 300);
+        function getHeight(){
+          clearTimeout(t); //清除定时器
+          var winHeight=null
+// 获取窗口高度
+          if (window.innerHeight){
+            winHeight = window.innerHeight;
+          }
+          else if ((document.body) && (document.body.clientHeight)){
+            winHeight = document.body.clientHeight;
+          }
+// 通过深入 Document 内部对 body 进行检测，获取窗口大小
+          if (document.documentElement && document.documentElement.clientHeight)
+          {
+            winHeight = document.documentElement.clientHeight;
+          }
+          that.height=winHeight-135
+          t = setTimeout(getHeight, 300); //设定定时器，循环运行
+        }
         time()
       },
       beforeRouteLeave (to, from, next) {
@@ -165,6 +183,7 @@
         next()
       },
     }
+
 </script>
 
 <style scoped>
@@ -222,7 +241,7 @@
     margin: 4px;
   }
   .myautocomplete{
-    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 30px 5px rgba(106, 245, 152,0.7);
     margin: 10px 10px 0;
     text-align: center;
     background-color: rgba(255, 234, 216, 0.63);
@@ -230,7 +249,7 @@
   }
   .mycategory{
     /*border-top: cyan 1px solid;*/
-    box-shadow: 0 0 30px 10px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 30px 5px rgba(106, 245, 152,0.7);
     margin: 0 10px 10px;
     text-align: center;
     background-color: rgba(255, 234, 216, 0.63);
@@ -256,6 +275,9 @@
     }
     .mobile{
       text-align: center;
+    }
+    .mycategory{
+      box-shadow: 0 0 30px 10px rgb(245,155,106);
     }
   }
   @media only screen and (min-width: 768px) {
