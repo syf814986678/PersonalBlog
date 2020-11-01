@@ -1,7 +1,7 @@
 import axios from "axios";
 import store from "../store";
 const http = axios.create({
-                                           // baseURL: 'http://localhost:8989'
+                                             // baseURL: 'http://localhost:8989'
 })
 //请求拦截
 http.interceptors.request.use(function (config) {

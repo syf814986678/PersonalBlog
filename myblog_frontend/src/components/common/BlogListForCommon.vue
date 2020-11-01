@@ -258,6 +258,7 @@
     background: linear-gradient(90deg, #070707,#ddf864,#05ddfa,#05ddfa,#ddf864,#070707);
     opacity: 0.4;
   }
+
   .blogTitle{
     text-align: center;
     font-size: 30px;

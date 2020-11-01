@@ -54,18 +54,28 @@
       <el-divider></el-divider>
     </div>
   </div>
-  <el-row style="margin-top: 5px;margin-bottom: 5px;text-align: center">
-    <el-pagination
-      background
-      :hide-on-single-page="true"
-      :current-page.sync="pageNow"
-      @current-change="handleCurrentChange"
-      :page-size="pageSize"
-      :total="total"
-      layout="prev, pager, next, jumper, total"
-    ></el-pagination>
-  </el-row>
-
+  <el-pagination
+    style="margin-top: -15px;margin-bottom: 15px;padding: 2px 0;text-align: center"
+    background
+    :hide-on-single-page="true"
+    :current-page.sync="pageNow"
+    @current-change="handleCurrentChange"
+    :page-size="pageSize"
+    :total="total"
+    :pager-count="5"
+    layout="pager, jumper, total"
+  ></el-pagination>
+<!--  <el-row style="text-align: center">-->
+<!--    <el-pagination-->
+<!--      background-->
+<!--      :hide-on-single-page="true"-->
+<!--      :current-page.sync="pageNow"-->
+<!--      @current-change="handleCurrentChange"-->
+<!--      :page-size="pageSize"-->
+<!--      :total="total"-->
+<!--      layout="prev, pager, next, jumper, total"-->
+<!--    ></el-pagination>-->
+<!--  </el-row>-->
 </div>
 </template>
 

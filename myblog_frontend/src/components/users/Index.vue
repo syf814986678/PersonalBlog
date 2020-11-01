@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="border: crimson solid 1px">
     <div class="no-hd">
       <ul>
                   <li>{{ this.totalBlogNums }}</li>
@@ -82,11 +82,11 @@
 
 <style scoped>
 .chart {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 30.375rem;
+  /*position: absolute;*/
+  /*top: 0;*/
+  /*left: 0;*/
+  /*width: 100%;*/
+  /*height: 30.375rem;*/
 }
 
 .map {

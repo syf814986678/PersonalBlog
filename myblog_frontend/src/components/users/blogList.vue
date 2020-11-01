@@ -50,20 +50,30 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <el-col :span="24" style="margin-top: 5px;margin-bottom: -5px;text-align: center">
-      <el-pagination
-        background
-        :hide-on-single-page="true"
-        @current-change="handleCurrentChange"
-        :current-page.sync="currentPage"
-        :page-size="pagesize"
-        :total="total"
-        layout="prev, pager, next, jumper, total"
-      >
-      </el-pagination>
-    </el-col>
-
+    <el-pagination
+      class="mobile"
+      small
+      background
+      :hide-on-single-page="true"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pagesize"
+      :total="total"
+      :pager-count="6"
+      layout="prev, pager, next, total"
+    >
+    </el-pagination>
+    <el-pagination
+      class="mypagination"
+      background
+      :hide-on-single-page="true"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pagesize"
+      :total="total"
+      layout="prev, pager, next, jumper, total"
+    >
+    </el-pagination>
     <el-dialog v-loading="dialogloading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" id="eldialog" width="90%" title="修改博客" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-form inline-message :model="formdata" :rules="rules" ref="form" @submit.native.prevent>
         <el-row :gutter="20">
@@ -454,8 +464,24 @@ export default {
     },
   },
   created() {
+    const that = this;
     this.refreshdate(this.$store.state.myuser.userid,this.currentPage,this.pagesize);
-  }
+    document.onkeydown = function (e) {
+      // 回车提交表单
+      // 兼容FF和IE和Opera
+      var theEvent = window.event || e;
+      var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+      if (document.activeElement.id==="myinput1"&& code === 13) {
+        that.searchblog()
+        document.getElementById('myinput1').blur();
+        document.getElementById('myinput2').blur();
+      }
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    document.onkeydown = undefined
+    next()
+  },
 }
 </script>
 <style>
@@ -468,6 +494,26 @@ export default {
 
 </style>
 <style scoped>
+@media only screen and (max-width: 767px) {
+  .mobile{
+    margin-top:5px;
+    padding: 2px 0;
+    text-align: center
+  }
+  .mypagination{
+    display: none;
+  }
+}
+@media only screen and (min-width: 768px) {
+  .mobile{
+    display: none;
+  }
+  .mypagination{
+    margin-top: 5px;
+    margin-bottom: -5px;
+    text-align: center
+  }
+}
 .v-md-editor__menu-item-红色字体{
   color: #dd0000;
 }

@@ -9,9 +9,7 @@
       <el-table-column :resizable="false" sortable align="center" label="更新时间"><template slot-scope="scope"><el-tag effect="dark" type="success">{{scope.row.updateGmt}}</el-tag></template></el-table-column>
       <el-table-column :resizable="false" align="center">
         <template slot="header" slot-scope="scope">
-          <el-input
-            size="medium"
-            placeholder="输入关键字搜索"/>
+          <span>操作</span>
         </template>
         <template slot-scope="scope">
           <el-button
@@ -28,29 +26,35 @@
             @click="showdeletedialog(scope.$index, scope.row)"
           >删除</el-button>
         </template>
-
       </el-table-column>
     </el-table>
+    <el-pagination
+      class="mobilepagination"
+      small
+      background
+      :hide-on-single-page="true"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pagesize"
+      :total="total"
+      :pager-count="6"
+      layout="prev, pager, next, total"
+    >
+    </el-pagination>
+    <el-pagination
+      class="mypagination"
+      background
+      :hide-on-single-page="true"
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="pagesize"
+      :total="total"
+      layout="prev, pager, next, jumper, total"
+    >
+    </el-pagination>
     <el-row>
       <el-button :disabled="loading" @click="showdialog" type="success" style="float: right;margin-top: 10px;margin-bottom: 0">添加类别</el-button>
     </el-row>
-
-    <el-row>
-      <el-col :span="24">
-        <el-pagination
-          style="margin-top: 20px"
-          background
-          :hide-on-single-page="true"
-          @current-change="handleCurrentChange"
-          :current-page.sync="currentPage"
-          :page-size="pagesize"
-          :total="total"
-          layout="prev, pager, next, jumper, total"
-        >
-        </el-pagination>
-      </el-col>
-    </el-row>
-
     <el-dialog width="80%" :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <div class="pc">
         <el-row style="box-shadow: 0 0 12px 0 rgb(245,155,106);padding:30px 0">
@@ -227,14 +231,31 @@ export default {
 </script>
 
 <style scoped>
+
 @media only screen and (max-width: 767px) {
   .pc{
     display: none !important;
+  }
+  .mobilepagination{
+    margin-top:5px;
+    padding: 2px 0;
+    text-align: center
+  }
+  .mypagination{
+    display: none;
   }
 }
 @media only screen and (min-width: 768px) {
   .mobile{
     display: none !important;
+  }
+  .mobilepagination{
+    display: none;
+  }
+  .mypagination{
+    margin-top: 5px;
+    margin-bottom: -5px;
+    text-align: center
   }
 }
 </style>

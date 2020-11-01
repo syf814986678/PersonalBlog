@@ -1,42 +1,34 @@
 <template>
-  <div class="login-container" align="center" style="margin-top: 220px">
-    <el-form class="login-form">
-
-        <div class="title-container">
-          <h3 class="title">Login Form</h3>
+  <div style="margin-top: 220px">
+    <el-form class="myform">
+        <div style="text-align: center">
+          <h3>Login Form</h3>
         </div>
-
       <el-form-item>
-        <el-row justify="center" type="flex">
-          <el-col :xs="24" :xl="6">
+        <div class="myloginrow">
             <el-input
               v-model="username"
               placeholder="Username"
               name="username"
               type="text"
             />
-          </el-col>
-        </el-row>
+        </div>
       </el-form-item>
 
       <el-form-item>
-        <el-row justify="center" type="flex">
-          <el-col :xs="24" :xl="6">
+        <div class="myloginrow">
             <el-input
               v-model="password"
               placeholder="Password"
               name="password"
               type="password"
             />
-          </el-col>
-        </el-row>
+        </div>
       </el-form-item>
 
-      <el-row justify="center" type="flex">
-        <el-col :xs="24" :xl="6">
+      <div class="myloginrow">
           <el-button type="primary" style="width: 100%" @click="login">Login</el-button>
-        </el-col>
-      </el-row>
+      </div>
 
     </el-form>
   </div>
@@ -81,4 +73,14 @@
 
 <style>
 
+@media only screen and (max-width: 767px){
+
+}
+@media only screen and (min-width: 768px) {
+  .myloginrow{
+    text-align: center;
+    width: 20%;
+    margin: 0 auto;
+  }
+}
 </style>

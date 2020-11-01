@@ -9,29 +9,6 @@
                         leave-active-class="animate__animated animate__bounceOutDown animate__faster">
               <router-view/>
             </transition>
-            <div class="mobile" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-              <div class="mycategory">
-                <el-autocomplete
-                  style="margin-top: 15px;width: 90%"
-                  :minlength="1"
-                  :maxlength="30"
-                  v-model="input"
-                  :fetch-suggestions="querySearchAsync"
-                  placeholder="请输入搜索内容"
-                  @select="handleSelect"
-                  suffix-icon=" el-icon-s-opportunity"
-                  prefix-icon="el-icon-search">
-                  <template slot-scope="{ item }">
-                    <span>{{ item.value }}</span>
-                    <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
-                  </template>
-                </el-autocomplete>
-                <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px;margin-top: 10px">TOP10类型</el-tag></el-row>
-                <el-row style="margin-top: 5px;padding-bottom: 10px">
-                  <el-button class="mybutton" round v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
-                </el-row>
-              </div>
-            </div>
           </el-main>
           <el-aside
             class="myaside"
@@ -61,8 +38,41 @@
                 <el-button class="mybutton" round v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
               </el-row>
             </div>
+            <el-divider></el-divider>
+            <div class="mycategory infodiv">
+              <span style="display: block" class="info motto-shake"></span>
+            </div>
+              <!--              <el-carousel height="200px" direction="vertical" :autoplay="false">-->
+<!--                <el-carousel-item v-for="item in 3" :key="item">-->
+<!--                  <h3 >{{ item }}</h3>-->
+<!--                </el-carousel-item>-->
+<!--              </el-carousel>-->
           </el-aside>
         </el-container>
+        <div class="mobile" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+          <div class="mycategory">
+            <el-autocomplete
+              style="margin-top: 15px;width: 90%"
+              :minlength="1"
+              :maxlength="30"
+              v-model="input"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="请输入搜索内容"
+              @select="handleSelect"
+              suffix-icon=" el-icon-s-opportunity"
+              prefix-icon="el-icon-search">
+              <template slot-scope="{ item }">
+                <span>{{ item.value }}</span>
+                <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
+              </template>
+            </el-autocomplete>
+            <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px;margin-top: 10px">TOP10类型</el-tag></el-row>
+            <el-row style="margin-top: 5px;padding-bottom: 10px">
+              <el-button class="mybutton" round v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
+            </el-row>
+          </div>
+
+        </div>
         <el-footer class="myfooter">
           <div class="myfooterinfo">
             <el-link style="margin-top: -16px;margin-bottom: 0" href="https://www.chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
@@ -75,20 +85,20 @@
       </el-container>
     </div>
 </template>
-
-
 <script>
     import {time} from "../../assets/js/showTime";
-    // import {getHeight} from "../../assets/js/calc";
+    import {getHeight} from "../../assets/js/calc";
+    import {getWidth} from "../../assets/js/calc";
     export default {
         name: "commonIndex",
       data(){
         return{
           mycategories:[],
-          loading: false,
+          loading: true,
           input:'',
           hotkeys: [],
-          height:0
+          height:0,
+          info:["经汝之手，晓后世之荣耀,吾等世界终将拨乱反正，永垂不朽","我一个人来到这个世界，给我勇气一个人离开这个世界"]
         }
       },
       methods:{
@@ -157,35 +167,40 @@
           console.log(error)
           this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
         })
-        let t = setTimeout(getHeight, 300);
-        function getHeight(){
-          clearTimeout(t); //清除定时器
-          var winHeight=null
-// 获取窗口高度
-          if (window.innerHeight){
-            winHeight = window.innerHeight;
-          }
-          else if ((document.body) && (document.body.clientHeight)){
-            winHeight = document.body.clientHeight;
-          }
-// 通过深入 Document 内部对 body 进行检测，获取窗口大小
-          if (document.documentElement && document.documentElement.clientHeight)
-          {
-            winHeight = document.documentElement.clientHeight;
-          }
-          that.height=winHeight-135
-          t = setTimeout(getHeight, 300); //设定定时器，循环运行
+        if (getWidth()>1000){
+          this.height=getHeight()-135
         }
+        else {
+          this.height=getHeight()-60
+        }
+        window.addEventListener("resize",function (){
+          if (getWidth()>1000){
+            that.height=getHeight()-135
+          }
+          else {
+            that.height=getHeight()-60
+          }
+        })
         time()
+        window.onload=function(){
+          var i=0;
+          new Motto('.info', {
+            lyric: that.info[i],
+            showUpSpeed: 150,
+            callback: function () {
+              setTimeout(function (){
+                document.getElementsByClassName("info")[0].classList.remove('motto-shake')
+              },5000)
+            }
+          })
+        };
       },
       beforeRouteLeave (to, from, next) {
         document.onkeydown = undefined
         next()
       },
     }
-
 </script>
-
 <style scoped>
   .myheader {
     background-color: #ffffff;
@@ -229,8 +244,8 @@
   }
 
   .mymain {
-    padding: 0 1px;
-    margin: 5px auto;
+    padding: 0 3px;
+    margin: 5px auto -25px;
   }
   .myaside {
     text-align: center;
@@ -255,11 +270,14 @@
     background-color: rgba(255, 234, 216, 0.63);
     border-radius: 10px;
   }
-
-
-
-
-
+  .info{
+    font-weight: bold;
+    font-size: 20px;
+    color: #5d07fc;
+  }
+  .infodiv{
+    padding: 15px;
+  }
 
 
   @media only screen and (max-width: 767px) {
@@ -275,6 +293,9 @@
     }
     .mobile{
       text-align: center;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: cyan solid 1px;
     }
     .mycategory{
       box-shadow: 0 0 30px 10px rgb(245,155,106);
@@ -289,7 +310,6 @@
       background-size: cover;
     }
   }
-
   .el-divider--horizontal{
     background: cyan;
   }
