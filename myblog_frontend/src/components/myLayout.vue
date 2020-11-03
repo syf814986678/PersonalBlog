@@ -43,7 +43,7 @@
         </el-row>
       </div>
     </el-header>
-    <el-container class="mycontainer" style="margin-top: 5px">
+    <el-container class="mycontainer">
       <el-aside
         class="myaside"
         :width="this.$store.state.isCollapse?'65px':'200px'"
@@ -69,7 +69,7 @@
       </el-aside>
       <el-main class="mymain" :style="{height:this.height+'px'}" >
         <div class="mobile">
-          <el-menu ref="mymenu" @select="handleSelect" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" mode="horizontal" router :default-active="$route.path">
+          <el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" mode="horizontal" router :default-active="$route.path">
             <el-menu-item index="/admin/index"><i class="el-icon-s-platform"></i><span>主页</span></el-menu-item>
             <el-submenu index="1">
               <template slot="title"><i class="el-icon-data-board"></i><span>博客</span></template>
@@ -105,9 +105,8 @@
 </template>
 
 <script>
-// import {getHeight} from "../assets/js/calc";
 import {time} from "../assets/js/showTime"
-import {getHeight} from "../assets/js/calc";
+import {getHeight, getWidth} from "../assets/js/calc";
 export default {
   name: "myLayout",
   data() {
@@ -130,20 +129,30 @@ export default {
     reverse(){
       this.$store.commit('collapseReverse')
     },
-    handleSelect(index,indexPath){
-      // console.log(indexPath)
-      // console.log(indexPath[1])
-      // this.$refs.mymenu.open(index)
-      this.$refs.mymenu.open(indexPath[1])
-
-    }
+    // handleSelect(index,indexPath){
+    //   // console.log(indexPath)
+    //   // console.log(indexPath[1])
+    //   // this.$refs.mymenu.open(index)
+    //   this.$refs.mymenu.open(indexPath[1])
+    //
+    // }
   },
   created() {
     const that=this
-    this.height=getHeight()-135
+    if (getWidth()>1000){
+      this.height=getHeight()-125
+    }
+    else {
+      this.height=getHeight()-60
+    }
     window.addEventListener("resize",function (){
-      that.height=getHeight()-135
-    })
+      if (getWidth()>1000){
+        that.height=getHeight()-125
+      }
+      else {
+        that.height=getHeight()-60
+      }}
+    )
     time()
   }
 }
@@ -180,9 +189,10 @@ export default {
   background-color: #fff;
   text-align: center;
   line-height: 60px;
-  margin-top: 6px;
-  margin-bottom: -10px;
+  margin-top: 3px;
+  /*margin-bottom: -10px;*/
   height: 48px !important;
+
 }
 .myfooterinfo{
   background-color: #333;
@@ -194,7 +204,7 @@ export default {
   letter-spacing: 1px;
   height: 48px;
   text-align: center;
-  margin: 0 -16px;
+  margin: 3px -20px;
 }
 
 @media only screen and (max-width: 767px) {
@@ -202,18 +212,18 @@ export default {
     background-image: url("https://picture.chardance.cloud/myblog/bg/bgMobile.png");
     background-size: cover;
   }
-  .showTime {
-    display: none;
-  }
-  .myaside {
-    display: none;
-  }
   .mobile{
     margin-bottom: 15px;
     text-align: center;
   }
+  .myaside {
+    display: none;
+  }
   .mymain{
-    padding: 10px !important;
+    padding: 13px 5px 0;
+  }
+  .showTime {
+    display: none;
   }
 
 }
@@ -224,15 +234,11 @@ export default {
   }
   .myaside {
     background-color: #545c64;
-    /*color: #333;*/
+    color: #333;
     text-align: left;
   }
   .mobile{
     display: none;
   }
 }
-
-
-
-
 </style>

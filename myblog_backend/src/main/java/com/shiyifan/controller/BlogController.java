@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -478,7 +479,7 @@ public class BlogController {
         BufferedReader br=null;
         try {
             String s = "";
-            in = new InputStreamReader(new FileInputStream("C:\\Users\\81498\\Desktop\\remote.txt"), "UTF-8");
+            in = new InputStreamReader(new FileInputStream("remote.txt"), StandardCharsets.UTF_8);
             br = new BufferedReader(in);
             ArrayList<HashMap<String, String>> hotkeys = new ArrayList<>();
             while ((s = br.readLine()) != null) {

@@ -2,7 +2,7 @@
   <div
       v-infinite-scroll="load"
       :infinite-scroll-disabled="disabled">
-      <div v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 95%;">
+      <div v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 98%  ">
           <div class="maoboli">
             <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
             <el-row style="margin-top: 10px;margin-bottom: 0">
@@ -12,10 +12,10 @@
             </el-row>
             <el-row style="margin-top: 5px">
               <el-col :span="12">
-                <p class="blogCreateGmt"><i class="el-icon-date" style="margin-right: 5px"></i>{{blog.createGmt}}</p>
+                <p class="blogCreateGmt"><i class="el-icon-date" style="margin-right: 2px"></i>{{blog.createGmt}}</p>
               </el-col>
               <el-col :span="12">
-                <p class="blogCreateGmt"><i class="el-icon-edit" style="margin-right: 5px"></i>{{blog.updateGmt}}</p>
+                <p class="blogCreateGmt"><i class="el-icon-edit" style="margin-right: 2px"></i>{{blog.updateGmt}}</p>
               </el-col>
             </el-row>
             <el-image
@@ -93,7 +93,7 @@
                 else {
                   this.lazy=false
                 }
-              }, 500)
+              }, 200)
               this.$store.commit('setmainloading',false)
             }
           }).catch(error=> {
@@ -102,7 +102,6 @@
           })
         }
         else if (this.$route.params.bloglist==="category"){
-          window.document.title = '博客类别: '+this.$store.state.category[this.$route.params.bloglist2]
           this.$http.post("/blog/selectBlogByCategoryIdAndPageForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&categoryId="+this.$route.params.bloglist2).then(response=>{
             if (response!=null){
               this.myblogs=response.data.msg["myblogs"]
@@ -114,7 +113,8 @@
                 else {
                   this.lazy=false
                 }
-              }, 500)
+                window.document.title = '博客类别: '+this.$store.state.category[this.$route.params.bloglist2]
+              }, 200)
               this.$store.commit('setmainloading',false)
             }
           }).catch(error=> {
@@ -132,7 +132,7 @@
       setTimeout(() => {
         document.getElementById("myelmain").scrollTop=5
         document.getElementById("myelmain").scrollTop=this.$store.state.height
-      }, 500)
+      }, 200)
 
     },
     beforeRouteLeave (to, from, next) {
@@ -150,7 +150,7 @@
           document.body.scrollTop=0
           document.getElementById("myelmain").scrollTop=5
           document.getElementById("myelmain").scrollTop=0
-        }, 100)
+        }, 200)
       }
     },
   }
@@ -210,7 +210,7 @@
   .blogCreateGmt{
     width: fit-content;
     margin: 0 auto;
-    padding: 5px 10px;
+    padding: 5px 0;
     border-radius: 10px;
     cursor:pointer;
     font-size: 14px;

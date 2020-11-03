@@ -41,20 +41,11 @@
       </el-col>
       <el-col :span="12">
         <el-form-item class="myitem">
-          <el-upload
-            style="margin-bottom: -13px"
-            class="avatar-uploader"
-            :disabled="available"
-            :headers="headers"
-            :on-progress="uploadonprogress"
-            :on-success="uploadsuccess"
-            :on-error="uploaderror"
-            action="/upload/uploadBlogCoverImage"
-            :before-upload="beforeUpload"
-            :show-file-list="false">
+          <div class="avatar-uploader" @click="choosefile">
             <el-image style="width: 100%; height: 120px" v-if="form.blogCoverImage" :src="form.blogCoverImage" fit="fill"></el-image>
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+            <input type="file" accept="image/png,image/jpeg" id="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" @change="getfile"/>
+          </div>
         </el-form-item>
       </el-col>
 
@@ -85,8 +76,8 @@
   </el-form>
 </template>
 <script>
-  import store from "../../store";
-  export default {
+
+export default {
     name: "addBlog",
     data() {
       return {
@@ -146,9 +137,6 @@
             ],
           },
         },
-        headers:{
-          Authorization: 'Bearer ' + this.$store.state.token
-        },
         options:[],
         form: {
           blogTitle: '',
@@ -180,37 +168,34 @@
           ],
         },
         loading: true,
-        available: false,
         filename:'',
       }
     },
     methods: {
+      choosefile(){
+        document.getElementById("file").click()
+      },
+      async getfile(){
+        // console.log(document.getElementById("file").files[0])
+        const mymessage = this.$message({
+          message: '封面图片上传中',
+          iconClass: "el-icon-loading",
+          center: true,
+          duration: 0,
+        });
+        // let now= Date.parse(new Date()) / 1000;
+        // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
+        // {
+        //   await this.gettoken(0);
+        // }
+        await this.getupload(document.getElementById("file").files[0],0)
+        mymessage.close()
+      },
       handleCopyCodeSuccess(){
         this.$message({
           message: '代码复制成功',
           type: 'success',
           duration: 2000
-        });
-      },
-      async handleUploadImage(event, insertImage, files) {
-        // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-        let now= Date.parse(new Date()) / 1000;
-        if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
-        {
-          await this.gettoken();
-        }
-        var formdata = new FormData();
-        formdata.append('key', this.$store.state.OSS.dir+this.randomName(files[0].name,10));
-        formdata.append('policy', this.$store.state.OSS.policy);
-        formdata.append('OSSAccessKeyId', this.$store.state.OSS.accessid);
-        formdata.append('success_action_status', '200');
-        formdata.append('callback', this.$store.state.OSS.callback);
-        formdata.append('signature', this.$store.state.OSS.signature);
-        formdata.append('file', files[0]);
-        await this.getupload(formdata)
-        insertImage({
-          url:this.filename,
-          desc: '博客图片',
         });
       },
       randomImage(){
@@ -259,37 +244,6 @@
         this.$refs.form.clearValidate()
         this.$refs.form.resetFields()
       },
-      beforeUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
-        const isLt2M = file.size / 1024 / 1024 < 2;
-
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
-        }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!');
-        }
-        return isJPG && isLt2M;
-      },
-      uploadonprogress(event){
-        this.$message({
-          message: '封面图片上传中',
-          iconClass: "el-icon-loading",
-          center: true,
-          duration: 0,
-        });
-      },
-      uploadsuccess(response){
-        switch (response.codeState) {
-          case 200:this.$message.closeAll();this.form.blogCoverImage=response.msg["blogCoverImage"];this.available=true;break;
-          case 701:store.commit('errorMsg',response.msg["tokenError"]);this.$store.commit('logout');break;
-          case 999:store.commit('errorMsg',response.msg["exception"]);this.$store.commit('logout');break;
-          default:break;
-        }
-      },
-      uploaderror(err){
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      },
       randomName(filename,len) {
         len = len || 32;
         var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
@@ -300,8 +254,22 @@
         }
         return pwd+filename.substring(filename.lastIndexOf("."))
       },
-      async gettoken(){
-        await this.$http.get("/upload/getOssToken").then((response) => {
+      async handleUploadImage(event, insertImage, files) {
+        // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
+        // let now= Date.parse(new Date()) / 1000;
+        // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
+        // {
+        //   await this.gettoken(1);
+        // }
+
+        await this.getupload(files[0],1)
+        insertImage({
+          url:this.filename,
+          desc: '博客图片',
+        });
+      },
+      async gettoken(type){
+        await this.$http.get("/upload/getOssToken/"+type).then((response) => {
           if (response!=null){
             this.$store.commit('setOSS',response.data)
           }
@@ -310,7 +278,16 @@
           this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
         })
       },
-      async getupload(formdata){
+      async getupload(file,type){
+        await this.gettoken(type)
+        var formdata = new FormData();
+        formdata.append('key', this.$store.state.OSS.dir+this.randomName(file.name,10));
+        formdata.append('policy', this.$store.state.OSS.policy);
+        formdata.append('OSSAccessKeyId', this.$store.state.OSS.accessid);
+        formdata.append('success_action_status', '200');
+        formdata.append('callback', this.$store.state.OSS.callback);
+        formdata.append('signature', this.$store.state.OSS.signature);
+        formdata.append('file', file);
         await this.$http({
           url: this.$store.state.OSS.host,
           method: 'post',
@@ -320,7 +297,12 @@
           },
         }).then((response) => {
           if (response!=null){
-            this.filename=response.data.filename
+            if (type===0){
+              this.form.blogCoverImage=response.data.filename
+            }
+            else if (type===1) {
+              this.filename=response.data.filename
+            }
           }
         }).catch(error=> {
           console.log(error)
@@ -369,7 +351,6 @@
         console.log(error)
         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
       })
-      this.gettoken();
     },
     beforeRouteLeave (to, from, next) {
       if (this.form.blogContent!==""){
@@ -391,22 +372,28 @@
     }
   }
 </script>
-<style>
-  .avatar-uploader .el-upload {
-    border: 2px solid #fd1e01;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    height: 120px;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #45ef27;
-  }
-
-</style>
 <style scoped>
+.avatar-uploader{
+  border: 2px solid #fd1e01;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 120px;
+}
+.avatar-uploader:hover {
+  border-color: #45ef27;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #45ef27;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  right: 50%;
+  bottom: 50%;
+}
   .v-md-editor__menu-item-红色字体{
     color: #dd0000;
   }
@@ -423,9 +410,5 @@
     margin: 10px 0;
     background: #ef15e4;
   }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #45ef27;
-    margin-top: 45px;
-  }
+
 </style>

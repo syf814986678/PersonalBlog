@@ -142,7 +142,6 @@
             AND blog_category_id =#{categoryid}
         </if>
         ORDER BY create_gmt DESC
-        limit 0,9;
     </select>
     <select id="selectBlogForOneForCommon" resultMap="blogandcategoryandusername">
         select blog_id,blog_title,blog_cover_image,blog_category_id,blog_user_id,create_gmt,update_gmt

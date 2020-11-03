@@ -107,14 +107,11 @@
           </el-col>
           <el-col :span="12">
             <el-form-item class="myitem">
-              <el-upload
-                style="margin-bottom: -13px"
-                class="avatar-uploader"
-                action="#"
-                :show-file-list="false"
-                :disabled="true">
-                <el-image style="width: 100%; height: 120px" :src="formdata.blogCoverImage" fit="fill"></el-image>
-              </el-upload>
+              <div class="avatar-uploader" @click="choosefile">
+                <el-image style="width: 100%; height: 120px" v-if="formdata.blogCoverImage" :src="formdata.blogCoverImage" fit="fill"></el-image>
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                <input type="file" accept="image/png,image/jpeg" id="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" @change="getfile"/>
+              </div>
             </el-form-item>
           </el-col>
 
@@ -246,6 +243,25 @@ export default {
     }
   },
   methods:{
+    choosefile(){
+      document.getElementById("file").click()
+    },
+    async getfile(){
+      // console.log(document.getElementById("file").files[0])
+      const mymessage = this.$message({
+        message: '封面图片上传中',
+        iconClass: "el-icon-loading",
+        center: true,
+        duration: 0,
+      });
+      // let now= Date.parse(new Date()) / 1000;
+      // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
+      // {
+      //   await this.gettoken(0);
+      // }
+      await this.getupload(document.getElementById("file").files[0],0)
+      mymessage.close()
+    },
     querySearchAsync(queryString,cb){
       this.$http.post("/blog/hotkeys").then(response=>{
         if (response!=null){
@@ -276,29 +292,6 @@ export default {
         message: '代码复制成功',
         type: 'success',
         duration: 2000
-      });
-    },
-    async handleUploadImage(event, insertImage, files) {
-      // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-      let now= Date.parse(new Date()) / 1000;
-      if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
-      {
-        await this.gettoken();
-      }
-      var formdata = new FormData();
-      formdata.append('key', this.$store.state.OSS.dir+this.randomName(files[0].name,10));
-      formdata.append('policy', this.$store.state.OSS.policy);
-      formdata.append('OSSAccessKeyId', this.$store.state.OSS.accessid);
-      formdata.append('success_action_status', '200');
-      formdata.append('callback', this.$store.state.OSS.callback);
-      formdata.append('signature', this.$store.state.OSS.signature);
-      formdata.append('file', files[0]);
-      await this.getupload(formdata)
-      // this.$refs.md.$img2Url(pos,this.filename)
-      // 此处只做示例
-      insertImage({
-        url:this.filename,
-        desc: '博客图片',
       });
     },
     randomImage(){
@@ -380,7 +373,6 @@ export default {
           this.options=response.data.msg["mycategories"];
           this.dialogFormVisible=true;
           this.dialogloading=false;
-          this.gettoken();
           setTimeout(() => {
             document.getElementById("eldialog").scrollTop=143
           }, 100)
@@ -434,8 +426,22 @@ export default {
       }
       return pwd+filename.substring(filename.lastIndexOf("."))
     },
-    async gettoken(){
-      await this.$http.get("/upload/getOssToken").then((response) => {
+    async handleUploadImage(event, insertImage, files) {
+      // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
+      // let now= Date.parse(new Date()) / 1000;
+      // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
+      // {
+      //   await this.gettoken(1);
+      // }
+
+      await this.getupload(files[0],1)
+      insertImage({
+        url:this.filename,
+        desc: '博客图片',
+      });
+    },
+    async gettoken(type){
+      await this.$http.get("/upload/getOssToken/"+type).then((response) => {
         if (response!=null){
           this.$store.commit('setOSS',response.data)
         }
@@ -444,7 +450,16 @@ export default {
         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
       })
     },
-    async getupload(formdata){
+    async getupload(file,type){
+      await this.gettoken(type)
+      var formdata = new FormData();
+      formdata.append('key', this.$store.state.OSS.dir+this.randomName(file.name,10));
+      formdata.append('policy', this.$store.state.OSS.policy);
+      formdata.append('OSSAccessKeyId', this.$store.state.OSS.accessid);
+      formdata.append('success_action_status', '200');
+      formdata.append('callback', this.$store.state.OSS.callback);
+      formdata.append('signature', this.$store.state.OSS.signature);
+      formdata.append('file', file);
       await this.$http({
         url: this.$store.state.OSS.host,
         method: 'post',
@@ -454,10 +469,14 @@ export default {
         },
       }).then((response) => {
         if (response!=null){
-          this.filename=response.data.filename
+          if (type===0){
+            this.formdata.blogCoverImage=response.data.filename
+          }
+          else if (type===1) {
+            this.filename=response.data.filename
+          }
         }
       }).catch(error=> {
-        console.log("上传oss错误")
         console.log(error)
         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
       })
@@ -491,7 +510,6 @@ export default {
 .el-table .success-row {
   background: #e4daff;
 }
-
 </style>
 <style scoped>
 @media only screen and (max-width: 767px) {
@@ -529,6 +547,27 @@ export default {
 }
 .myitem {
   margin-bottom: 0;
+}
+.avatar-uploader{
+  border: 2px solid #fd1e01;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 120px;
+}
+.avatar-uploader:hover {
+  border-color: #45ef27;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #45ef27;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  right: 50%;
+  bottom: 50%;
 }
 </style>
 

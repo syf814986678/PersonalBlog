@@ -1,5 +1,5 @@
 <template>
-  <div style="border: crimson solid 1px">
+  <div>
     <div class="no-hd">
       <ul>
                   <li>{{ this.totalBlogNums }}</li>
@@ -138,7 +138,6 @@
   font-weight: normal;
   font-style: normal;
 }
-
 .no-hd{
   background: rgba(101, 132, 226, 0.2);
   position: relative;
@@ -240,24 +239,23 @@
   }
   .map{
     height: 30.375rem;
-    top: 40px;
   }
   .map_bg {
     width: 25.9rem;
     height: 25.9rem;
-    top: 65%;
+    top: 55%;
     left: 50%;
   }
   .map_bg2 {
     width: 30rem;
     height: 30rem;
-    top: 65%;
+    top: 55%;
     left: 50%;
   }
   .map_bg3{
     width: 28.2rem;
     height: 28.2rem;
-    top: 65%;
+    top: 55%;
     left: 50%;
   }
 }
