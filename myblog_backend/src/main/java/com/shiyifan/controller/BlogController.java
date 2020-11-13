@@ -479,7 +479,7 @@ public class BlogController {
         BufferedReader br=null;
         try {
             String s = "";
-            in = new InputStreamReader(new FileInputStream("remote.txt"), StandardCharsets.UTF_8);
+            in = new InputStreamReader(new FileInputStream("/home/syf/myblog/remote.txt"), StandardCharsets.UTF_8);
             br = new BufferedReader(in);
             ArrayList<HashMap<String, String>> hotkeys = new ArrayList<>();
             while ((s = br.readLine()) != null) {

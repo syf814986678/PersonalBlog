@@ -1,6 +1,15 @@
 package com.shiyifan.service;
 
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
+import com.aliyuncs.dcdn.model.v20180115.PreloadDcdnObjectCachesRequest;
+import com.aliyuncs.dcdn.model.v20180115.PreloadDcdnObjectCachesResponse;
+import com.aliyuncs.dcdn.model.v20180115.RefreshDcdnObjectCachesRequest;
+import com.aliyuncs.dcdn.model.v20180115.RefreshDcdnObjectCachesResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.profile.DefaultProfile;
 import com.google.gson.Gson;
+import com.shiyifan.constant.MyConstant;
 import com.shiyifan.dao.BlogMapper;
 import com.shiyifan.dao.CategoryMapper;
 import com.shiyifan.pojo.ElasticSearchBlog;
@@ -60,6 +69,9 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+
+    @Autowired
+    private MyConstant myConstant;
 
     /*----------------登陆后进行的操作----------------*/
 
@@ -143,6 +155,8 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         if(categoryidInDB!=myblog.getMycategory().getCategoryId()){
             categoryMapper.deleteCategoryRank(myblog.getMyuser().getUserId(), categoryidInDB);
             categoryMapper.addCategoryRank(myblog.getMyuser().getUserId(), myblog.getMycategory().getCategoryId());
+            myblog.setBlogTitle(myblog.getBlogTitle().replace(myblog.getBlogTitle().substring(myblog.getBlogTitle().indexOf("(")), "")
+                    +"("+ numUtil.arabicNumToChineseNum(categoryMapper.getCategoryRank(myblog.getMyuser().getUserId(), myblog.getMycategory().getCategoryId())) +")");
         }
         blogMapper.updateBlog(myblog);
         Myblog mynewblog = blogMapper.selectBlogForOne(myblog.getMyuser().getUserId(), myblog.getBlogId());
@@ -395,7 +409,36 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     }
 
     /*---------------------------------------------------------------------------*/
+    public void refreshDcdn(){
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", myConstant.getAccessKeyId(), myConstant.getAccessKeySecret());
+        IAcsClient client = new DefaultAcsClient(profile);
+        RefreshDcdnObjectCachesRequest request = new RefreshDcdnObjectCachesRequest();
+        request.setObjectPath("https://www.chardance.cloud/#/index/bloglist/all/all");
 
+        try {
+            RefreshDcdnObjectCachesResponse response = client.getAcsResponse(request);
+            log.warn(new Gson().toJson(response));
+        } catch (ClientException e) {
+            log.error("ErrCode:" + e.getErrCode());
+            log.error("ErrMsg:" + e.getErrMsg());
+            log.error("RequestId:" + e.getRequestId());
+        }
+    }
+    public void preLoadDcdn(){
+        DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", myConstant.getAccessKeyId(), myConstant.getAccessKeySecret());
+        IAcsClient client = new DefaultAcsClient(profile);
+        PreloadDcdnObjectCachesRequest request = new PreloadDcdnObjectCachesRequest();
+        request.setObjectPath("https://www.chardance.cloud/#/index/bloglist/all/all");
+
+        try {
+            PreloadDcdnObjectCachesResponse response = client.getAcsResponse(request);
+            log.warn(new Gson().toJson(response));
+        } catch (ClientException e) {
+            log.error("ErrCode:" + e.getErrCode());
+            log.error("ErrMsg:" + e.getErrMsg());
+            log.error("RequestId:" + e.getRequestId());
+        }
+    }
     @Override
     public void run(ApplicationArguments args){
         log.info("<--------------------初始化redis-------------------->");
@@ -410,6 +453,8 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
                     redisUtil.RSet("category-"+mycategory.getCategoryId()+"-myblogsForCommon", iteratorMyblog.next());
                 }
                 redisUtil.set("category-"+mycategory.getCategoryId()+"-myblogsForCommonTotal", blogMapper.selectTotalBlogNumsForCommon(mycategory.getCategoryId()));            }
+            refreshDcdn();
+            preLoadDcdn();
         }
         catch (Exception e){
             log.error(e);

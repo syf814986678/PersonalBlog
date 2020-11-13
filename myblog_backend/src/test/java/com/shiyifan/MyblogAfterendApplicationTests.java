@@ -1,24 +1,74 @@
 package com.shiyifan;
 
-import com.shiyifan.service.BlogService;
+import com.google.gson.Gson;
+import com.shiyifan.dao.BlogMapper;
+import com.shiyifan.pojo.ElasticSearchBlog;
 import lombok.extern.log4j.Log4j2;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 @SpringBootTest
 @Log4j2
 class MyblogAfterendApplicationTests {
 
-//    @Autowired
-//    private RestHighLevelClient restHighLevelClient;
+    @Autowired
+    private RestHighLevelClient restHighLevelClient;
+    @Autowired
+    private BlogMapper blogMapper;
+
+    @Test
+    public void test() throws IOException {
+        ArrayList<ElasticSearchBlog> elasticSearchBlogs = blogMapper.selectElasticSearchAllBlogForCommon();
+        BulkRequest bulkRequest = new BulkRequest();
+        Gson gson = new Gson();
+        bulkRequest.timeout("2m");
+        for (ElasticSearchBlog elasticSearchBlog : elasticSearchBlogs) {
+            bulkRequest.add(new IndexRequest("blogindex").id(elasticSearchBlog.getBlogId()).source(gson.toJson(elasticSearchBlog), XContentType.JSON));
+        }
+        BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+        System.out.println(bulk.hasFailures());
+    }
 //
 //    @Autowired
 //    private UserServiceImpl userService;
 
-    @Autowired
-    private BlogService blogService;
+//    @Autowired
+//    private TestMapper testMapper;
+//    @Autowired
+//    private ArabicNumToChineseNumUtil numUtil;
+//
+//    @Test
+//    public void test() {
+//        int id=7;
+//        ArrayList<Myblog> list = testMapper.selectAllBlogTitle(id);
+//        Iterator<Myblog> iterator = list.iterator();
+//        int i=1;
+//        while (iterator.hasNext()){
+//            Myblog myblog = iterator.next();
+//            String blogTitle = myblog.getBlogTitle();
+//            blogTitle=blogTitle.replace(blogTitle.substring(blogTitle.indexOf("(")), "");
+//            blogTitle=blogTitle+"("+ numUtil.arabicNumToChineseNum(i++) +")";
+//            testMapper.update(blogTitle,myblog.getBlogId());
+//        }
+//        i=1;
+//        list = testMapper.selectAllBlogTitle(id);
+//        iterator = list.iterator();
+//        while (iterator.hasNext()){
+//            System.out.println("第"+i+++"条："+iterator.next().getBlogTitle());
+//        }
+//
+//    }
 
 //    @Test
 //    public void test(){
@@ -27,15 +77,15 @@ class MyblogAfterendApplicationTests {
 
 //    @Test
 //    public void testindex() throws IOException {
-//        CreateIndexRequest testindex = new CreateIndexRequest("testindex");
-//        CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(testindex, RequestOptions.DEFAULT);
-//        System.out.println(createIndexResponse);
-
-//        GetIndexRequest test_index = new GetIndexRequest("test_index");
-//        boolean exists = restHighLevelClient.indices().exists(test_index, RequestOptions.DEFAULT);
-//        System.out.println(exists);
-
-//        DeleteIndexRequest test_index = new DeleteIndexRequest("test_index");
+////        CreateIndexRequest testindex = new CreateIndexRequest("testindex");
+////        CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(testindex, RequestOptions.DEFAULT);
+////        System.out.println(createIndexResponse);
+////
+////        GetIndexRequest test_index = new GetIndexRequest("test_index");
+////        boolean exists = restHighLevelClient.indices().exists(test_index, RequestOptions.DEFAULT);
+////        System.out.println(exists);
+//
+//        DeleteIndexRequest test_index = new DeleteIndexRequest("blogindex");
 //        AcknowledgedResponse delete = restHighLevelClient.indices().delete(test_index, RequestOptions.DEFAULT);
 //        System.out.println(delete.isAcknowledged());
 //    }
@@ -385,10 +435,10 @@ class MyblogAfterendApplicationTests {
     private StringEncryptor stringEncryptor;
     @Test
     public void testencoding(){
-        String yuanwen1="47.103.1.235";
+        String yuanwen1="uMbisou3Q8D32goIEc9CmX8SygsK7T";
         String miwen1 = stringEncryptor.encrypt(yuanwen1) ;
         System.out.println(miwen1);
-        System.out.println(stringEncryptor.decrypt(miwen1));
+//        System.out.println(stringEncryptor.decrypt(yuanwen1));
 
     }
 

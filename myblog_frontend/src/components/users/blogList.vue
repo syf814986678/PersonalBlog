@@ -493,7 +493,6 @@ export default {
       if (document.activeElement.id==="myinput1"&& code === 13) {
         that.searchblog()
         document.getElementById('myinput1').blur();
-        document.getElementById('myinput2').blur();
       }
     }
   },

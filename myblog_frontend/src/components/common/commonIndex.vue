@@ -16,6 +16,7 @@
         v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
         <div class="myautocomplete">
           <el-autocomplete
+            id="myinput1"
             :minlength="1"
             :maxlength="30"
             v-model="input"
@@ -51,6 +52,7 @@
     <div class="mobile" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
       <div class="mycategory">
         <el-autocomplete
+          id="myinput2"
           style="margin-top: 15px;width: 90%"
           :minlength="1"
           :maxlength="30"
