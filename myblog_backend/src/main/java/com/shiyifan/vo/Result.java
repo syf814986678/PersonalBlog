@@ -1,14 +1,16 @@
 package com.shiyifan.vo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name Result
+ * @date 2020-11-20 15:35:32
+ *
+ **/
 @Data
 public class Result {
     private int codeState;

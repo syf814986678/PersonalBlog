@@ -11,17 +11,37 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name MyDruidConfig
+ * @date 2020-11-20 14:50:47
+ *
+ **/
 @Configuration
 public class MyDruidConfig {
-
     @ConfigurationProperties(prefix = "spring.datasource")
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:01:57
+     * @method druidDatasource
+     * @params []
+     * @return javax.sql.DataSource
+     *
+     **/
     @Bean
     public DataSource druidDatasource(){
         return new DruidDataSource();
     }
-    //后台监控
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:02:11
+     * @method statViewServlet
+     * @params []
+     * @return org.springframework.boot.web.servlet.ServletRegistrationBean
+     *
+     **/
     @Bean
     public ServletRegistrationBean statViewServlet(){
         ServletRegistrationBean<StatViewServlet> bean = new ServletRegistrationBean<>(new StatViewServlet(), "/druid/*");

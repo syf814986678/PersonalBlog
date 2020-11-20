@@ -48,8 +48,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name BlogServiceImpl
+ * @date 2020-11-20 15:25:35
+ *
+ **/
 @Service
 @Order
 @Log4j2
@@ -75,6 +79,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
 
     /*----------------登陆后进行的操作----------------*/
 
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:25:47
+     * @method addBlog
+     * @params [myblog]
+     * @return void
+     *
+     **/
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addBlog(Myblog myblog) {
@@ -92,7 +105,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         redisUtil.incr("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommonTotal",1);
         log.info("redis添加成功");
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:25:54
+     * @method addElasticsearchBlog
+     * @params [blogId]
+     * @return void
+     *
+     **/
     @Override
     @Retryable(value = IOException.class)
     public void addElasticsearchBlog(String blogId) throws IOException {
@@ -106,7 +127,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
         log.warn("添加ElasticsearchBlog成功");
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:25:58
+     * @method deleteBlogById
+     * @params [userId, blogId, categoryId]
+     * @return void
+     *
+     **/
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteBlogById(int userId, String blogId, int categoryId) {
@@ -137,7 +166,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             }
         }
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:26:02
+     * @method deleteElasticsearchBlog
+     * @params [blogId]
+     * @return void
+     *
+     **/
     @Override
     @Retryable(value = IOException.class)
     public void deleteElasticsearchBlog(String blogId) throws IOException {
@@ -147,7 +184,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
         log.warn("删除ElasticsearchBlog成功");
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:26:10
+     * @method updateBlog
+     * @params [myblog]
+     * @return void
+     *
+     **/
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateBlog(Myblog myblog) {
@@ -194,7 +239,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         }
         redisUtil.del(myblog.getBlogId());
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:26:13
+     * @method updateElasticsearchBlog
+     * @params [blogId]
+     * @return void
+     *
+     **/
     @Override
     @Retryable(value = IOException.class)
     public void updateElasticsearchBlog(String blogId)throws IOException{
@@ -213,13 +266,29 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
         log.warn("更新ElasticsearchBlog(添加)成功");
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:26:17
+     * @method selectBlogById
+     * @params [userId, blogId]
+     * @return com.shiyifan.pojo.Myblog
+     *
+     **/
     @Override
     public Myblog selectBlogById(int userId, String blogId) {
         Myblog myblog = blogMapper.selectBlogById(userId, blogId);
         return myblog;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:26:20
+     * @method selectBlogByPage
+     * @params [userId, pageNow, pageSize]
+     * @return java.util.ArrayList<com.shiyifan.pojo.Myblog>
+     *
+     **/
     @Override
     public ArrayList<Myblog> selectBlogByPage(int userId, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
@@ -236,7 +305,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         log.info("redis中存在selectBlogByPage-> start:"+start+"<=>"+"end:"+end);
         return (ArrayList<Myblog>)(Object)myblogs;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:26:25
+     * @method selectTotalBlogNums
+     * @params [userId]
+     * @return int
+     *
+     **/
     @Override
     public int selectTotalBlogNums(int userId) {
         Object myblogsTotal = redisUtil.get("user-"+ userId +"myblogsTotal");
@@ -249,13 +326,29 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         return (int) myblogsTotal;
     }
 
-//   todo
-//   未使用
+
+    /**
+     * todo 未使用
+     * @author ZouCha
+     * @date 2020-11-20 15:26:32
+     * @method selectBlogByCategoryIdAndPage
+     * @params [userId, categoryId, pageNow, pageSize]
+     * @return java.util.ArrayList<com.shiyifan.pojo.Myblog>
+     *
+     **/
     @Override
     public ArrayList<Myblog> selectBlogByCategoryIdAndPage(int userId, int categoryId, int pageNow, int pageSize) {
         return blogMapper.selectBlogByCategoryIdAndPage(userId, categoryId,pageNow,pageSize);
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:27:27
+     * @method setTempBlog
+     * @params [myblog]
+     * @return java.lang.Boolean
+     *
+     **/
     @Override
     public Boolean setTempBlog(Myblog myblog) {
         try {
@@ -269,7 +362,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         }
 
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:27:31
+     * @method getTempBlog
+     * @params [userId]
+     * @return com.shiyifan.pojo.Myblog
+     *
+     **/
     @Override
     public Myblog getTempBlog(int userId) {
         try {
@@ -287,6 +388,16 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     /*---------------------------------------------------------------------------*/
 
     /*------------------------------公共操作-------------------------------*/
+
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:27:39
+     * @method selectBlogByIdForCommon
+     * @params [blogId]
+     * @return com.shiyifan.pojo.Myblog
+     *
+     **/
     @Override
     public Myblog selectBlogByIdForCommon(String blogId) {
         Myblog myblog = (Myblog) redisUtil.get(blogId);
@@ -298,8 +409,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         log.info("redis中存在selectBlogByIdForCommon-> blogId:"+ blogId);
         return myblog;
     }
-
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:27:45
+     * @method selectBlogAllByPageForCommon
+     * @params [categoryId, pageNow, pageSize]
+     * @return java.util.ArrayList<com.shiyifan.pojo.Myblog>
+     *
+     **/
     @Override
     public ArrayList<Myblog> selectBlogAllByPageForCommon(int categoryId, int pageNow, int pageSize) {
         ArrayList<Object> myblogs=new ArrayList<>();
@@ -326,7 +444,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         }
         return (ArrayList<Myblog>)(Object)myblogs;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:27:49
+     * @method selectTotalBlogNumsForCommon
+     * @params [categoryId]
+     * @return int
+     *
+     **/
     @Override
     public int selectTotalBlogNumsForCommon(int categoryId) {
         Object myblogsTotal =null;
@@ -344,20 +470,34 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         log.info("redis中存在selectTotalBlogNumsForCommon-> categoryId:"+ categoryId +"<=>"+"nums:"+myblogsTotal);
         return (int) myblogsTotal;
     }
-
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:27:52
+     * @method selectBlogByAuthorForCommon
+     * @params [userId, pageNow, pageSize]
+     * @return java.util.ArrayList<com.shiyifan.pojo.Myblog>
+     *
+     **/
     @Override
     public ArrayList<Myblog> selectBlogByAuthorForCommon(int userId, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
         return blogMapper.selectBlogByAuthorForCommon(userId,start,pageSize);
     }
 
-
-
     /*---------------------------------------------------------------------------*/
 
     /*------------------------------搜索操作-------------------------------*/
 
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:28:01
+     * @method searchContentPage
+     * @params [keyword, pageNow, pageSize]
+     * @return java.util.ArrayList<java.util.Map<java.lang.String,java.lang.Object>>
+     *
+     **/
     @Override
     @Retryable(value = IOException.class)
     public ArrayList<Map<String, Object>> searchContentPage(String keyword, int pageNow, int pageSize) throws IOException {
@@ -409,6 +549,16 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     }
 
     /*---------------------------------------------------------------------------*/
+
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:28:11
+     * @method refreshDcdn
+     * @params []
+     * @return void
+     *
+     **/
     public void refreshDcdn(){
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", myConstant.getAccessKeyId(), myConstant.getAccessKeySecret());
         IAcsClient client = new DefaultAcsClient(profile);
@@ -424,6 +574,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             log.error("RequestId:" + e.getRequestId());
         }
     }
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:28:15
+     * @method preLoadDcdn
+     * @params []
+     * @return void
+     *
+     **/
     public void preLoadDcdn(){
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", myConstant.getAccessKeyId(), myConstant.getAccessKeySecret());
         IAcsClient client = new DefaultAcsClient(profile);
@@ -439,6 +598,15 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             log.error("RequestId:" + e.getRequestId());
         }
     }
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:28:20
+     * @method run
+     * @params [args]
+     * @return void
+     *
+     **/
     @Override
     public void run(ApplicationArguments args){
         log.info("<--------------------初始化redis-------------------->");

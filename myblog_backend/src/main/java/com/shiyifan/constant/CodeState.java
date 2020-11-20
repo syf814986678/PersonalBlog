@@ -1,5 +1,11 @@
 package com.shiyifan.constant;
-
+/**
+ *
+ * @author ZouCha
+ * @name CodeState
+ * @date 2020-11-20 15:04:37
+ *
+ **/
 public class CodeState {
     //操作成功
     public static final int success=200;

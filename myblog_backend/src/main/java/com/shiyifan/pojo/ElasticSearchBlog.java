@@ -8,8 +8,12 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name ElasticSearchBlog
+ * @date 2020-11-20 15:22:29
+ *
+ **/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

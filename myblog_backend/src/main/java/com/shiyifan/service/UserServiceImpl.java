@@ -10,8 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name UserServiceImpl
+ * @date 2020-11-20 15:31:01
+ *
+ **/
 @Service
 @Transactional
 public class UserServiceImpl implements UserService{
@@ -22,7 +26,15 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:31:09
+     * @method login
+     * @params [username, password]
+     * @return com.shiyifan.pojo.Myuser
+     *
+     **/
     @Override
     public Myuser login(String username, String password) {
         Myuser myuser = userMapper.login(username);
@@ -33,7 +45,15 @@ public class UserServiceImpl implements UserService{
         }
         return null;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:31:19
+     * @method getAllId
+     * @params []
+     * @return java.util.ArrayList<java.lang.Integer>
+     *
+     **/
     @Override
     public ArrayList<Integer> getAllId() {
         return userMapper.getAllId();

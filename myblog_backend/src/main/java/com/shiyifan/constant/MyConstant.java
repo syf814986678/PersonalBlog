@@ -4,7 +4,13 @@ package com.shiyifan.constant;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
+/**
+ *
+ * @author ZouCha
+ * @name MyConstant
+ * @date 2020-11-20 15:04:49
+ *
+ **/
 @Component
 @Data
 public class MyConstant {

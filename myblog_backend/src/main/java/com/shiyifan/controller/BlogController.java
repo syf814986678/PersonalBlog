@@ -24,8 +24,12 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name BlogController
+ * @date 2020-11-20 15:05:06
+ *
+ **/
 @RestController
 @RequestMapping("/blog")
 @Log4j2
@@ -42,7 +46,15 @@ public class BlogController {
     private VisitCountUtil VisitCountUtil;
     /*------------------------------登陆后进行的操作-------------------------------*/
 
-    //查找最新六条博客
+    /**
+     * 查找最新六条博客
+     * @author ZouCha
+     * @date 2020-11-20 15:05:36
+     * @method selectLastestSixBlog
+     * @params [request]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/index")
     public Result selectLastestSixBlog(HttpServletRequest request) {
         Result result = new Result();
@@ -71,8 +83,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //根据博客ID和用户ID查找博客
+    /**
+     * 根据博客ID和用户ID查找博客
+     * @author ZouCha
+     * @date 2020-11-20 15:05:54
+     * @method selectBlogById
+     * @params [request, blogId]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectBlogById")
     public Result selectBlogById(HttpServletRequest request, @RequestParam("blogId") String blogId) {
         Result result = new Result();
@@ -102,8 +121,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //分页查询博客和查询总条数
+    /**
+     * 分页查询博客和查询总条数
+     * @author ZouCha
+     * @date 2020-11-20 15:06:06
+     * @method selectBlogByPage
+     * @params [request, pageNow, pageSize]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectBlogByPage")
     public Result selectBlogByPage(HttpServletRequest request, @RequestParam("pageNow") int pageNow, @RequestParam("pageSize") int pageSize) {
         Result result = new Result();
@@ -133,8 +159,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //添加博客
+    /**
+     * 添加博客
+     * @author ZouCha
+     * @date 2020-11-20 15:06:17
+     * @method addBlog
+     * @params [request, myblog]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/addBlog")
     public Result addBlog(HttpServletRequest request,@RequestBody Myblog myblog) {
         Result result = new Result();
@@ -163,8 +196,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //更新博客
+    /**
+     * 更新博客
+     * @author ZouCha
+     * @date 2020-11-20 15:06:28
+     * @method updateBlog
+     * @params [request, myblog]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/updateBlog")
     public Result updateBlog(HttpServletRequest request,@RequestBody Myblog myblog){
         Result result = new Result();
@@ -192,8 +232,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //根据ID删除博客
+    /**
+     * 根据ID删除博客
+     * @author ZouCha
+     * @date 2020-11-20 15:06:43
+     * @method deleteBlog
+     * @params [request, blogId, categoryId]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/deleteBlog")
     public Result deleteBlog(HttpServletRequest request, @RequestParam("blogId") String blogId, @RequestParam("categoryId") int categoryId) {
         Result result = new Result();
@@ -222,8 +269,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //读取暂存redis
+    /**
+     * 读取redis暂存博客
+     * @author ZouCha
+     * @date 2020-11-20 15:06:54
+     * @method getTempBlog
+     * @params [request]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/getTempBlog")
     public Result getTempBlog(HttpServletRequest request) {
         Result result = new Result();
@@ -251,8 +305,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //获取访问人数
+    /**
+     * 获取访问人数
+     * @author ZouCha
+     * @date 2020-11-20 15:07:22
+     * @method getVisitNums
+     * @params [request, dayNum]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/getVisitNums")
     public Result getVisitNums(HttpServletRequest request,@RequestParam("dayNum") int dayNum) {
         Result result = new Result();
@@ -279,8 +340,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //查询博客总条数
+    /**
+     * 查询博客总条数
+     * @author ZouCha
+     * @date 2020-11-20 15:07:44
+     * @method selectTotalBlogNums
+     * @params [request]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectTotalBlogNums")
     public Result selectTotalBlogNums(HttpServletRequest request) {
         Result result = new Result();
@@ -309,8 +377,17 @@ public class BlogController {
     }
     /*---------------------------------------------------------------------------*/
 
+
     /*------------------------------公共操作-------------------------------*/
-    //获取所有访问人数
+    /**
+     * 获取网站总访问人数
+     * @author ZouCha
+     * @date 2020-11-20 15:08:05
+     * @method getAllVisitNums
+     * @params []
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/getAllVisitNums")
     public Result getAllVisitNums() {
         Result result = new Result();
@@ -330,8 +407,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //暂存redis
+    /**
+     * 将博客暂存到redis
+     * @author ZouCha
+     * @date 2020-11-20 15:08:42
+     * @method setTempBlog
+     * @params [myblog]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/setTempBlog")
     public Result setTempBlog(@RequestBody Myblog myblog) {
         Result result = new Result();
@@ -351,8 +435,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //根据博客ID查找博客
+    /**
+     * 根据博客ID查找博客
+     * @author ZouCha
+     * @date 2020-11-20 15:09:17
+     * @method selectBlogByIdForCommon
+     * @params [request, blogId]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectBlogByIdForCommon")
     public Result selectBlogByIdForCommon(HttpServletRequest request,@RequestParam("blogId") String blogId) {
         Result result = new Result();
@@ -373,8 +464,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //分页查找最新博客
+    /**
+     * 分页查找最新博客
+     * @author ZouCha
+     * @date 2020-11-20 15:09:31
+     * @method selectLastestBlogByPageForCommon
+     * @params [request, pageNow, pageSize]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectLastestBlogByPageForCommon")
     public Result selectLastestBlogByPageForCommon(HttpServletRequest request,@RequestParam("pageNow") int pageNow, @RequestParam("pageSize") int pageSize) {
         Result result = new Result();
@@ -398,8 +496,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //根据种类ID查找博客
+    /**
+     * 根据种类ID查找博客
+     * @author ZouCha
+     * @date 2020-11-20 15:09:43
+     * @method selectBlogByCategoryIdAndPageForCommon
+     * @params [categoryId, pageNow, pageSize]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectBlogByCategoryIdAndPageForCommon")
     public Result selectBlogByCategoryIdAndPageForCommon(@RequestParam("categoryId")int categoryId, @RequestParam("pageNow")int pageNow, @RequestParam("pageSize")int pageSize){
         Result result = new Result();
@@ -421,8 +526,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //根据作者查找博客
+    /**
+     * 根据作者查找博客
+     * @author ZouCha
+     * @date 2020-11-20 15:09:54
+     * @method selectBlogByAuthorForCommon
+     * @params [userId, pageNow, pageSize]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectBlogByAuthorForCommon")
     public Result selectBlogByAuthorForCommon(@RequestParam("userId")int userId, @RequestParam("pageNow")int pageNow, @RequestParam("pageSize")int pageSize){
         Result result = new Result();
@@ -447,8 +559,15 @@ public class BlogController {
     /*---------------------------------------------------------------------------*/
 
     /*------------------------------搜索操作-------------------------------*/
-
-    //搜索博客
+    /**
+     * 搜索博客
+     * @author ZouCha
+     * @date 2020-11-20 15:10:09
+     * @method search
+     * @params [keyword]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/search/{keyword}")
     public Result search(@PathVariable("keyword") String keyword){
         Result result = new Result();
@@ -469,8 +588,15 @@ public class BlogController {
         }
         return result;
     }
-
-    //查找热词
+    /**
+     * 查找热词
+     * @author ZouCha
+     * @date 2020-11-20 15:10:54
+     * @method hotkeys
+     * @params []
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/hotkeys")
     public Result hotkeys(){
         Result result = new Result();

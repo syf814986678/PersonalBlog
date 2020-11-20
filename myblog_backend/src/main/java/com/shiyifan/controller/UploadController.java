@@ -21,8 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name UploadController
+ * @date 2020-11-20 15:12:36
+ *
+ **/
 @RestController
 @RequestMapping("/upload")
 @Log4j2
@@ -68,7 +72,15 @@ public class UploadController {
 //        }
 //        return result;
 //    }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:12:45
+     * @method randomBlogCoverImage
+     * @params [request]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/RandomBlogCoverImage")
     public Result randomBlogCoverImage(HttpServletRequest request){
         Result result = new Result();
@@ -102,7 +114,15 @@ public class UploadController {
         }
         return result;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:12:53
+     * @method getOssToken
+     * @params [request, type]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @RequestMapping("/getOssToken/{type}")
     public Result getOssToken(HttpServletRequest request,@PathVariable("type") int type){
         Result result = new Result();
@@ -168,7 +188,15 @@ public class UploadController {
         }
         return result;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:12:59
+     * @method callback
+     * @params [request]
+     * @return java.lang.String
+     *
+     **/
     @RequestMapping("/callback")
     public String callback(HttpServletRequest request) {
         Gson gson = new Gson();

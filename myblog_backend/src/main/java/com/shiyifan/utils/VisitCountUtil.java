@@ -7,14 +7,28 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+/**
+ *
+ * @author ZouCha
+ * @name VisitCountUtil
+ * @date 2020-11-20 15:34:45
+ *
+ **/
 @Component
 @Log4j2
 public class VisitCountUtil {
 
     @Autowired
     private RedisUtil redisUtill;
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:35:05
+     * @method setVisitCount
+     * @params [request, userId]
+     * @return long
+     *
+     **/
     public long setVisitCount(HttpServletRequest request, int userId){
         String ip = request.getHeader("X-Forwarded-For");
         if (ip!=null && !"unknown".equalsIgnoreCase(ip)) {
@@ -37,7 +51,15 @@ public class VisitCountUtil {
             return 0;
         }
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:35:09
+     * @method setVisitCount
+     * @params [request]
+     * @return long
+     *
+     **/
     public long setVisitCount(HttpServletRequest request){
         String ip = request.getHeader("X-Forwarded-For");
         if (ip!=null && !"unknown".equalsIgnoreCase(ip)) {
@@ -60,7 +82,15 @@ public class VisitCountUtil {
             return 0;
         }
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:35:20
+     * @method getVisitCount
+     * @params [userId, dayNum]
+     * @return long
+     *
+     **/
     public long getVisitCount(int userId, int dayNum){
         Date date = new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24*dayNum);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

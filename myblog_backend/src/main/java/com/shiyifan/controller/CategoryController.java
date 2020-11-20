@@ -14,8 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name CategoryController
+ * @date 2020-11-20 15:11:31
+ *
+ **/
 @RestController
 @RequestMapping("/category")
 @Log4j2
@@ -24,7 +28,15 @@ public class CategoryController {
 
     @Autowired
     private CategoryService categoryService;
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:11:38
+     * @method selectAllCategoryByPage
+     * @params [request, pageNow, pageSize]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectAllCategoryByPage")
     public Result selectAllCategoryByPage(HttpServletRequest request, @RequestParam("pageNow") int pageNow, @RequestParam("pageSize") int pageSize){
         Result result = new Result();
@@ -54,7 +66,15 @@ public class CategoryController {
         }
         return result;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:11:42
+     * @method selectAllCategoryForBlog
+     * @params [request]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectAllCategoryForBlog")
     public Result selectAllCategoryForBlog(HttpServletRequest request){
         Result result = new Result();
@@ -82,7 +102,15 @@ public class CategoryController {
         }
         return result;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:11:49
+     * @method addCategory
+     * @params [request, categoryName]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/addCategory")
     public Result addCategory(HttpServletRequest request,@RequestParam("categoryName") String categoryName){
         Result result = new Result();
@@ -110,7 +138,15 @@ public class CategoryController {
         }
         return result;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:11:53
+     * @method selectCategoryById
+     * @params [request, categoryId]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectCategoryById")
     public Result selectCategoryById(HttpServletRequest request,@RequestParam("categoryId")int categoryId){
         Result result = new Result();
@@ -138,7 +174,15 @@ public class CategoryController {
         }
         return result;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:11:58
+     * @method updateCategory
+     * @params [request, categoryId, categoryName]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/updateCategory")
     public Result updateCategory(HttpServletRequest request,@RequestParam("categoryId")int categoryId,@RequestParam("categoryName") String categoryName){
         Result result = new Result();
@@ -166,7 +210,15 @@ public class CategoryController {
         }
         return result;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:12:03
+     * @method deleteCategory
+     * @params [request, categoryId]
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/deleteCategory")
     public Result deleteCategory(HttpServletRequest request, @RequestParam("categoryId")int categoryId){
         Result result = new Result();
@@ -201,7 +253,15 @@ public class CategoryController {
         }
         return result;
     }
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:12:07
+     * @method selectAllCategoryForCommon
+     * @params []
+     * @return com.shiyifan.vo.Result
+     *
+     **/
     @PostMapping("/selectAllCategoryForCommon")
     public Result selectAllCategoryForCommon(){
         Result result = new Result();

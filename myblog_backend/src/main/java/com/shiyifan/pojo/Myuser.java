@@ -9,8 +9,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name Myuser
+ * @date 2020-11-20 15:23:04
+ *
+ **/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

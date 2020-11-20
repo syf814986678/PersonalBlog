@@ -6,7 +6,13 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-
+/**
+ *
+ * @author ZouCha
+ * @name TestMapper
+ * @date 2020-11-20 15:21:25
+ *
+ **/
 @Mapper
 @Repository
 public interface TestMapper {

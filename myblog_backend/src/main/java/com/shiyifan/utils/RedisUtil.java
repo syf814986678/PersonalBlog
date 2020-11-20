@@ -13,8 +13,12 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name RedisUtil
+ * @date 2020-11-20 15:32:35
+ *
+ **/
 @Component
 @Log4j2
 public class RedisUtil {
@@ -23,7 +27,12 @@ public class RedisUtil {
     @Qualifier("myredisTemplate")
     private RedisTemplate<String, Object> myredisTemplate;
 
-    // =============================common============================ /** * 指定缓存失效时间 * @param key 键 * @param time 时间(秒) */
+    // =============================common============================
+    /**
+     * 指定缓存失效时间
+     * @param key 键
+     * @param time 时间(秒)
+     */
     public boolean expire(String key, long time) {
         try {
             if (time > 0) {
@@ -37,14 +46,18 @@ public class RedisUtil {
     }
 
     /**
-     * 根据key 获取过期时间 * @param key 键 不能为null * @return 时间(秒) 返回0代表为永久有效
+     * 根据key 获取过期时间
+     * @param key 键 不能为null
+     * @return 时间(秒) 返回0代表为永久有效
      */
     public long getExpire(String key) {
         return myredisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
 
     /**
-     * 判断key是否存在 * @param key 键 * @return true 存在 false不存在
+     * 判断key是否存在
+     * @param key 键
+     * @return true 存在 false不存在
      */
     public boolean hasKey(String key) {
         try {
@@ -56,7 +69,8 @@ public class RedisUtil {
     }
 
     /**
-     * 删除缓存 * @param key 可以传一个值 或多个
+     * 删除缓存
+     * @param key 可以传一个值 或多个
      */
     @SuppressWarnings("unchecked")
     public void del(String... key) {

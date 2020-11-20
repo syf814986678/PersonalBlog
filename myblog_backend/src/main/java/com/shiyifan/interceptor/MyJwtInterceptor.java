@@ -11,13 +11,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name MyJwtInterceptor
+ * @date 2020-11-20 15:22:10
+ *
+ **/
 @Component
 public class MyJwtInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private JwtUtil jwtUtil;
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:22:16
+     * @method preHandle
+     * @params [request, response, handler]
+     * @return boolean
+     *
+     **/
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {

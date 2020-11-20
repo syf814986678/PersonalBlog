@@ -25,8 +25,12 @@ import java.util.Iterator;
 
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name ScheduleTaskConfig
+ * @date 2020-11-20 14:57:12
+ *
+ **/
 @Configuration
 @EnableScheduling
 @Log4j2
@@ -41,17 +45,42 @@ public class ScheduleTaskConfig{
     @Autowired
     private MyConstant myConstant;
 
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:01:03
+     * @method deleteVisitRedisConfigureTasks
+     * @params []
+     * @return void
+     *
+     **/
     @Scheduled(cron = "0 0 0 1/1 * ? ")
     private void deleteVisitRedisConfigureTasks() {
        deleteVisitRedis();
     }
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:00:41
+     * @method DcdnConfigureTasks
+     * @params []
+     * @return void
+     *
+     **/
     @Scheduled(cron = "0 0/30 * * * ? ")
     private void DcdnConfigureTasks() {
         refreshDcdn();
         preLoadDcdn();
     }
-
-
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:01:25
+     * @method deleteVisitRedis
+     * @params []
+     * @return void
+     *
+     **/
     private void deleteVisitRedis(){
         try {
             Date date = new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 2);
@@ -72,6 +101,15 @@ public class ScheduleTaskConfig{
             log.error(e);
         }
     }
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:01:33
+     * @method refreshDcdn
+     * @params []
+     * @return void
+     *
+     **/
     public void refreshDcdn(){
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", myConstant.getAccessKeyId(), myConstant.getAccessKeySecret());
         IAcsClient client = new DefaultAcsClient(profile);
@@ -87,6 +125,15 @@ public class ScheduleTaskConfig{
             log.error("RequestId:" + e.getRequestId());
         }
     }
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:01:42
+     * @method preLoadDcdn
+     * @params []
+     * @return void
+     *
+     **/
     public void preLoadDcdn(){
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", myConstant.getAccessKeyId(), myConstant.getAccessKeySecret());
         IAcsClient client = new DefaultAcsClient(profile);

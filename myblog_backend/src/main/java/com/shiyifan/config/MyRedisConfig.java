@@ -12,10 +12,23 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 
 /**
- * @author 81498
- */
+ *
+ * @author ZouCha
+ * @name MyRedisConfig
+ * @date 2020-11-20 14:53:20
+ *
+ **/
 @Configuration
 public class MyRedisConfig {
+    /**
+     *
+     * @author ZouCha
+     * @date 2020-11-20 15:02:35
+     * @method myredisTemplate
+     * @params [factory]
+     * @return org.springframework.data.redis.core.RedisTemplate<java.lang.String,java.lang.Object>
+     *
+     **/
     @Bean
     @SuppressWarnings("all")
     public RedisTemplate<String, Object> myredisTemplate(RedisConnectionFactory factory) {

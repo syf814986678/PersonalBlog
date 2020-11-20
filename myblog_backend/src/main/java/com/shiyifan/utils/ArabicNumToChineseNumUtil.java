@@ -2,17 +2,25 @@ package com.shiyifan.utils;
 
 import org.springframework.stereotype.Component;
 
-/**
- * @author 81498
- */
+/***
+ *
+ * @author ZouCha
+ * @name ArabicNumToChineseNumUtil
+ * @date 2020-11-20 15:31:30
+ *
+ **/
 @Component
 public class ArabicNumToChineseNumUtil {
     static char[] cnArr = new char [] {'一','二','三','四','五','六','七','八','九'};
     /**
-     * 将数字转换为中文数字， 这里只写到了万
-     * @param intInput
-     * @return
-     */
+     * 数字转换为中文数字， 这里只写到了万
+     * @author ZouCha
+     * @date 2020-11-20 15:31:42
+     * @method arabicNumToChineseNum
+     * @params [intInput]
+     * @return java.lang.String
+     *
+     **/
     public String arabicNumToChineseNum(int intInput) {
         String si = String.valueOf(intInput);
         String sd = "";
