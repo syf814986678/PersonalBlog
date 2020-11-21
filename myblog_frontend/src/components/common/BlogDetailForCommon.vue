@@ -70,7 +70,7 @@
             });
           },
           refresh(){
-            this.$http.post("/blog/selectBlogByIdForCommon","blogId="+this.$route.params.blogid).then(response=>{
+            this.$http.post("/blog/selectBlogByIdForCommon/"+this.$route.params.blogid).then(response=>{
               if (response!=null){
                 this.myblog=response.data.msg["myblog"]
                 document.title=this.myblog.blogTitle
@@ -85,6 +85,14 @@
           document.documentElement.scrollTop=0
           document.body.scrollTop=0
           this.refresh();
+        },
+        watch: {
+          '$route.params.blogid': function (to, from) {
+            this.$store.commit('setmainloading',true)
+            document.documentElement.scrollTop=0
+            document.body.scrollTop=0
+            this.refresh()
+          }
         },
     }
 </script>

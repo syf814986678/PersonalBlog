@@ -105,7 +105,7 @@ public class VisitCountUtil {
         }
         catch (Exception e){
             log.error(e);
-            return 0;
+            return -1;
         }
     }
 }

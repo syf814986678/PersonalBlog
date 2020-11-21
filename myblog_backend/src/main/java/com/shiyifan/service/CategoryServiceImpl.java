@@ -2,9 +2,12 @@ package com.shiyifan.service;
 
 import com.shiyifan.dao.CategoryMapper;
 import com.shiyifan.pojo.Mycategory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.ArrayList;
 /**
@@ -15,7 +18,8 @@ import java.util.ArrayList;
  *
  **/
 @Service
-@Transactional
+@Order
+@Log4j2
 public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
@@ -32,7 +36,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ArrayList<Mycategory> selectAllCategoryByPage(int userId, int pageNow, int pageSize) {
         int start = (pageNow-1)*pageSize;
-        return categoryMapper.selectAllCategoryByPage(userId, start, pageSize);
+        ArrayList<Mycategory> mycategories=null;
+        try {
+            mycategories=categoryMapper.selectAllCategoryByPage(userId, start, pageSize);
+        }
+        catch (Exception e){
+            log.error(e);
+        }
+        return mycategories;
     }
     /**
      *
@@ -45,7 +56,14 @@ public class CategoryServiceImpl implements CategoryService {
      **/
     @Override
     public ArrayList<Mycategory> selectAllCategoryForBlog(int userId) {
-        return categoryMapper.selectAllCategoryForBlog(userId);
+        ArrayList<Mycategory> mycategories = null;
+        try {
+            mycategories = categoryMapper.selectAllCategoryForBlog(userId);
+        }
+        catch (Exception e){
+            log.error(e);
+        }
+        return mycategories;
     }
     /**
      *
@@ -58,7 +76,14 @@ public class CategoryServiceImpl implements CategoryService {
      **/
     @Override
     public int selectTotalCategoryNums(int userId) {
-        return categoryMapper.selectTotalCategoryNums(userId);
+        try {
+            return categoryMapper.selectTotalCategoryNums(userId);
+        }
+        catch (Exception e){
+            log.error(e);
+            return -1;
+        }
+
     }
     /**
      *
@@ -70,8 +95,17 @@ public class CategoryServiceImpl implements CategoryService {
      *
      **/
     @Override
-    public void addCategory(int userId, String categoryName) {
-        categoryMapper.addCategory(userId, categoryName);
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean addCategory(int userId, String categoryName) {
+        try {
+            categoryMapper.addCategory(userId, categoryName);
+            return true;
+        }
+        catch (Exception e){
+            log.error(e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;
+        }
     }
     /**
      *
@@ -84,7 +118,14 @@ public class CategoryServiceImpl implements CategoryService {
      **/
     @Override
     public Mycategory selectCategoryById(int userId, int categoryId) {
-        return categoryMapper.selectCategoryById(userId, categoryId);
+        Mycategory mycategory=null;
+        try {
+            mycategory=categoryMapper.selectCategoryById(userId, categoryId);
+        }
+        catch (Exception e){
+            log.error(e);
+        }
+        return mycategory;
     }
     /**
      *
@@ -96,8 +137,17 @@ public class CategoryServiceImpl implements CategoryService {
      *
      **/
     @Override
-    public void updateCategory(int userId, String categoryName, int categoryId) {
-        categoryMapper.updateCategory(userId, categoryName, categoryId);
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateCategory(int userId, String categoryName, int categoryId) {
+        try {
+            categoryMapper.updateCategory(userId, categoryName, categoryId);
+            return true;
+        }
+        catch (Exception e){
+            log.error(e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;
+        }
     }
     /**
      *
@@ -109,8 +159,17 @@ public class CategoryServiceImpl implements CategoryService {
      *
      **/
     @Override
-    public void deleteCategory(int userId, int categoryId) {
-        categoryMapper.deleteCategory(userId, categoryId);
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteCategory(int userId, int categoryId) {
+        try {
+            categoryMapper.deleteCategory(userId, categoryId);
+            return true;
+        }
+        catch (Exception e){
+            log.error(e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return false;
+        }
     }
     /**
      *
@@ -123,7 +182,13 @@ public class CategoryServiceImpl implements CategoryService {
      **/
     @Override
     public int getCategoryRank(int userId, int categoryId) {
-        return categoryMapper.getCategoryRank(userId, categoryId);
+        try {
+            return categoryMapper.getCategoryRank(userId, categoryId);
+        }
+        catch (Exception e){
+            return -1;
+        }
+
     }
     /**
      *
@@ -136,6 +201,13 @@ public class CategoryServiceImpl implements CategoryService {
      **/
     @Override
     public ArrayList<Mycategory> selectAllCategoryForCommon() {
-        return categoryMapper.selectAllCategoryForCommon();
+        ArrayList<Mycategory> mycategories=null;
+        try {
+            mycategories=categoryMapper.selectAllCategoryForCommon();
+        }
+        catch (Exception e){
+            log.error(e);
+        }
+        return mycategories;
     }
 }

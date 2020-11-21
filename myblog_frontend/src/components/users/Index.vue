@@ -43,29 +43,6 @@
           this.$http.post("/blog/selectTotalBlogNums").then(response=>{
             if (response!=null){
               this.totalBlogNums=response.data.msg["totalBlogNums"];
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-          this.$http.post("/blog/getVisitNums","dayNum=0").then(response=>{
-            if (response!=null){
-              this.todayVisitors=response.data.msg["visitNums"];
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-          this.$http.post("/blog/getVisitNums","dayNum=1").then(response=>{
-            if (response!=null){
-              this.yesterdayVisitors=response.data.msg["visitNums"];
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-          this.$http.post("/blog/selectBlogByPage","pageNow=0"+"&pageSize=5").then(response=>{
-            if (response!=null){
               this.$notify({
                 title: '欢迎',
                 message: "欢迎登录本博客",
@@ -74,7 +51,24 @@
               });
             }
           }).catch(error=> {
-            console.log(error);
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums/0").then(response=>{
+            if (response!=null){
+              this.todayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/getVisitNums/1").then(response=>{
+            if (response!=null){
+              this.yesterdayVisitors=response.data.msg["visitNums"];
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
           })
         }
     }

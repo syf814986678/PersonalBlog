@@ -128,7 +128,7 @@
     <!--根据博客ID查找博客-->
     <select id="selectBlogByIdForCommon" resultMap="blogandcategoryandusername">
         select *
-        from myblog blog
+        from myblog
         where blog_id =#{blogid}
         and is_deleted =0;
     </select>

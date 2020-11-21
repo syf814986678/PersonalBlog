@@ -36,7 +36,6 @@ public class UploadController {
     @Autowired
     private MyConstant myConstant;
 
-
     private String dir;
 
 //    @PostMapping("/uploadBlogCoverImage")
@@ -52,18 +51,18 @@ public class UploadController {
 //                String key="myblog/BlogCoverImage/"+ userId+"-"+userName+"/"+ UUID.randomUUID().toString().replaceAll("-", "")+".jpg";
 //                PutObjectRequest putObjectRequest = new PutObjectRequest(myConstant.getBucket(), key, new ByteArrayInputStream(file.getBytes()));
 //                ossClient.putObject(putObjectRequest);
-//                result.setCodeState(CodeState.success);
+//                result.setCodeState(CodeState.SUCCESS_CODE);
 //                map.put("blogCoverImage","https://picture.chardance.cloud/"+key);
 //            }
 //            else {
-//                result.setCodeState(CodeState.tokenError);
-//                map.put("tokenError", request.getAttribute("tokenError"));
+//                result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+//                map.put("TOKEN_ERROR_CODE", request.getAttribute("TOKEN_ERROR_CODE"));
 //            }
 //        }
 //        catch (Exception e){
 //            log.error(e);
-//            result.setCodeState(CodeState.exception);
-//            map.put("exception", "服务端处理错误！请稍后再试");
+//            result.setCodeState(CodeState.EXCEPTION_CODE);
+//            map.put("EXCEPTION_CODE", "服务端处理错误！请稍后再试");
 //        }
 //        finally {
 //            // 关闭OSSClient。
@@ -72,8 +71,10 @@ public class UploadController {
 //        }
 //        return result;
 //    }
+
     /**
-     *
+     * 随机封面图片
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:12:45
      * @method randomBlogCoverImage
@@ -81,31 +82,37 @@ public class UploadController {
      * @return com.shiyifan.vo.Result
      *
      **/
-    @PostMapping("/RandomBlogCoverImage")
+    @PostMapping("/randomBlogCoverImage")
     public Result randomBlogCoverImage(HttpServletRequest request){
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
         OSS ossClient = new OSSClientBuilder().build(myConstant.getEndpoint(),myConstant.getAccessKeyId(),myConstant.getAccessKeySecret());
         try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
+            Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
             if(claims!=null){
                 ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
                 listObjectsRequest.setBucketName(myConstant.getBucket());
                 listObjectsRequest.setPrefix("myblog/Random/");
                 ObjectListing objectListing = ossClient.listObjects(listObjectsRequest);
                 List<OSSObjectSummary> sums = objectListing.getObjectSummaries();
-                result.setCodeState(CodeState.success);
+                result.setCodeState(CodeState.SUCCESS_CODE);
                 map.put("blogCoverImage","https://picture.chardance.cloud/"+sums.get((int) (1 + Math.random() * (sums.size()-1))).getKey());
             }
             else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+                if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                    result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                    map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+                }
+                if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                    result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                    map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
+                }
             }
         }
         catch (Exception e){
             log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "获取随机封面图片失败！");
         }
         finally {
             // 关闭OSSClient。
@@ -114,8 +121,10 @@ public class UploadController {
         }
         return result;
     }
+
     /**
-     *
+     * 获取Token
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:12:53
      * @method getOssToken
@@ -129,7 +138,7 @@ public class UploadController {
         HashMap<String, Object> map = new HashMap<>();
         OSS ossClient = new OSSClientBuilder().build(myConstant.getEndpoint(),myConstant.getAccessKeyId(),myConstant.getAccessKeySecret());
         try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
+            Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
             if(claims!=null){
                 int userId = (int)claims.get("userId");
                 String userName=(String)claims.get("userName");
@@ -169,17 +178,23 @@ public class UploadController {
                 jasonCallback.put("callbackBodyType", "application/x-www-form-urlencoded");
                 String base64CallbackBody = BinaryUtil.toBase64String(jasonCallback.toString().getBytes());
                 map.put("callback", base64CallbackBody);
-                result.setCodeState(CodeState.success);
+                result.setCodeState(CodeState.SUCCESS_CODE);
             }
             else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+                if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                    result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                    map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+                }
+                if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                    result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                    map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
+                }
             }
         }
         catch (Exception e){
             log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "获取Token失败！");
         }
         finally {
             // 关闭OSSClient。
@@ -188,8 +203,9 @@ public class UploadController {
         }
         return result;
     }
+
     /**
-     *
+     * 上传Oss回调
      * @author ZouCha
      * @date 2020-11-20 15:12:59
      * @method callback
@@ -209,12 +225,13 @@ public class UploadController {
             map.put("MimeType", request.getParameter("mimeType"));
             map.put("Width", request.getParameter("Width"));
             map.put("Height", request.getParameter("Height"));
-            map.put("codeState", CodeState.success);
+            map.put("codeState", CodeState.SUCCESS_CODE);
         }
+
         catch (Exception e){
             log.error(e);
-            map.put("codeState", CodeState.ossException);
-            map.put("exception", "服务端处理错误！请稍后再试");
+            map.put("codeState", CodeState.OSS_EXCEPTION_CODE);
+            map.put(CodeState.OSS_EXCEPTION_STR, "上传Oss回调失败！");
         }
         return gson.toJson(map);
     }

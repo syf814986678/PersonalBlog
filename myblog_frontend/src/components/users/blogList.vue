@@ -59,7 +59,6 @@
       :current-page.sync="currentPage"
       :page-size="pagesize"
       :total="total"
-      :pager-count="6"
       layout="prev, pager, next, total"
     >
     </el-pagination>
@@ -295,7 +294,7 @@ export default {
       });
     },
     randomImage(){
-      this.$http.post("/upload/RandomBlogCoverImage").then(response=>{
+      this.$http.post("/upload/randomBlogCoverImage").then(response=>{
         if (response!=null){
           this.formdata.blogCoverImage=response.data.msg["blogCoverImage"];
         }
@@ -304,8 +303,8 @@ export default {
         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
       })
     },
-    refreshdate(userid,pageNow,pageSize){
-      this.$http.post("/blog/selectBlogByPage","pageNow="+pageNow+"&pageSize="+pageSize).then(response=>{
+    refreshdate(pageNow,pageSize){
+      this.$http.post("/blog/selectBlogsByPage/"+pageSize+"/"+pageNow).then(response=>{
         if (response!=null){
           this.mydata=response.data.msg["myblogs"];
           this.total=response.data.msg["totalBlogNums"];
@@ -318,7 +317,7 @@ export default {
     },
     handleCurrentChange(page){
       this.$store.commit('setCurrentPage',page)
-      this.refreshdate(this.$store.state.myuser.userid,page,this.pagesize);
+      this.refreshdate(page,this.pagesize);
     },
     tableRowClassName({row, rowIndex}) {
       if (rowIndex % 2 ) {
@@ -348,7 +347,7 @@ export default {
       });
     },
     deleteblog(blogid,categoryid) {
-      this.$http.post("/blog/deleteBlog","blogId="+blogid+"&categoryId="+categoryid).then(response=>{
+      this.$http.post("/blog/deleteBlog/"+blogid+"/"+categoryid).then(response=>{
         if (response!=null){
           this.$notify({
             title: '删除成功',
@@ -356,7 +355,7 @@ export default {
             type: 'success',
             duration: 2500
           });
-          this.refreshdate(this.$store.state.myuser.userid,this.currentPage,this.pagesize);
+          this.refreshdate(this.currentPage,this.pagesize);
         }
       }).catch(error=> {
         console.log(error)
@@ -367,15 +366,22 @@ export default {
       this.dialogFormVisible=false;
     },
     selectblog(index, row) {
-      this.$http.post("/blog/selectBlogById","blogId="+row.blogId).then(response=>{
+      this.$http.post("/blog/selectBlogById/"+row.blogId).then(response=>{
         if (response!=null){
           this.formdata=response.data.msg["myblog"];
-          this.options=response.data.msg["mycategories"];
-          this.dialogFormVisible=true;
-          this.dialogloading=false;
-          setTimeout(() => {
-            document.getElementById("eldialog").scrollTop=143
-          }, 100)
+          this.$http.post("/category/selectAllBlogCategory").then(response=>{
+            if (response!=null){
+              this.options=response.data.msg["mycategories"];
+              this.dialogFormVisible=true;
+              this.dialogloading=false;
+              setTimeout(() => {
+                document.getElementById("eldialog").scrollTop=143
+              }, 100)
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
         }
       }).catch(error=> {
         console.log(error)
@@ -400,7 +406,7 @@ export default {
                 type: 'success',
                 duration: 2500
               });
-              this.refreshdate(this.$store.state.myuser.userid,this.currentPage,this.pagesize)
+              this.refreshdate(this.currentPage,this.pagesize)
               this.dialogFormVisible=false
             }
           }).catch(error=> {
@@ -484,7 +490,7 @@ export default {
   },
   created() {
     const that = this;
-    this.refreshdate(this.$store.state.myuser.userid,this.currentPage,this.pagesize);
+    this.refreshdate(this.currentPage,this.pagesize);
     document.onkeydown = function (e) {
       // 回车提交表单
       // 兼容FF和IE和Opera

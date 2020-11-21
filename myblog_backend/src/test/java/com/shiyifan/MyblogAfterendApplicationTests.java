@@ -435,10 +435,10 @@ class MyblogAfterendApplicationTests {
     private StringEncryptor stringEncryptor;
     @Test
     public void testencoding(){
-        String yuanwen1="uMbisou3Q8D32goIEc9CmX8SygsK7T";
-        String miwen1 = stringEncryptor.encrypt(yuanwen1) ;
-        System.out.println(miwen1);
-//        System.out.println(stringEncryptor.decrypt(yuanwen1));
+        String yuanwen1="BpCIn7gPcYBqjYnzdnsQK2bDCSkcNJ5acWhDVBTp8obyco57OwOu4Oah4vxCWKX0";
+//        String miwen1 = stringEncryptor.encrypt(yuanwen1) ;
+//        System.out.println(miwen1);
+        System.out.println(stringEncryptor.decrypt(yuanwen1));
 
     }
 

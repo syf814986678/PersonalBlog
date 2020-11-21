@@ -82,7 +82,7 @@
       },
       refresh(page){
         if (this.$route.params.bloglist==="all"){
-          this.$http.post("/blog/selectLastestBlogByPageForCommon","pageNow="+page+"&pageSize="+this.pageSize).then(response=>{
+          this.$http.post("/blog/selectBlogsByPageForCommon/"+this.pageSize+"/"+page).then(response=>{
             if (response!=null){
               this.myblogs=response.data.msg["myblogs"]
               this.total=response.data.msg["nums"]
@@ -102,7 +102,7 @@
           })
         }
         else if (this.$route.params.bloglist==="category"){
-          this.$http.post("/blog/selectBlogByCategoryIdAndPageForCommon","pageNow="+page+"&pageSize="+this.pageSize+"&categoryId="+this.$route.params.bloglist2).then(response=>{
+          this.$http.post("/blog/selectBlogsByCategoryIdAndPageForCommon/"+this.$route.params.bloglist2+"/"+this.pageSize+"/"+page).then(response=>{
             if (response!=null){
               this.myblogs=response.data.msg["myblogs"]
               this.total=response.data.msg["nums"]

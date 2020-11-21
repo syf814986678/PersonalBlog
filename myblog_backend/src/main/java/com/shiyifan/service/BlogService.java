@@ -25,7 +25,7 @@ public interface BlogService {
      * @return void
      *
      **/
-    void addBlog(Myblog myblog);
+    Boolean addBlog(Myblog myblog);
 
     /**
      * 根据博客ID和用户ID查找博客
@@ -47,7 +47,7 @@ public interface BlogService {
      * @return void
      *
      **/
-    void deleteBlogById(int userId, String blogId, int categoryId);
+    Boolean deleteBlogById(int userId, String blogId, int categoryId);
 
     /**
      * 更新博客
@@ -58,7 +58,7 @@ public interface BlogService {
      * @return void
      *
      **/
-    void updateBlog(Myblog myblog);
+    Boolean updateBlog(Myblog myblog);
 
     /**
      * 分页查询博客
@@ -121,10 +121,10 @@ public interface BlogService {
      * @date 2020-11-20 15:24:36
      * @method addElasticsearchBlog
      * @params [blogId]
-     * @return void
      *
-     **/
-    void addElasticsearchBlog(String blogId) throws IOException;
+     *
+     * @return*/
+    Boolean addElasticsearchBlog(String blogId) throws IOException;
 
     /**
      *
@@ -135,7 +135,7 @@ public interface BlogService {
      * @return void
      *
      **/
-    void deleteElasticsearchBlog(String blogId) throws IOException;
+    Boolean deleteElasticsearchBlog(String blogId) throws IOException;
 
     /**
      *
@@ -146,7 +146,7 @@ public interface BlogService {
      * @return void
      *
      **/
-    void updateElasticsearchBlog(String blogId) throws IOException;
+    Boolean updateElasticsearchBlog(String blogId) throws IOException;
 
     /*---------------------------------------------------------------------------*/
 

@@ -6,7 +6,7 @@ import addBlog from "../components/users/addBlog";
 import blogList from "../components/users/blogList";
 import page404 from "../components/page404";
 import commonIndex from "../components/common/commonIndex";
-import myLayout from "../components/myLayout";
+import myLayout from "../components/users/myLayout";
 import BlogDetailForCommon from "../components/common/BlogDetailForCommon";
 import BlogListForCommon from "../components/common/BlogListForCommon";
 import categoryList from "../components/users/categoryList";

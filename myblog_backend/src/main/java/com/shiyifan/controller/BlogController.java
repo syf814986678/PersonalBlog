@@ -47,44 +47,8 @@ public class BlogController {
     /*------------------------------登陆后进行的操作-------------------------------*/
 
     /**
-     * 查找最新六条博客
-     * @author ZouCha
-     * @date 2020-11-20 15:05:36
-     * @method selectLastestSixBlog
-     * @params [request]
-     * @return com.shiyifan.vo.Result
-     *
-     **/
-    @PostMapping("/index")
-    public Result selectLastestSixBlog(HttpServletRequest request) {
-        Result result = new Result();
-        HashMap<String, Object> map = new HashMap<>();
-        try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
-            if(claims!=null){
-                int userId = (int)claims.get("userId");
-                ArrayList<Myblog> myblogs = blogService.selectBlogByPage(userId,1,5);
-                blogService.selectTotalBlogNums(userId);
-                result.setCodeState(CodeState.success);
-                map.put("myblogs", myblogs);
-            }
-            else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
-            }
-        }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
-        }
-        finally {
-            result.setMsg(map);
-        }
-        return result;
-    }
-    /**
-     * 根据博客ID和用户ID查找博客
+     * 根据博客ID查找博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:05:54
      * @method selectBlogById
@@ -92,75 +56,85 @@ public class BlogController {
      * @return com.shiyifan.vo.Result
      *
      **/
-    @PostMapping("/selectBlogById")
-    public Result selectBlogById(HttpServletRequest request, @RequestParam("blogId") String blogId) {
+    @PostMapping("/selectBlogById/{blogId}")
+    public Result selectBlogById(HttpServletRequest request, @PathVariable("blogId") String blogId) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
-            if(claims!=null){
-                int userId = (int)claims.get("userId");
-                Myblog myblog = blogService.selectBlogById(userId, blogId);
-                ArrayList<Mycategory> mycategories = categoryService.selectAllCategoryForBlog(userId);
-                result.setCodeState(CodeState.success);
+        Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
+        if(claims!=null){
+            int userId = (int)claims.get("userId");
+            Myblog myblog = blogService.selectBlogById(userId, blogId);
+            ArrayList<Mycategory> mycategories = categoryService.selectAllCategoryForBlog(userId);
+            if(myblog != null && mycategories!=null){
+                result.setCodeState(CodeState.SUCCESS_CODE);
                 map.put("myblog", myblog);
                 map.put("mycategories", mycategories);
             }
             else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+                result.setCodeState(CodeState.EXCEPTION_CODE);
+                map.put(CodeState.EXCEPTION_STR, "根据博客ID查找博客失败！");
             }
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+            }
+            if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
+            }
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
-     * 分页查询博客和查询总条数
+     * 分页查找博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:06:06
-     * @method selectBlogByPage
+     * @method selectBlogsByPage
      * @params [request, pageNow, pageSize]
      * @return com.shiyifan.vo.Result
      *
      **/
-    @PostMapping("/selectBlogByPage")
-    public Result selectBlogByPage(HttpServletRequest request, @RequestParam("pageNow") int pageNow, @RequestParam("pageSize") int pageSize) {
+    @PostMapping("/selectBlogsByPage/{pageSize}/{pageNow}")
+    public Result selectBlogsByPage(HttpServletRequest request, @PathVariable("pageNow") int pageNow, @PathVariable("pageSize") int pageSize) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
-            if(claims!=null){
-                int userId = (int)claims.get("userId");
-                ArrayList<Myblog> myblogs = blogService.selectBlogByPage(userId, pageNow, pageSize);
-                int totalBlogNums = blogService.selectTotalBlogNums(userId);
-                result.setCodeState(CodeState.success);
+        Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
+        if(claims!=null){
+            int userId = (int)claims.get("userId");
+            ArrayList<Myblog> myblogs = blogService.selectBlogByPage(userId, pageNow, pageSize);
+            int totalBlogNums = blogService.selectTotalBlogNums(userId);
+            if(myblogs!=null && totalBlogNums!=-1){
+                result.setCodeState(CodeState.SUCCESS_CODE);
                 map.put("myblogs", myblogs);
                 map.put("totalBlogNums", totalBlogNums);
             }
             else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+                result.setCodeState(CodeState.EXCEPTION_CODE);
+                map.put(CodeState.EXCEPTION_STR, "分页查找博客失败！");
             }
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+            }
+            if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
+            }
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
      * 添加博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:06:17
      * @method addBlog
@@ -169,35 +143,45 @@ public class BlogController {
      *
      **/
     @PostMapping("/addBlog")
-    public Result addBlog(HttpServletRequest request,@RequestBody Myblog myblog) {
+    public Result addBlog(HttpServletRequest request,@RequestBody Myblog myblog){
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
-            if(claims!=null){
-                myblog.setBlogId(UUID.randomUUID().toString().replaceAll("-", ""));
-                blogService.addBlog(myblog);
-                blogService.addElasticsearchBlog(myblog.getBlogId());
-                result.setCodeState(CodeState.success);
-                map.put("add", "发布成功");
+        Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
+        if(claims!=null){
+            myblog.setBlogId(UUID.randomUUID().toString().replaceAll("-", ""));
+            try {
+                if(blogService.addBlog(myblog) && blogService.addElasticsearchBlog(myblog.getBlogId())){
+                    result.setCodeState(CodeState.SUCCESS_CODE);
+                    map.put("add", "发布成功");
+                }
+                else {
+                    result.setCodeState(CodeState.EXCEPTION_CODE);
+                    map.put(CodeState.EXCEPTION_STR, "添加博客失败！");
+                }
             }
-            else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+            catch (Exception e){
+                log.error(e);
+                result.setCodeState(CodeState.EXCEPTION_CODE);
+                map.put(CodeState.EXCEPTION_STR, "添加博客服务端处理错误！");
             }
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+            }
+            if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
+            }
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
      * 更新博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:06:28
      * @method updateBlog
@@ -209,31 +193,40 @@ public class BlogController {
     public Result updateBlog(HttpServletRequest request,@RequestBody Myblog myblog){
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
-            if(claims!=null){
-                blogService.updateBlog(myblog);
-                blogService.updateElasticsearchBlog(myblog.getBlogId());
-                result.setCodeState(CodeState.success);
-                map.put("update", "更新成功");
+        Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
+        if(claims!=null){
+            try {
+                if(blogService.updateBlog(myblog) && blogService.updateElasticsearchBlog(myblog.getBlogId())){
+                    result.setCodeState(CodeState.SUCCESS_CODE);
+                    map.put("update", "更新成功");
+                }
+                else {
+                    result.setCodeState(CodeState.EXCEPTION_CODE);
+                    map.put(CodeState.EXCEPTION_STR, "更新博客失败！");
+                }
             }
-            else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+            catch (Exception e){
+                result.setCodeState(CodeState.EXCEPTION_CODE);
+                map.put(CodeState.EXCEPTION_STR, "更新博客服务端处理错误！");
             }
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+            }
+            if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
+            }
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
      * 根据ID删除博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:06:43
      * @method deleteBlog
@@ -241,36 +234,45 @@ public class BlogController {
      * @return com.shiyifan.vo.Result
      *
      **/
-    @PostMapping("/deleteBlog")
-    public Result deleteBlog(HttpServletRequest request, @RequestParam("blogId") String blogId, @RequestParam("categoryId") int categoryId) {
+    @PostMapping("/deleteBlog/{blogId}/{categoryId}")
+    public Result deleteBlog(HttpServletRequest request, @PathVariable("blogId") String blogId, @PathVariable("categoryId") int categoryId) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
-            if(claims!=null){
-                int userId = (int)claims.get("userId");
-                blogService.deleteBlogById(userId, blogId,categoryId);
-                blogService.deleteElasticsearchBlog(blogId);
-                result.setCodeState(CodeState.success);
-                map.put("delete", "删除成功");
+        Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
+        if(claims!=null){
+            int userId = (int)claims.get("userId");
+            try {
+                if(blogService.deleteBlogById(userId, blogId,categoryId) && blogService.deleteElasticsearchBlog(blogId)){
+                    result.setCodeState(CodeState.SUCCESS_CODE);
+                    map.put("delete", "删除成功");
+                }
+                else {
+                    result.setCodeState(CodeState.EXCEPTION_CODE);
+                    map.put(CodeState.EXCEPTION_STR, "根据ID删除博客失败！");
+                }
             }
-            else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+            catch (Exception e){
+                result.setCodeState(CodeState.EXCEPTION_CODE);
+                map.put(CodeState.EXCEPTION_STR, "根据ID删除博客服务端处理错误！");
             }
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+            }
+            if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
+            }
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
      * 读取redis暂存博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:06:54
      * @method getTempBlog
@@ -282,31 +284,36 @@ public class BlogController {
     public Result getTempBlog(HttpServletRequest request) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
-            if(claims!=null){
-                int userId = (int)claims.get("userId");
-                Myblog myblog = blogService.getTempBlog(userId);
-                result.setCodeState(CodeState.success);
+        Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
+        if(claims!=null){
+            int userId = (int)claims.get("userId");
+            Myblog myblog = blogService.getTempBlog(userId);
+            if(myblog!=null){
+                result.setCodeState(CodeState.SUCCESS_CODE);
                 map.put("myblog", myblog);
             }
-            else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+//            else {
+//                result.setCodeState(CodeState.EXCEPTION_CODE);
+//                map.put(CodeState.EXCEPTION_STR, "读取redis暂存博客失败！");
+//            }
+        }
+        else {
+            if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+            }
+            if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
             }
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
-        }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
      * 获取访问人数
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:07:22
      * @method getVisitNums
@@ -314,34 +321,39 @@ public class BlogController {
      * @return com.shiyifan.vo.Result
      *
      **/
-    @PostMapping("/getVisitNums")
-    public Result getVisitNums(HttpServletRequest request,@RequestParam("dayNum") int dayNum) {
+    @PostMapping("/getVisitNums/{dayNum}")
+    public Result getVisitNums(HttpServletRequest request,@PathVariable("dayNum") int dayNum) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
-            if(claims!=null){
-                long visitor = VisitCountUtil.getVisitCount((int)claims.get("userId"),dayNum);
-                result.setCodeState(CodeState.success);
+        Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
+        if(claims!=null){
+            long visitor = VisitCountUtil.getVisitCount((int)claims.get("userId"),dayNum);
+            if(visitor!=-1){
+                result.setCodeState(CodeState.SUCCESS_CODE);
                 map.put("visitNums", visitor);
             }
             else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+                result.setCodeState(CodeState.EXCEPTION_CODE);
+                map.put(CodeState.EXCEPTION_STR, "获取访问人数失败！");
             }
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+            }
+            if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
+            }
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
      * 查询博客总条数
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:07:44
      * @method selectTotalBlogNums
@@ -353,34 +365,39 @@ public class BlogController {
     public Result selectTotalBlogNums(HttpServletRequest request) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            Claims claims = (Claims)request.getAttribute("user_claims");
-            if(claims!=null){
-                int totalBlogNums = blogService.selectTotalBlogNums((int)claims.get("userId"));
-                result.setCodeState(CodeState.success);
+        Claims claims = (Claims)request.getAttribute(CodeState.USER_CLAIMS_STR);
+        if(claims!=null){
+            int totalBlogNums = blogService.selectTotalBlogNums((int)claims.get("userId"));
+            if(totalBlogNums!=-1){
+                result.setCodeState(CodeState.SUCCESS_CODE);
                 map.put("totalBlogNums", totalBlogNums);
             }
             else {
-                result.setCodeState(CodeState.tokenError);
-                map.put("tokenError", request.getAttribute("tokenError"));
+                result.setCodeState(CodeState.EXCEPTION_CODE);
+                map.put(CodeState.EXCEPTION_STR, "查询博客总条数失败！");
             }
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
+                result.setCodeState(CodeState.TOKEN_ERROR_CODE);
+                map.put(CodeState.TOKEN_ERROR_STR, request.getAttribute(CodeState.TOKEN_ERROR_STR));
+            }
+            if(request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR)!=null) {
+                result.setCodeState(CodeState.TOKEN_TIME_LIMIT_CODE);
+                map.put(CodeState.TOKEN_TIME_LIMIT_STR, request.getAttribute(CodeState.TOKEN_TIME_LIMIT_STR));
+            }
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /*---------------------------------------------------------------------------*/
 
-
     /*------------------------------公共操作-------------------------------*/
+
     /**
-     * 获取网站总访问人数
+     * 获取网站总访问人数 todo
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:08:05
      * @method getAllVisitNums
@@ -392,23 +409,22 @@ public class BlogController {
     public Result getAllVisitNums() {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            long visitCount = VisitCountUtil.getVisitCount(0, 2);
-            result.setCodeState(CodeState.success);
+        long visitCount = VisitCountUtil.getVisitCount(0, 2);
+        if(visitCount!=-1){
+            result.setCodeState(CodeState.SUCCESS_CODE);
             map.put("visitAllNums", visitCount);
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "获取网站总访问人数失败！");
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
-     * 将博客暂存到redis
+     * 暂存博客到redis
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:08:42
      * @method setTempBlog
@@ -420,23 +436,21 @@ public class BlogController {
     public Result setTempBlog(@RequestBody Myblog myblog) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            blogService.setTempBlog(myblog);
-            result.setCodeState(CodeState.success);
+        if (blogService.setTempBlog(myblog)){
+            result.setCodeState(CodeState.SUCCESS_CODE);
             map.put("setTempBlog", "未完成博客已暂存");
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "暂存博客到redis失败！");
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
-     * 根据博客ID查找博客
+     * 根据博客ID查找公共博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:09:17
      * @method selectBlogByIdForCommon
@@ -444,123 +458,119 @@ public class BlogController {
      * @return com.shiyifan.vo.Result
      *
      **/
-    @PostMapping("/selectBlogByIdForCommon")
-    public Result selectBlogByIdForCommon(HttpServletRequest request,@RequestParam("blogId") String blogId) {
+    @PostMapping("/selectBlogByIdForCommon/{blogId}")
+    public Result selectBlogByIdForCommon(HttpServletRequest request,@PathVariable("blogId") String blogId) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            Myblog myblog = blogService.selectBlogByIdForCommon(blogId);
+        Myblog myblog = blogService.selectBlogByIdForCommon(blogId);
+        if(myblog!=null){
             VisitCountUtil.setVisitCount(request,myblog.getMyuser().getUserId());
-            result.setCodeState(CodeState.success);
+            result.setCodeState(CodeState.SUCCESS_CODE);
             map.put("myblog", myblog);
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "根据博客ID查找公共博客失败！");
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
-     * 分页查找最新博客
+     * 分页查找公共博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
-     * @date 2020-11-20 15:09:31
-     * @method selectLastestBlogByPageForCommon
+     * @date 2020-11-21 11:00:49
+     * @method selectBlogsByPageForCommon
      * @params [request, pageNow, pageSize]
      * @return com.shiyifan.vo.Result
      *
      **/
-    @PostMapping("/selectLastestBlogByPageForCommon")
-    public Result selectLastestBlogByPageForCommon(HttpServletRequest request,@RequestParam("pageNow") int pageNow, @RequestParam("pageSize") int pageSize) {
+    @PostMapping("/selectBlogsByPageForCommon/{pageSize}/{pageNow}")
+    public Result selectBlogsByPageForCommon(HttpServletRequest request,@PathVariable("pageNow") int pageNow, @PathVariable("pageSize") int pageSize) {
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            ArrayList<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(0,pageNow, pageSize);
-            int nums = blogService.selectTotalBlogNumsForCommon(0);
+        ArrayList<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(0,pageNow, pageSize);
+        int nums = blogService.selectTotalBlogNumsForCommon(0);
+        if(myblogs.size()!=0 && nums!=-1){
             VisitCountUtil.setVisitCount(request);
-            result.setCodeState(CodeState.success);
+            result.setCodeState(CodeState.SUCCESS_CODE);
             map.put("myblogs", myblogs);
             map.put("nums",nums);
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "分页查找公共博客失败！");
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
-     * 根据种类ID查找博客
+     * 根据种类ID分页查找公共博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
-     * @date 2020-11-20 15:09:43
-     * @method selectBlogByCategoryIdAndPageForCommon
+     * @date 2020-11-21 11:06:45
+     * @method selectBlogsByCategoryIdAndPageForCommon
      * @params [categoryId, pageNow, pageSize]
      * @return com.shiyifan.vo.Result
      *
      **/
-    @PostMapping("/selectBlogByCategoryIdAndPageForCommon")
-    public Result selectBlogByCategoryIdAndPageForCommon(@RequestParam("categoryId")int categoryId, @RequestParam("pageNow")int pageNow, @RequestParam("pageSize")int pageSize){
+    @PostMapping("/selectBlogsByCategoryIdAndPageForCommon/{categoryId}/{pageSize}/{pageNow}")
+    public Result selectBlogsByCategoryIdAndPageForCommon(@PathVariable("categoryId")int categoryId, @PathVariable("pageNow")int pageNow, @PathVariable("pageSize")int pageSize){
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            ArrayList<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(categoryId, pageNow, pageSize);
-            int nums = blogService.selectTotalBlogNumsForCommon(categoryId);
-            result.setCodeState(CodeState.success);
+        ArrayList<Myblog> myblogs = blogService.selectBlogAllByPageForCommon(categoryId, pageNow, pageSize);
+        int nums = blogService.selectTotalBlogNumsForCommon(categoryId);
+        if(myblogs.size()!=0 && nums!=-1){
+            result.setCodeState(CodeState.SUCCESS_CODE);
             map.put("myblogs", myblogs);
             map.put("nums",nums);
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "根据种类ID分页查找公共博客失败！");
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
-     * 根据作者查找博客
+     * 根据作者分页查找公共博客 todo
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:09:54
-     * @method selectBlogByAuthorForCommon
+     * @method selectBlogByAuthorAndPageForCommon
      * @params [userId, pageNow, pageSize]
      * @return com.shiyifan.vo.Result
      *
      **/
-    @PostMapping("/selectBlogByAuthorForCommon")
-    public Result selectBlogByAuthorForCommon(@RequestParam("userId")int userId, @RequestParam("pageNow")int pageNow, @RequestParam("pageSize")int pageSize){
+    @PostMapping("/selectBlogByAuthorAndPageForCommon/{userId}/{pageSize}/{pageNow}")
+    public Result selectBlogByAuthorAndPageForCommon(@PathVariable("userId")int userId, @PathVariable("pageNow")int pageNow, @PathVariable("pageSize")int pageSize){
         Result result = new Result();
         HashMap<String, Object> map = new HashMap<>();
-        try {
-            ArrayList<Myblog> myblogs = blogService.selectBlogByAuthorForCommon(userId, pageNow, pageSize);
-            int nums = blogService.selectTotalBlogNums(userId);
-            result.setCodeState(CodeState.success);
+        ArrayList<Myblog> myblogs = blogService.selectBlogByAuthorForCommon(userId, pageNow, pageSize);
+        int nums = blogService.selectTotalBlogNums(userId);
+        if(myblogs.size()!=0 && nums!=-1){
+            result.setCodeState(CodeState.SUCCESS_CODE);
             map.put("myblogs", myblogs);
             map.put("nums",nums);
         }
-        catch (Exception e) {
-            log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+        else {
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "根据作者分页查找公共博客失败！");
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /*---------------------------------------------------------------------------*/
 
     /*------------------------------搜索操作-------------------------------*/
+
     /**
      * 搜索博客
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:10:09
      * @method search
@@ -574,22 +584,22 @@ public class BlogController {
         HashMap<String, Object> map = new HashMap<>();
         try {
             ArrayList<Map<String, Object>> results = blogService.searchContentPage(keyword, 1,30);
+            result.setCodeState(CodeState.SUCCESS_CODE);
             map.put("results", results);
             map.put("total", results.size());
-            result.setCodeState(CodeState.success);
         }
         catch (Exception e) {
             log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "搜索博客失败！");
         }
-        finally {
-            result.setMsg(map);
-        }
+        result.setMsg(map);
         return result;
     }
+
     /**
      * 查找热词
+     * 已修改(controller名称,restful风格)
      * @author ZouCha
      * @date 2020-11-20 15:10:54
      * @method hotkeys
@@ -605,7 +615,7 @@ public class BlogController {
         BufferedReader br=null;
         try {
             String s = "";
-            in = new InputStreamReader(new FileInputStream("/home/syf/myblog/remote.txt"), StandardCharsets.UTF_8);
+            in = new InputStreamReader(new FileInputStream("C:\\Users\\81498\\Desktop\\remote.txt"), StandardCharsets.UTF_8);
             br = new BufferedReader(in);
             ArrayList<HashMap<String, String>> hotkeys = new ArrayList<>();
             while ((s = br.readLine()) != null) {
@@ -613,13 +623,13 @@ public class BlogController {
                 stringmap.put("value", s);
                 hotkeys.add(stringmap);
             }
+            result.setCodeState(CodeState.SUCCESS_CODE);
             map.put("hotkeys", hotkeys);
-            result.setCodeState(CodeState.success);
         }
         catch (Exception e) {
             log.error(e);
-            result.setCodeState(CodeState.exception);
-            map.put("exception", "服务端处理错误！请稍后再试");
+            result.setCodeState(CodeState.EXCEPTION_CODE);
+            map.put(CodeState.EXCEPTION_STR, "查找热刺失败！");
         }
         finally {
             try {
@@ -630,8 +640,8 @@ public class BlogController {
             } catch (IOException e) {
                 log.error(e);
             }
-            result.setMsg(map);
         }
+        result.setMsg(map);
         return result;
     }
 }

@@ -55,7 +55,7 @@ public interface CategoryService {
      * @return void
      *
      **/
-    void addCategory(int userId, String categoryName);
+    Boolean addCategory(int userId, String categoryName);
 
     /**
      * 根据种类ID和用户ID查找一个种类
@@ -77,7 +77,7 @@ public interface CategoryService {
      * @return void
      *
      **/
-    void updateCategory(int userId, String categoryName, int categoryId);
+    Boolean updateCategory(int userId, String categoryName, int categoryId);
 
     /**
      * 根据种类ID和用户ID删除种类
@@ -88,7 +88,7 @@ public interface CategoryService {
      * @return void
      *
      **/
-    void deleteCategory(int userId, int categoryId);
+    Boolean deleteCategory(int userId, int categoryId);
 
     /**
      * 根据种类ID和用户ID查找种类Rank

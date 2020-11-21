@@ -105,8 +105,8 @@
 </template>
 
 <script>
-import {time} from "../assets/js/showTime"
-import {getHeight, getWidth} from "../assets/js/calc";
+import {time} from "../../assets/js/showTime"
+import {getHeight, getWidth} from "../../assets/js/calc";
 export default {
   name: "myLayout",
   data() {

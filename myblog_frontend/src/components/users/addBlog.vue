@@ -199,7 +199,7 @@ export default {
         });
       },
       randomImage(){
-        this.$http.post("/upload/RandomBlogCoverImage").then(response=>{
+        this.$http.post("/upload/randomBlogCoverImage").then(response=>{
           if (response!=null){
             this.form.blogCoverImage=response.data.msg["blogCoverImage"];
           }
@@ -311,7 +311,7 @@ export default {
       },
     },
     created() {
-      this.$http.post("/category/selectAllCategoryForBlog").then(response=>{
+      this.$http.post("/category/selectAllBlogCategory").then(response=>{
         if (response!=null){
           this.options=response.data.msg["mycategories"];
           this.loading=false;
@@ -323,28 +323,26 @@ export default {
       this.$http.post("/blog/getTempBlog").then(response=>{
         if (response!=null){
           var myblog=response.data.msg["myblog"];
-          if (myblog!=null){
-            this.$notify({
-              title: '加载博客',
-              message: "加载暂存博客成功",
-              type: 'success',
-              duration: 2500
-            });
-            if (myblog.blogTitle!==""){
-              this.form.blogTitle=myblog.blogTitle
-            }
-            if (myblog.blogCoverImage!==""){
-              this.form.blogCoverImage=myblog.blogCoverImage
-            }
-            if (myblog.blogContent!==""){
-              this.form.blogContent=myblog.blogContent
-            }
-            if (myblog.mycategory.categoryId!==""){
-              this.form.mycategory.categoryId=myblog.mycategory.categoryId
-            }
-            if (myblog.mycategory.categoryName!==""){
-              this.form.mycategory.categoryName=myblog.mycategory.categoryName
-            }
+          this.$notify({
+            title: '加载博客',
+            message: "加载暂存博客成功",
+            type: 'success',
+            duration: 2500
+          });
+          if (myblog.blogTitle!==""){
+            this.form.blogTitle=myblog.blogTitle
+          }
+          if (myblog.blogCoverImage!==""){
+            this.form.blogCoverImage=myblog.blogCoverImage
+          }
+          if (myblog.blogContent!==""){
+            this.form.blogContent=myblog.blogContent
+          }
+          if (myblog.mycategory.categoryId!==""){
+            this.form.mycategory.categoryId=myblog.mycategory.categoryId
+          }
+          if (myblog.mycategory.categoryName!==""){
+            this.form.mycategory.categoryName=myblog.mycategory.categoryName
           }
         }
       }).catch(error=> {

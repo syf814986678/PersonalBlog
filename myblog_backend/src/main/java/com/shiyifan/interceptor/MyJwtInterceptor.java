@@ -1,6 +1,7 @@
 package com.shiyifan.interceptor;
 
 import com.alibaba.druid.util.StringUtils;
+import com.shiyifan.constant.CodeState;
 import com.shiyifan.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,18 +43,19 @@ public class MyJwtInterceptor extends HandlerInterceptorAdapter {
                     String token=authorization.replace("Bearer ", "");
                     Claims claims = jwtUtil.parseToken(token);
                     if(claims!=null){
-                        request.setAttribute("user_claims",claims);
+                        request.setAttribute(CodeState.USER_CLAIMS_STR,claims);
                     }
                 }
             }
             else {
-                request.setAttribute("tokenError","token验证非法！请重新登录");
+                request.setAttribute(CodeState.TOKEN_ERROR_STR,"token验证非法！请重新登录");
             }
         }
         catch (io.jsonwebtoken.MalformedJwtException | io.jsonwebtoken.SignatureException e){
-            request.setAttribute("tokenError","token验证非法！请重新登录");
-        } catch (io.jsonwebtoken.ExpiredJwtException e){
-            request.setAttribute("tokenError","token已过期！请重新登录");
+            request.setAttribute(CodeState.TOKEN_ERROR_STR,"token验证非法！请重新登录");
+        }
+        catch (io.jsonwebtoken.ExpiredJwtException e){
+            request.setAttribute(CodeState.TOKEN_TIME_LIMIT_STR,"token已过期！请重新登录");
         }
         return true;
     }
