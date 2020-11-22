@@ -421,7 +421,9 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         Myblog myblog =null;
         try {
             myblog = (Myblog) redisUtil.get("user-" + userId + "-TempBlog");
-            log.info("读取暂存博客成功");
+            if(myblog==null){
+                myblog=new Myblog();
+            }
             redisUtil.del("user-" + userId + "-TempBlog");
         }
         catch (Exception e){
@@ -506,7 +508,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
                 else {
                     blogs = (ArrayList<Object>) redisUtil.lGet("category-"+ categoryId +"-myblogsForCommon", start, end);
                 }
-                if(blogs.size()==0){
+                if(blogs==null || blogs.size()==0){
                     log.info("初始化redis-> selectBlogAllByPageForCommon");
                     Iterator<Myblog> iterator = blogMapper.selectBlogAllForCommon(0).iterator();
                     while (iterator.hasNext()){

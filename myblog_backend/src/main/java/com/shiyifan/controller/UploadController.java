@@ -30,7 +30,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/upload")
 @Log4j2
-@CrossOrigin
 public class UploadController {
 
     @Autowired

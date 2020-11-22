@@ -33,7 +33,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/blog")
 @Log4j2
-@CrossOrigin
 public class BlogController {
 
     @Autowired
@@ -289,13 +288,18 @@ public class BlogController {
             int userId = (int)claims.get("userId");
             Myblog myblog = blogService.getTempBlog(userId);
             if(myblog!=null){
-                result.setCodeState(CodeState.SUCCESS_CODE);
-                map.put("myblog", myblog);
+                if(!myblog.getBlogId().isEmpty()){
+                    result.setCodeState(CodeState.SUCCESS_CODE);
+                    map.put("myblog", myblog);
+                }
+                else {
+                    result.setCodeState(CodeState.SUCCESS_CODE);
+                }
             }
-//            else {
-//                result.setCodeState(CodeState.EXCEPTION_CODE);
-//                map.put(CodeState.EXCEPTION_STR, "读取redis暂存博客失败！");
-//            }
+            else {
+                result.setCodeState(CodeState.EXCEPTION_CODE);
+                map.put(CodeState.EXCEPTION_STR, "读取redis暂存博客失败！");
+            }
         }
         else {
             if(request.getAttribute(CodeState.TOKEN_ERROR_STR)!=null){
@@ -615,7 +619,7 @@ public class BlogController {
         BufferedReader br=null;
         try {
             String s = "";
-            in = new InputStreamReader(new FileInputStream("C:\\Users\\81498\\Desktop\\remote.txt"), StandardCharsets.UTF_8);
+            in = new InputStreamReader(new FileInputStream("/home/syf/myblog/remote.txt"), StandardCharsets.UTF_8);
             br = new BufferedReader(in);
             ArrayList<HashMap<String, String>> hotkeys = new ArrayList<>();
             while ((s = br.readLine()) != null) {

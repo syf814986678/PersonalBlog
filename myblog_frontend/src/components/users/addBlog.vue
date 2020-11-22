@@ -322,27 +322,29 @@ export default {
       })
       this.$http.post("/blog/getTempBlog").then(response=>{
         if (response!=null){
-          var myblog=response.data.msg["myblog"];
-          this.$notify({
-            title: '加载博客',
-            message: "加载暂存博客成功",
-            type: 'success',
-            duration: 2500
-          });
-          if (myblog.blogTitle!==""){
-            this.form.blogTitle=myblog.blogTitle
-          }
-          if (myblog.blogCoverImage!==""){
-            this.form.blogCoverImage=myblog.blogCoverImage
-          }
-          if (myblog.blogContent!==""){
-            this.form.blogContent=myblog.blogContent
-          }
-          if (myblog.mycategory.categoryId!==""){
-            this.form.mycategory.categoryId=myblog.mycategory.categoryId
-          }
-          if (myblog.mycategory.categoryName!==""){
-            this.form.mycategory.categoryName=myblog.mycategory.categoryName
+          const myblog = response.data.msg["myblog"];
+          if (myblog!==null){
+            this.$notify({
+              title: '加载博客',
+              message: "加载暂存博客成功",
+              type: 'success',
+              duration: 2500
+            });
+            if (myblog.blogTitle!==""){
+              this.form.blogTitle=myblog.blogTitle
+            }
+            if (myblog.blogCoverImage!==""){
+              this.form.blogCoverImage=myblog.blogCoverImage
+            }
+            if (myblog.blogContent!==""){
+              this.form.blogContent=myblog.blogContent
+            }
+            if (myblog.mycategory.categoryId!==""){
+              this.form.mycategory.categoryId=myblog.mycategory.categoryId
+            }
+            if (myblog.mycategory.categoryName!==""){
+              this.form.mycategory.categoryName=myblog.mycategory.categoryName
+            }
           }
         }
       }).catch(error=> {
