@@ -56,7 +56,7 @@
     <el-form-item prop="blogContent" class="myitem">
       <v-md-editor v-model="form.blogContent" height="762px" :disabled-menus="[]" @upload-image="handleUploadImage"
                    :include-level="[1, 6]"
-                   left-toolbar="undo redo clear | tip customToolbar h bold italic strikethrough | ul ol table hr | link code"
+                   left-toolbar="undo redo clear | tip customToolbar h bold italic strikethrough image| ul ol table hr | link code"
                    right-toolbar="preview toc sync-scroll fullscreen"
                    :toolbar="toolbar"
                    @copy-code-success="handleCopyCodeSuccess"
@@ -322,8 +322,7 @@ export default {
       })
       this.$http.post("/blog/getTempBlog").then(response=>{
         if (response!=null){
-          const myblog = response.data.msg["myblog"];
-          if (myblog!==null){
+          if (response.data.msg["myblog"]!=="SUCCESS"){
             this.$notify({
               title: '加载博客',
               message: "加载暂存博客成功",

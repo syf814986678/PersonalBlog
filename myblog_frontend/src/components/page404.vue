@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <h1 style="text-align: center">
       Page404，页面不存在
-    </div>
+    </h1>
 </template>
 
 <script>

@@ -435,7 +435,7 @@ class MyblogAfterendApplicationTests {
     private StringEncryptor stringEncryptor;
     @Test
     public void testencoding(){
-        String yuanwen1="BpCIn7gPcYBqjYnzdnsQK2bDCSkcNJ5acWhDVBTp8obyco57OwOu4Oah4vxCWKX0";
+        String yuanwen1="AmIjL2U0o5xP9pCVQ/ppflxgyIuhuYKLBwDwxvFHY7JO9VSaqmFp8ybaXq8fw2CUPRr19ujwQMBRs9oABghAWVXcW5IFbbQPkUOA2azsc2n6W/nCGCLKUj+peOJMEI+4rsxwZQXNF+nC+VtZ+OB/mN5IsjWhFCHzOpx2Awc37XOTHsYwbeNT8o2MJQMMNH1p";
 //        String miwen1 = stringEncryptor.encrypt(yuanwen1) ;
 //        System.out.println(miwen1);
         System.out.println(stringEncryptor.decrypt(yuanwen1));

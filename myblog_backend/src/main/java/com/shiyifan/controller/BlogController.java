@@ -10,6 +10,7 @@ import com.shiyifan.vo.Result;
 import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -288,12 +289,13 @@ public class BlogController {
             int userId = (int)claims.get("userId");
             Myblog myblog = blogService.getTempBlog(userId);
             if(myblog!=null){
-                if(!myblog.getBlogId().isEmpty()){
+                if(!StringUtils.isEmpty(myblog.getBlogId())){
                     result.setCodeState(CodeState.SUCCESS_CODE);
                     map.put("myblog", myblog);
                 }
                 else {
                     result.setCodeState(CodeState.SUCCESS_CODE);
+                    map.put("myblog", CodeState.SUCCESS_STR);
                 }
             }
             else {

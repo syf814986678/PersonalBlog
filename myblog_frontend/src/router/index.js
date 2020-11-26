@@ -114,7 +114,7 @@ const router=new Router({
       path: "*",
       component: page404,
       meta: {
-        title: '404，页面丢失',
+        title: '页面不存在',
       }
      }
   ]

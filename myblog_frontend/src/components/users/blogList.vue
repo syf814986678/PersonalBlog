@@ -121,7 +121,7 @@
         <el-form-item prop="blogContent" class="myitem">
           <v-md-editor v-model="formdata.blogContent" height="740px" :disabled-menus="[]" @upload-image="handleUploadImage"
                        :include-level="[1, 6]"
-                       left-toolbar="undo redo clear | tip customToolbar h bold italic strikethrough | ul ol table hr | link code"
+                       left-toolbar="undo redo clear | tip customToolbar h bold italic strikethrough image| ul ol table hr | link code"
                        right-toolbar="preview toc sync-scroll fullscreen"
                        :toolbar="toolbar"
                        @copy-code-success="handleCopyCodeSuccess"
@@ -439,7 +439,6 @@ export default {
       // {
       //   await this.gettoken(1);
       // }
-
       await this.getupload(files[0],1)
       insertImage({
         url:this.filename,

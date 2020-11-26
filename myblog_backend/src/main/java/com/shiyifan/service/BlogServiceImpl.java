@@ -98,14 +98,14 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             blogMapper.addBlog(myblog);
             categoryMapper.addCategoryRank(myblog.getMyuser().getUserId(), myblog.getMycategory().getCategoryId());
             Myblog mynewblog = blogMapper.selectBlogForOne(myblog.getMyuser().getUserId(), myblog.getBlogId());
-            redisUtil.lSet("user-"+myblog.getMyuser().getUserId()+"-myblogs",mynewblog);
-            redisUtil.incr("user-"+myblog.getMyuser().getUserId()+"myblogsTotal",1);
+            redisUtil.lSet(myConstant.getUserBlogs()+myblog.getMyuser().getUserId(),mynewblog);
+            redisUtil.incr(myConstant.getUserTotalBlogs()+myblog.getMyuser().getUserId(),1);
             mynewblog=blogMapper.selectBlogForOneForCommon(myblog.getBlogId());
-            redisUtil.lSet("myblogsForCommon",mynewblog);
-            redisUtil.incr("myblogsForCommonTotal",1);
-            redisUtil.lSet("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommon",mynewblog);
-            redisUtil.incr("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommonTotal",1);
-            log.info("redis添加成功");
+            redisUtil.lSet(myConstant.getBlogsForCommon(),mynewblog);
+            redisUtil.incr(myConstant.getTotalBlogsForCommon(),1);
+            redisUtil.lSet(myConstant.getCategoryBlogsForCommon()+myblog.getMycategory().getCategoryId(),mynewblog);
+            redisUtil.incr(myConstant.getCategoryTotalBlogsForCommon()+myblog.getMycategory().getCategoryId(),1);
+            log.info("博客ID:"+mynewblog.getBlogId()+"-添加成功");
             return true;
         }
         catch (Exception e){
@@ -142,7 +142,6 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             log.error(e);
             throw new IOException();
         }
-
     }
     /**
      *
@@ -160,30 +159,29 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             blogMapper.deleteBlogById(userId, blogId);
             categoryMapper.deleteCategoryRank(userId, categoryId);
             redisUtil.del(blogId);
-            ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+ userId +"-myblogs", 0, -1);
+            ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet(myConstant.getUserBlogs()+userId, 0, -1);
             Iterator<Object> iterator = myblogs.iterator();
             while (iterator.hasNext()){
                 Myblog myblog = (Myblog) iterator.next();
                 if(myblog.getBlogId().equals(blogId)){
-                    redisUtil.lRemove("user-"+ userId +"-myblogs",1,myblog);
-                    redisUtil.decr("user-"+ userId +"myblogsTotal",1);
-                    log.info("redis删除成功");
+                    redisUtil.lRemove(myConstant.getUserBlogs()+userId,1,myblog);
+                    redisUtil.decr(myConstant.getUserTotalBlogs()+userId,1);
                     break;
                 }
             }
-            myblogs = (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", 0, -1);
+            myblogs = (ArrayList<Object>) redisUtil.lGet(myConstant.getBlogsForCommon(), 0, -1);
             iterator = myblogs.iterator();
             while (iterator.hasNext()){
                 Myblog myblog = (Myblog) iterator.next();
                 if(myblog.getBlogId().equals(blogId)){
-                    redisUtil.lRemove("myblogsForCommon",1,myblog);
-                    redisUtil.decr("myblogsForCommonTotal",1);
-                    redisUtil.lRemove("category-"+ categoryId +"-myblogsForCommon",1,myblog);
-                    redisUtil.decr("category-"+ categoryId +"-myblogsForCommonTotal",1);
-                    log.info("redis删除成功");
+                    redisUtil.lRemove(myConstant.getBlogsForCommon(),1,myblog);
+                    redisUtil.decr(myConstant.getTotalBlogsForCommon(),1);
+                    redisUtil.lRemove(myConstant.getCategoryBlogsForCommon()+categoryId,1,myblog);
+                    redisUtil.decr(myConstant.getCategoryTotalBlogsForCommon()+categoryId,1);
                     break;
                 }
             }
+            log.info("博客ID:"+blogId+"-删除成功");
             return true;
         }
         catch (Exception e){
@@ -239,39 +237,40 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
             }
             blogMapper.updateBlog(myblog);
             Myblog mynewblog = blogMapper.selectBlogForOne(myblog.getMyuser().getUserId(), myblog.getBlogId());
-            ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet("user-"+myblog.getMyuser().getUserId()+"-myblogs", 0, -1);
+            ArrayList<Object> myblogs = (ArrayList<Object>) redisUtil.lGet(myConstant.getUserBlogs()+myblog.getMyuser().getUserId(), 0, -1);
             Iterator<Object> iterator = myblogs.iterator();
             int index = 0;
             while (iterator.hasNext()){
                 Myblog myredisblog = (Myblog) iterator.next();
                 if(myredisblog.getBlogId().equals(myblog.getBlogId())){
-                    redisUtil.lUpdateIndex("user-"+myblog.getMyuser().getUserId()+"-myblogs",index,mynewblog);
+                    redisUtil.lUpdateIndex(myConstant.getUserBlogs()+myblog.getMyuser().getUserId(),index,mynewblog);
                     break;
                 }
                 index++;
             }
             index=0;
             mynewblog=blogMapper.selectBlogForOneForCommon(myblog.getBlogId());
-            myblogs = (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", 0, -1);
+            myblogs = (ArrayList<Object>) redisUtil.lGet(myConstant.getBlogsForCommon(), 0, -1);
             iterator = myblogs.iterator();
             while (iterator.hasNext()){
                 Myblog myredisblog = (Myblog) iterator.next();
                 if(myredisblog.getBlogId().equals(myblog.getBlogId())){
-                    redisUtil.lUpdateIndex("myblogsForCommon",index,mynewblog);
+                    redisUtil.lUpdateIndex(myConstant.getBlogsForCommon(),index,mynewblog);
                     if(categoryidInDB!=myblog.getMycategory().getCategoryId()){
-                        redisUtil.lRemove("category-"+categoryidInDB+"-myblogsForCommon",1,myredisblog);
-                        redisUtil.decr("category-"+categoryidInDB+"-myblogsForCommonTotal",1);
-                        redisUtil.lSet("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommon",mynewblog);
-                        redisUtil.incr("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommonTotal",1);
+                        redisUtil.lRemove(myConstant.getCategoryBlogsForCommon()+categoryidInDB,1,myredisblog);
+                        redisUtil.decr(myConstant.getCategoryTotalBlogsForCommon()+categoryidInDB,1);
+                        redisUtil.lSet(myConstant.getCategoryBlogsForCommon()+myblog.getMycategory().getCategoryId(),mynewblog);
+                        redisUtil.incr(myConstant.getCategoryTotalBlogsForCommon()+myblog.getMycategory().getCategoryId(),1);
                     }
                     else {
-                        redisUtil.lUpdateIndex("category-"+myblog.getMycategory().getCategoryId()+"-myblogsForCommon",index,mynewblog);
+                        redisUtil.lUpdateIndex(myConstant.getCategoryBlogsForCommon()+myblog.getMycategory().getCategoryId(),index,mynewblog);
                     }
                     break;
                 }
                 index++;
             }
             redisUtil.del(myblog.getBlogId());
+            log.info("博客ID:"+myblog.getBlogId()+"-更新成功");
             return true;
         }
         catch (Exception e){
@@ -329,6 +328,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         Myblog myblog =null;
         try {
             myblog = blogMapper.selectBlogById(userId, blogId);
+            log.info("博客ID:"+blogId+"-查找成功");
         }
         catch (Exception e){
             log.error(e);
@@ -350,16 +350,16 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         int end = (pageNow*pageSize)-1;
         ArrayList<Myblog> myblogs = null;
         try {
-            myblogs = (ArrayList<Myblog>)(Object) redisUtil.lGet("user-"+ userId +"-myblogs", start, end);
+            myblogs = (ArrayList<Myblog>)(Object) redisUtil.lGet(myConstant.getUserBlogs()+userId, start, end);
             if(myblogs == null || myblogs.size()==0){
-                log.info("初始化redis-> selectBlogByPage");
+                log.info("初始化->selectBlogByPage");
                 Iterator<Myblog> iterator = blogMapper.selectBlogAll(userId).iterator();
                 while (iterator.hasNext()){
-                    redisUtil.RSet("user-"+ userId +"-myblogs", iterator.next());
+                    redisUtil.RSet(myConstant.getUserBlogs()+userId, iterator.next());
                 }
-                myblogs = (ArrayList<Myblog>)(Object) redisUtil.lGet("user-"+ userId +"-myblogs", start, end);
+                myblogs = (ArrayList<Myblog>)(Object) redisUtil.lGet(myConstant.getUserBlogs()+userId, start, end);
             }
-            log.info("redis中存在selectBlogByPage-> start:"+start+"<=>"+"end:"+end);
+            log.info("selectBlogByPage-> start:"+start+"<=>"+"end:"+end);
         }
         catch (Exception e){
             log.error(e);
@@ -379,13 +379,13 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     public int selectTotalBlogNums(int userId) {
         Object myblogsTotal = null;
         try {
-            myblogsTotal=redisUtil.get("user-"+ userId +"myblogsTotal");
+            myblogsTotal=redisUtil.get(myConstant.getUserTotalBlogs()+userId);
             if(myblogsTotal == null){
-                log.info("初始化redis-> selectTotalBlogNums");
-                redisUtil.set("user-"+ userId +"myblogsTotal", blogMapper.selectTotalBlogNums(userId));
-                myblogsTotal=redisUtil.get("user-"+ userId +"myblogsTotal");
+                log.info("初始化->selectTotalBlogNums");
+                redisUtil.set(myConstant.getUserTotalBlogs()+userId, blogMapper.selectTotalBlogNums(userId));
+                myblogsTotal=redisUtil.get(myConstant.getUserTotalBlogs()+userId);
             }
-            log.info("redis中存在selectTotalBlogNums-> nums:"+(int) myblogsTotal);
+            log.info("selectTotalBlogNums-> nums:"+(int) myblogsTotal);
         }
         catch (Exception e){
             log.error(e);
@@ -420,11 +420,12 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     public Myblog getTempBlog(int userId) {
         Myblog myblog =null;
         try {
-            myblog = (Myblog) redisUtil.get("user-" + userId + "-TempBlog");
+            myblog = (Myblog) redisUtil.get(myConstant.getUserTempBlog()+userId);
             if(myblog==null){
                 myblog=new Myblog();
             }
-            redisUtil.del("user-" + userId + "-TempBlog");
+            redisUtil.del(myConstant.getUserTempBlog()+userId);
+            log.info("读取暂存博客成功");
         }
         catch (Exception e){
             log.error(e);
@@ -448,7 +449,7 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
     @Override
     public Boolean setTempBlog(Myblog myblog) {
         try {
-            redisUtil.set("user-"+myblog.getMyuser().getUserId()+"-TempBlog", myblog);
+            redisUtil.set(myConstant.getUserTempBlog()+myblog.getMyuser().getUserId(), myblog);
             log.info("添加暂存博客成功");
             return true;
         }
@@ -474,11 +475,11 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         try {
             myblog = (Myblog) redisUtil.get(blogId);
             if(myblog==null){
-                log.info("初始化redis-> selectBlogByIdForCommon");
+                log.info("初始化->selectBlogByIdForCommon");
                 redisUtil.set(blogId, blogMapper.selectBlogByIdForCommon(blogId));
                 myblog = (Myblog) redisUtil.get(blogId);
             }
-            log.info("redis中存在selectBlogByIdForCommon-> blogId:"+ blogId);
+            log.info("selectBlogByIdForCommon-> blogId:"+ blogId);
         }
         catch (Exception e) {
             log.error(e);
@@ -503,21 +504,21 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
                 int end = (i*pageSize)-1;
                 ArrayList<Object> blogs=null;
                 if(categoryId == 0){
-                    blogs = (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
+                    blogs = (ArrayList<Object>) redisUtil.lGet(myConstant.getBlogsForCommon(), start, end);
                 }
                 else {
-                    blogs = (ArrayList<Object>) redisUtil.lGet("category-"+ categoryId +"-myblogsForCommon", start, end);
+                    blogs = (ArrayList<Object>) redisUtil.lGet(myConstant.getCategoryBlogsForCommon()+categoryId, start, end);
                 }
                 if(blogs==null || blogs.size()==0){
-                    log.info("初始化redis-> selectBlogAllByPageForCommon");
+                    log.info("初始化->selectBlogAllByPageForCommon");
                     Iterator<Myblog> iterator = blogMapper.selectBlogAllForCommon(0).iterator();
                     while (iterator.hasNext()){
-                        redisUtil.RSet("myblogsForCommon", iterator.next());
+                        redisUtil.RSet(myConstant.getBlogsForCommon(), iterator.next());
                     }
-                    blogs= (ArrayList<Object>) redisUtil.lGet("myblogsForCommon", start, end);
+                    blogs= (ArrayList<Object>) redisUtil.lGet(myConstant.getBlogsForCommon(), start, end);
                 }
                 myblogs.addAll((ArrayList<Myblog>)(Object)blogs);
-                log.info("redis中存在selectBlogAllByPageForCommon-> categoryId:"+ categoryId +"<=>"+"start:"+start+"<=>"+"end:"+end);
+                log.info("selectBlogAllByPageForCommon-> categoryId:"+ categoryId +"<=>"+"start:"+start+"<=>"+"end:"+end);
             }
         }
         catch (Exception e){
@@ -539,17 +540,17 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
         Object myblogsTotal =null;
         try {
             if(categoryId == 0){
-                myblogsTotal = redisUtil.get("myblogsForCommonTotal");
+                myblogsTotal = redisUtil.get(myConstant.getTotalBlogsForCommon());
             }
             else {
-                myblogsTotal = redisUtil.get("category-"+ categoryId +"-myblogsForCommonTotal");
+                myblogsTotal = redisUtil.get(myConstant.getCategoryTotalBlogsForCommon()+categoryId);
             }
             if(myblogsTotal == null){
-                log.info("初始化redis-> selectTotalBlogNumsForCommon");
-                redisUtil.set("myblogsForCommonTotal", blogMapper.selectTotalBlogNumsForCommon(0));
-                myblogsTotal=redisUtil.get("myblogsForCommonTotal");
+                log.info("初始化->selectTotalBlogNumsForCommon");
+                redisUtil.set(myConstant.getTotalBlogsForCommon(), blogMapper.selectTotalBlogNumsForCommon(0));
+                myblogsTotal=redisUtil.get(myConstant.getTotalBlogsForCommon());
             }
-            log.info("redis中存在selectTotalBlogNumsForCommon-> categoryId:"+ categoryId +"<=>"+"nums:"+myblogsTotal);
+            log.info("selectTotalBlogNumsForCommon-> categoryId:"+ categoryId +"<=>"+"nums:"+myblogsTotal);
         }
         catch (Exception e){
             log.error(e);
@@ -709,9 +710,9 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
                 Mycategory mycategory = iterator.next();
                 Iterator<Myblog> iteratorMyblog = blogMapper.selectBlogAllForCommon(mycategory.getCategoryId()).iterator();
                 while (iteratorMyblog.hasNext()){
-                    redisUtil.RSet("category-"+mycategory.getCategoryId()+"-myblogsForCommon", iteratorMyblog.next());
+                    redisUtil.RSet(myConstant.getCategoryBlogsForCommon()+mycategory.getCategoryId(), iteratorMyblog.next());
                 }
-                redisUtil.set("category-"+mycategory.getCategoryId()+"-myblogsForCommonTotal", blogMapper.selectTotalBlogNumsForCommon(mycategory.getCategoryId()));            }
+                redisUtil.set(myConstant.getCategoryTotalBlogsForCommon()+mycategory.getCategoryId(), blogMapper.selectTotalBlogNumsForCommon(mycategory.getCategoryId()));            }
             refreshDcdn();
             preLoadDcdn();
         }
