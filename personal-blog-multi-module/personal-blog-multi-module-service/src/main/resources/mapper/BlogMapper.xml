@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shiyifan.mapper.BlogMapper">
+<!--    <resultMap id="category_name_and_username" type="com.shiyifan.pojo.Blog">-->
+<!--        <association property="category" column="blog_category_id"  select="selectCategoryById"/>-->
+<!--        <association property="user" column="blog_user_id"  select="selectUserById"/>-->
+<!--    </resultMap>-->
+
+<!--    <select id="selectCategoryById" resultType="com.shiyifan.pojo.Category">-->
+<!--        select category_id,category_name,category_rank-->
+<!--        from mycategory-->
+<!--        where category_id =#{blog_category_id}-->
+<!--        and is_deleted =0-->
+<!--    </select>-->
+
+<!--    <select id="selectUserById" resultType="com.shiyifan.pojo.User">-->
+<!--        select user_id,user_name-->
+<!--        from myuser-->
+<!--        where user_id =#{blog_user_id}-->
+<!--        and is_deleted =0-->
+<!--    </select>-->
+    <select id="selectBlogByBlogId" resultType="blog">
+        select *
+        from myblog
+        where blog_id =#{blogid}
+        and is_deleted =0
+    </select>
+</mapper>
