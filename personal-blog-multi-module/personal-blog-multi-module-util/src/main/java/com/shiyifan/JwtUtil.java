@@ -21,17 +21,18 @@ public class JwtUtil {
     private Long ttl;
     @Value("${jwt.key}")
     private String key;
+
     /**
      * 设置认证token
+     *
+     * @return java.lang.String
      * @author ZouCha
      * @date 2020-11-20 15:32:10
      * @method createToken
      * @params [userId, userName]
-     * @return java.lang.String
-     *
      **/
-    public String createToken(int userId, String userName){
-        Long exp=System.currentTimeMillis()+ttl;
+    public String createToken(int userId, String userName) {
+        Long exp = System.currentTimeMillis() + ttl;
         //创建token
         return Jwts.builder().claim("userId", userId)
                 .claim("userName", userName)
@@ -40,16 +41,17 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS256, key)
                 .compact();
     }
+
     /**
      * 解析token
+     *
+     * @return io.jsonwebtoken.Claims
      * @author ZouCha
      * @date 2020-11-20 15:32:24
      * @method parseToken
      * @params [token]
-     * @return io.jsonwebtoken.Claims
-     *
      **/
-    public Claims parseToken(String token){
+    public Claims parseToken(String token) {
         return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
     }
 }

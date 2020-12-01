@@ -16,6 +16,16 @@
             <artifactId>personal-blog-multi-module-util</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.shiyifan</groupId>
+            <artifactId>personal-blog-multi-module-pojo</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.shiyifan</groupId>
+            <artifactId>personal-blog-multi-module-dao</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

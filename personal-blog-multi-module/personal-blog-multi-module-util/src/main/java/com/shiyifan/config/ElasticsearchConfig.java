@@ -8,11 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
  * @author ZouCha
  * @name MyElasticsearchConfig
  * @date 2020-11-20 14:52:11
- *
  **/
 @Configuration
 public class ElasticsearchConfig {
@@ -20,13 +18,11 @@ public class ElasticsearchConfig {
     private String host;
 
     /**
-     *
+     * @return org.elasticsearch.client.RestHighLevelClient
      * @author ZouCha
      * @date 2020-11-20 15:02:18
      * @method restHighLevelClient
      * @params []
-     * @return org.elasticsearch.client.RestHighLevelClient
-     *
      **/
     @Bean
     public RestHighLevelClient restHighLevelClient() {

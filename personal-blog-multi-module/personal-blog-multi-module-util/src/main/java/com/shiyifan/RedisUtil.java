@@ -7,18 +7,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
  * @author ZouCha
  * @name RedisUtil
  * @date 2020-11-20 15:32:35
- *
  **/
 @Component
 @Log4j2
@@ -29,9 +25,11 @@ public class RedisUtil {
     private RedisTemplate<String, Object> myredisTemplate;
 
     // =============================common============================
+
     /**
      * 指定缓存失效时间
-     * @param key 键
+     *
+     * @param key  键
      * @param time 时间(秒)
      */
     public boolean expire(String key, long time) {
@@ -48,6 +46,7 @@ public class RedisUtil {
 
     /**
      * 根据key 获取过期时间
+     *
      * @param key 键 不能为null
      * @return 时间(秒) 返回0代表为永久有效
      */
@@ -57,6 +56,7 @@ public class RedisUtil {
 
     /**
      * 判断key是否存在
+     *
      * @param key 键
      * @return true 存在 false不存在
      */
@@ -71,6 +71,7 @@ public class RedisUtil {
 
     /**
      * 删除缓存
+     *
      * @param key 可以传一个值 或多个
      */
 
@@ -461,6 +462,7 @@ public class RedisUtil {
             return false;
         }
     }
+
     public boolean lSet(String key, Object value) {
         try {
             myredisTemplate.opsForList().leftPush(key, value);
@@ -567,58 +569,58 @@ public class RedisUtil {
 
 
     // ===============================Hyperloglog=================================
-    public long addHyperloglog(String key,Object... values){
+    public long addHyperloglog(String key, Object... values) {
         try {
             Long add = myredisTemplate.opsForHyperLogLog().add(key, values);
             return add;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error(e);
             return 0;
         }
     }
 
-    public boolean deleteHyperloglog(String key){
+    public boolean deleteHyperloglog(String key) {
         try {
             myredisTemplate.opsForHyperLogLog().delete(key);
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error(e);
             return false;
         }
     }
 
-    public long unionHyperloglog(String destinationKey,String... sourceKeys){
+    public long unionHyperloglog(String destinationKey, String... sourceKeys) {
         try {
             Long union = myredisTemplate.opsForHyperLogLog().union(destinationKey, sourceKeys);
             return union;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error(e);
             return 0;
         }
     }
 
-    public long getHyperloglogSize(String...Keys){
+    public long getHyperloglogSize(String... Keys) {
         try {
             Long size = myredisTemplate.opsForHyperLogLog().size(Keys);
             return size;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error(e);
             return 0;
         }
     }
 
-
-
-
-    public Boolean flushDb(){
+    /**
+     * @return java.lang.Boolean
+     * @author ZouCha
+     * @date 2020-12-01 15:15:09
+     * @method flushDb
+     * @params []
+     **/
+    public Boolean flushDb() {
         try {
             myredisTemplate.getConnectionFactory().getConnection().flushDb();
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e);
             return false;
         }

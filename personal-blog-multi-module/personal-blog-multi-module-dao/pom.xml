@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>personal-blog-multi-module-service</artifactId>
+    <artifactId>personal-blog-multi-module-dao</artifactId>
     <dependencies>
         <!--mybatis-->
         <dependency>
@@ -32,11 +32,6 @@
         <dependency>
             <groupId>com.shiyifan</groupId>
             <artifactId>personal-blog-multi-module-pojo</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.shiyifan</groupId>
-            <artifactId>personal-blog-multi-module-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

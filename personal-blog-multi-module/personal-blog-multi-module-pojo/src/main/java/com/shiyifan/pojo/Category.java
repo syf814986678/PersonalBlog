@@ -9,11 +9,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
  * @author ZouCha
- * @name Mycategory
- * @date 2020-11-20 15:22:45
- *
+ * @name Category
+ * @date 2020-12-01 15:25:28
  **/
 @Data
 @AllArgsConstructor

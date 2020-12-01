@@ -12,22 +12,18 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 
 /**
- *
  * @author ZouCha
  * @name RedisConfig
  * @date 2020-11-30 12:55:17
- *
  **/
 @Configuration
 public class RedisConfig {
     /**
-     *
+     * @return org.springframework.data.redis.core.RedisTemplate<java.lang.String, java.lang.Object>
      * @author ZouCha
      * @date 2020-11-20 15:02:35
      * @method myredisTemplate
      * @params [factory]
-     * @return org.springframework.data.redis.core.RedisTemplate<java.lang.String,java.lang.Object>
-     *
      **/
     @Bean
     @SuppressWarnings("all")

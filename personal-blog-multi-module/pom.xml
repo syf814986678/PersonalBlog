@@ -6,7 +6,7 @@
     <modules>
         <module>personal-blog-multi-module-util</module>
         <module>personal-blog-multi-module-web</module>
-        <module>personal-blog-multi-module-service</module>
+        <module>personal-blog-multi-module-dao</module>
         <module>personal-blog-multi-module-pojo</module>
         <module>personal-blog-multi-module-api</module>
     </modules>

@@ -4,16 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
  * @author ZouCha
- * @name Myblog
- * @date 2020-11-20 15:22:39
- *
+ * @name Blog
+ * @date 2020-12-01 15:25:20
  **/
 @Data
 @AllArgsConstructor

@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>com.shiyifan</groupId>
-            <artifactId>personal-blog-multi-module-service</artifactId>
+            <artifactId>personal-blog-multi-module-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
