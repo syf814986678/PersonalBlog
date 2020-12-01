@@ -1,4 +1,4 @@
-package com.shiyifan.controller;
+package com.shiyifan.controller.admin;
 
 import com.google.gson.Gson;
 import com.shiyifan.BlogService;
@@ -21,12 +21,13 @@ import java.util.HashMap;
  **/
 @RestController
 @CrossOrigin
-public class test {
+public class test implements BaseController<Blog> {
     @Autowired
     private BlogService blogService;
 
-    @RequestMapping("/")
-    public String test(){
+    @RequestMapping("/test")
+    @Override
+    public Result selectBlogByBlogId(String blogId) {
         Blog blog = blogService.selectBlogByBlogId("02039b6a22164e898e2f235b9e5f9cb3");
         Result result = new Result();
         result.setCodeState(CodeState.SUCCESS_CODE);
@@ -34,6 +35,7 @@ public class test {
         HashMap<String, Object> hashMap = new HashMap<>(16);
         hashMap.put("Blog", blog);
         result.setData(hashMap);
-        return new Gson().toJson(result);
+        return result;
     }
+
 }
