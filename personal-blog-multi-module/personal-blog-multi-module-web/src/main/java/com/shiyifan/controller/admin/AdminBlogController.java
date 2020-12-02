@@ -1,6 +1,5 @@
 package com.shiyifan.controller.admin;
 
-import com.google.gson.Gson;
 import com.shiyifan.BlogService;
 import com.shiyifan.pojo.Blog;
 import com.shiyifan.pojo.CodeState;
@@ -10,23 +9,27 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
 /**
  * @author ZouCha
- * @name test
- * @date 2020-12-01 12:49
+ * @name AdminBlogController
+ * @date 2020-12-02 18:35
  **/
 @RestController
 @CrossOrigin
-public class test implements BaseController<Blog> {
+@RequestMapping("/admin/blog")
+public class AdminBlogController {
     @Autowired
     private BlogService blogService;
 
-    @RequestMapping("/test")
-    @Override
+    /**
+     * @return com.shiyifan.pojo.Result
+     * @author ZouCha
+     * @date 2020-12-02 19:17:35
+     * @method selectBlogByBlogId
+     * @params [blogId]
+     **/
     public Result selectBlogByBlogId(String blogId) {
         Blog blog = blogService.selectBlogByBlogId("02039b6a22164e898e2f235b9e5f9cb3");
         Result result = new Result();
@@ -37,5 +40,4 @@ public class test implements BaseController<Blog> {
         result.setData(hashMap);
         return result;
     }
-
 }
