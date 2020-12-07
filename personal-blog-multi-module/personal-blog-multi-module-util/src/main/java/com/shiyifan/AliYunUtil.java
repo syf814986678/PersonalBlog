@@ -38,7 +38,7 @@ public class AliYunUtil {
      * @method refreshDcdn
      * @params []
      **/
-    public void refreshDcdn() {
+    public void refreshDcdn() throws ClientException {
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
         IAcsClient client = new DefaultAcsClient(profile);
         RefreshDcdnObjectCachesRequest request = new RefreshDcdnObjectCachesRequest();
@@ -47,20 +47,19 @@ public class AliYunUtil {
             RefreshDcdnObjectCachesResponse response = client.getAcsResponse(request);
             log.info(new Gson().toJson(response));
         } catch (ClientException e) {
-            log.error("ErrCode:" + e.getErrCode());
-            log.error("ErrMsg:" + e.getErrMsg());
-            log.error("RequestId:" + e.getRequestId());
+            log.error("阿里云刷新Dcdn错误"+e.toString());
+            throw new ClientException("阿里云刷新Dcdn错误"+e.toString());
         }
     }
 
     /**
-     * @return voidc
+     * @return void
      * @author ZouCha
      * @date 2020-12-01 12:07:44
      * @method preLoadDcdn
      * @params []
      **/
-    public void preLoadDcdn() {
+    public void preLoadDcdn() throws ClientException {
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
         IAcsClient client = new DefaultAcsClient(profile);
         PreloadDcdnObjectCachesRequest request = new PreloadDcdnObjectCachesRequest();
@@ -69,9 +68,8 @@ public class AliYunUtil {
             PreloadDcdnObjectCachesResponse response = client.getAcsResponse(request);
             log.info(new Gson().toJson(response));
         } catch (ClientException e) {
-            log.error("ErrCode:" + e.getErrCode());
-            log.error("ErrMsg:" + e.getErrMsg());
-            log.error("RequestId:" + e.getRequestId());
+            log.error("阿里云预载Dcdn错误"+e.toString());
+            throw new ClientException("阿里云预载Dcdn错误"+e.toString());
         }
     }
 }

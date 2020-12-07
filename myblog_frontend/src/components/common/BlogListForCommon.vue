@@ -2,12 +2,12 @@
   <div
       v-infinite-scroll="load"
       :infinite-scroll-disabled="disabled">
-      <div v-for="blog in myblogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 98%  ">
+      <div v-for="blog in blogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 98%  ">
           <div class="maoboli">
             <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
             <el-row style="margin-top: 10px;margin-bottom: 0">
               <el-col :span="24">
-                <p class="blogCategory" @click="select(blog.mycategory.categoryId,blog.mycategory.categoryName)"><i class="el-icon-collection-tag myi"></i>{{blog.mycategory.categoryName}}</p>
+                <p class="blogCategory" @click="select(blog.category.categoryId,blog.mycategory.categoryName)"><i class="el-icon-collection-tag myi"></i>{{blog.category.categoryName}}</p>
               </el-col>
             </el-row>
             <el-row style="margin-top: 5px">
@@ -40,7 +40,7 @@
     name: "showBlogListForCommon",
     data() {
       return  {
-        myblogs:[],
+        blogs:[],
         pageSize: 5,
         total: null,
         disabled: true,
@@ -49,52 +49,58 @@
     },
     methods:{
       load(){
-         this.disabled=true
-          if (this.myblogs.length >= this.total){
-            this.$message({
-              message: '博客全部加载完毕',
-              type: 'error',
-              duration: 1000
-            });
-          }
-          else {
-            if (this.$route.params.bloglist==="all" && this.myblogs.length>=10){
-              this.$message({
-                message: '请选择右侧类型查看更多博客！',
-                type: 'error',
-                duration: 2500,
-                center: true
-              });
-            }
-            else {
-              this.$message({
-                message: '博客加载中',
-                type: 'warning',
-                duration: 500
-              });
-              this.$store.commit('setCommonCurrentPage',++this.$store.state.commonCurrentPage)
-              this.refresh(this.$store.state.commonCurrentPage)
-            }
-          }
+        this.disabled=true
+        if (this.$route.params.bloglist==="all" && this.blogs.length >= 10){
+          this.$message({
+            message: '请选择右侧类型查看更多博客！',
+            type: 'error',
+            duration: 2500,
+            center: true
+          });
+        }
+        else if (this.$route.params.bloglist==="category" && this.blogs.length >= this.total){
+          this.$message({
+            message: '博客全部加载完毕',
+            type: 'error',
+            duration: 1000
+          });
+        }
+        else {
+          this.$message({
+            message: '博客加载中',
+            type: 'warning',
+            duration: 500
+          });
+          this.$store.commit('setCommonCurrentPage',++this.$store.state.commonCurrentPage)
+          this.refresh(this.$store.state.commonCurrentPage)
+        }
       },
       select(id){
         this.$router.push("/index/bloglist/category/"+id)
       },
       refresh(page){
         if (this.$route.params.bloglist==="all"){
-          this.$http.post("/blog/selectBlogsByPageForCommon/"+this.pageSize+"/"+page).then(response=>{
+          this.$http.post("/common/blog/selectBlogListByPageForCommon/"+0+"/"+page+"/"+this.pageSize).then(response=>{
             if (response!=null){
-              this.myblogs=response.data.msg["myblogs"]
-              this.total=response.data.msg["nums"]
-              setTimeout(() => {
-                if (this.total>1){
-                  this.disabled=false
+              this.blogs=response.data.data
+              this.$http.post("/common/blog/selectTotalBlogsForCommon/"+0).then(response=>{
+                if (response!=null){
+                  this.total=response.data.data
+                  setTimeout(() => {
+                    if (this.total>1){
+                      this.disabled=false
+                    }
+                    else {
+                      this.lazy=false
+                    }
+                  }, 200)
+                  this.$store.commit('setMainLoading',false)
                 }
-                else {
-                  this.lazy=false
-                }
-              }, 200)
-              this.$store.commit('setmainloading',false)
+              }).catch(error=> {
+                console.log(error)
+                this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+              })
+
             }
           }).catch(error=> {
             console.log(error)
@@ -102,20 +108,27 @@
           })
         }
         else if (this.$route.params.bloglist==="category"){
-          this.$http.post("/blog/selectBlogsByCategoryIdAndPageForCommon/"+this.$route.params.bloglist2+"/"+this.pageSize+"/"+page).then(response=>{
+          this.$http.post("/common/blog/selectBlogListByPageForCommon/"+this.$route.params.bloglist2+"/"+page+"/"+this.pageSize).then(response=>{
+            console.log(response)
             if (response!=null){
-              this.myblogs=response.data.msg["myblogs"]
-              this.total=response.data.msg["nums"]
-              setTimeout(() => {
-                if (this.total>1){
-                  this.disabled=false
+              this.blogs=response.data.data
+              this.$http.post("/common/blog/selectTotalBlogsForCommon/"+this.$route.params.bloglist2).then(response=>{
+                if (response!=null){
+                  this.total=response.data.data
+                  setTimeout(() => {
+                    if (this.total>1){
+                      this.disabled=false
+                    }
+                    else {
+                      this.lazy=false
+                    }
+                  }, 200)
+                  this.$store.commit('setMainLoading',false)
                 }
-                else {
-                  this.lazy=false
-                }
-                window.document.title = '博客类别: '+this.$store.state.category[this.$route.params.bloglist2]
-              }, 200)
-              this.$store.commit('setmainloading',false)
+              }).catch(error=> {
+                console.log(error)
+                this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+              })
             }
           }).catch(error=> {
             console.log(error)

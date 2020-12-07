@@ -2,20 +2,19 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from "vuex-persistedstate"
 import router from "../router";
-import ca from "element-ui/src/locale/lang/ca";
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state:{
     collapseBtnClick: false,
     isCollapse: true,
-    myuser:{
-      userid: '',
-      username: '',
+    user:{
+      userId: '',
+      userName: '',
     },
     token: '',
     OSS: {
-      accessid: '',
+      accessId: '',
       host: '',
       policy: '',
       signature: '',
@@ -26,19 +25,19 @@ export default new Vuex.Store({
     commonCurrentPage: 1,
     currentPage: 1,
     height:0,
-    mainloading:true,
+    mainLoading:true,
     category: {},
-    whatsearch:'',
+    whatSearch:'',
   },
   mutations:{
-    setsearch(state,search){
-      state.whatsearch=search
+    setSearch(state,search){
+      state.whatSearch=search
     },
     setCategory(state,category){
       state.category[category[0]] = category[1]
     },
-    setmainloading(state,status){
-      state.mainloading=status
+    setMainLoading(state,status){
+      state.mainLoading=status
     },
     setHeight(state,height){
       state.height=height
@@ -50,7 +49,7 @@ export default new Vuex.Store({
       state.commonCurrentPage=page
     },
     setOSS(state,data){
-      state.OSS.accessid=data.msg["accessid"]
+      state.OSS.accessId=data.msg["accessId"]
       state.OSS.host=data.msg["host"]
       state.OSS.policy=data.msg["policy"]
       state.OSS.signature=data.msg["signature"]
@@ -58,30 +57,30 @@ export default new Vuex.Store({
       state.OSS.expire=data.msg["expire"]
       state.OSS.dir=data.msg["dir"]
     },
-    setmyuser(state,myuser){
-      state.myuser.userid=myuser.userId
-      state.myuser.username=myuser.userName
+    setUser(state,user){
+      state.user.userId=user.userId
+      state.user.userName=user.userName
     },
-    setmyuserid(state,myuserid){
-      state.myuser.userid=myuserid
-    },
-    setmyusername(state,myusername){
-      state.myuser.username=myusername
-    },
-    settoken(state,token){
+    // setmyuserid(state,myuserid){
+    //   state.myuser.userid=myuserid
+    // },
+    // setmyusername(state,myusername){
+    //   state.myuser.username=myusername
+    // },
+    setToken(state,token){
       state.token=token
     },
     logout(state){
-      state.myuser.username=''
-      state.myuser.userid=''
+      state.user.userName=''
+      state.user.userId=''
       state.token=''
       sessionStorage.removeItem('vuex')
       router.push("/login")
       var d = new Date();
       d.setTime(d.getTime()+(-1*1000));
       var expires = "expires="+d.toUTCString();
-      document.cookie = "myuserid=;"+expires;
-      document.cookie = "myusername=;"+expires;
+      document.cookie = "userId=;"+expires;
+      document.cookie = "userName=;"+expires;
       document.cookie = "token=;"+expires;
     },
     collapseOpen(state) {
@@ -109,9 +108,9 @@ export default new Vuex.Store({
     reducer(val) {
       return {
         // 只储存state中的user
-        myuser: {
-          userid: val.myuser.userid,
-          username: val.myuser.username,
+        user: {
+          userId: val.user.userId,
+          userName: val.user.userName,
         },
         token: val.token,
       }

@@ -52,7 +52,7 @@ public class MySpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
         StrictHttpFirewall firewall = new StrictHttpFirewall();
-//此处开启不让检测‘/’符号
+        //此处开启不让检测‘/’符号
         firewall.setAllowUrlEncodedSlash(true);
         return firewall;
     }

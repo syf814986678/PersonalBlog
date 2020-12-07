@@ -32,7 +32,7 @@ public class JwtUtil {
      * @params [userId, userName]
      **/
     public String createToken(int userId, String userName) {
-        Long exp = System.currentTimeMillis() + ttl;
+        long exp = System.currentTimeMillis() + ttl;
         //创建token
         return Jwts.builder().claim("userId", userId)
                 .claim("userName", userName)

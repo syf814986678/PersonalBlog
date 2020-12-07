@@ -1,5 +1,6 @@
 package com.shiyifan;
 
+import com.aliyuncs.exceptions.ClientException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
@@ -22,52 +23,58 @@ public class ArabicNumToChineseNumUtil {
      * @method arabicNumToChineseNum
      * @params [intInput]
      **/
-    public String arabicNumToChineseNum(int intInput) {
+    public String arabicNumToChineseNum(int intInput) throws Exception {
         String si = String.valueOf(intInput);
         String sd = "";
-        if (si.length() == 1) {
-            if (intInput == 0) {
+        try {
+            if (si.length() == 1) {
+                if (intInput == 0) {
+                    return sd;
+                }
+                sd += cnArr[intInput - 1];
                 return sd;
-            }
-            sd += cnArr[intInput - 1];
-            return sd;
-        } else if (si.length() == 2) {
-            if ("1".equals(si.substring(0, 1))) {
-                sd += "十";
-                if (intInput % 10 == 0) {
-                    return sd;
+            } else if (si.length() == 2) {
+                if ("1".equals(si.substring(0, 1))) {
+                    sd += "十";
+                    if (intInput % 10 == 0) {
+                        return sd;
+                    }
+                } else {
+                    sd += (cnArr[intInput / 10 - 1] + "十");
                 }
-            } else {
-                sd += (cnArr[intInput / 10 - 1] + "十");
-            }
-            sd += arabicNumToChineseNum(intInput % 10);
-        } else if (si.length() == 3) {
-            sd += (cnArr[intInput / 100 - 1] + "百");
-            if (String.valueOf(intInput % 100).length() < 2) {
-                if (intInput % 100 == 0) {
-                    return sd;
+                sd += arabicNumToChineseNum(intInput % 10);
+            } else if (si.length() == 3) {
+                sd += (cnArr[intInput / 100 - 1] + "百");
+                if (String.valueOf(intInput % 100).length() < 2) {
+                    if (intInput % 100 == 0) {
+                        return sd;
+                    }
+                    sd += "零";
                 }
-                sd += "零";
-            }
-            sd += arabicNumToChineseNum(intInput % 100);
-        } else if (si.length() == 4) {
-            sd += (cnArr[intInput / 1000 - 1] + "千");
-            if (String.valueOf(intInput % 1000).length() < 3) {
-                if (intInput % 1000 == 0) {
-                    return sd;
+                sd += arabicNumToChineseNum(intInput % 100);
+            } else if (si.length() == 4) {
+                sd += (cnArr[intInput / 1000 - 1] + "千");
+                if (String.valueOf(intInput % 1000).length() < 3) {
+                    if (intInput % 1000 == 0) {
+                        return sd;
+                    }
+                    sd += "零";
                 }
-                sd += "零";
-            }
-            sd += arabicNumToChineseNum(intInput % 1000);
-        } else if (si.length() == 5) {
-            sd += (cnArr[intInput / 10000 - 1] + "万");
-            if (String.valueOf(intInput % 10000).length() < 4) {
-                if (intInput % 10000 == 0) {
-                    return sd;
+                sd += arabicNumToChineseNum(intInput % 1000);
+            } else if (si.length() == 5) {
+                sd += (cnArr[intInput / 10000 - 1] + "万");
+                if (String.valueOf(intInput % 10000).length() < 4) {
+                    if (intInput % 10000 == 0) {
+                        return sd;
+                    }
+                    sd += "零";
                 }
-                sd += "零";
+                sd += arabicNumToChineseNum(intInput % 10000);
             }
-            sd += arabicNumToChineseNum(intInput % 10000);
+        }
+        catch (Exception e){
+            log.error("数字转换错误"+e.toString());
+            throw new Exception("数字转换错误"+e.toString());
         }
         return sd;
     }

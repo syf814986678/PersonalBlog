@@ -19,5 +19,5 @@ import java.util.Map;
 public class Result implements Serializable {
     private int codeState;
     private String msg;
-    private HashMap<String, Object> data;
+    private Object data;
 }

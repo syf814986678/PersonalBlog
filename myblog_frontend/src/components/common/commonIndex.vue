@@ -2,7 +2,7 @@
   <el-container class="topcontainer">
     <el-header class="myheader"><div class="mytitle"><span class="mytitletext">字符跳动</span></div></el-header>
     <el-container class="mycontainer">
-      <el-main :style="{height:this.height+'px'}" class="mymain" id="myelmain" v-loading="this.$store.state.mainloading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+      <el-main :style="{height:this.height+'px'}" class="mymain" id="myelmain" v-loading="this.$store.state.mainLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
         <transition mode="out-in"
                     enter-active-class="animate__animated animate__bounceInDown animate__faster"
                     leave-active-class="animate__animated animate__bounceOutDown animate__faster">
@@ -35,7 +35,7 @@
         <div class="mycategory">
           <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px;margin-top: 10px">TOP10类型</el-tag></el-row>
           <el-row style="margin-top: 10px">
-            <el-button class="mybutton" round v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
+            <el-button class="mybutton" round v-for="item in categories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
           </el-row>
         </div>
         <el-divider></el-divider>
@@ -69,7 +69,7 @@
         </el-autocomplete>
         <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px;margin-top: 10px">TOP10类型</el-tag></el-row>
         <el-row style="margin-top: 5px;padding-bottom: 10px">
-          <el-button class="mybutton" round v-for="item in mycategories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
+          <el-button class="mybutton" round v-for="item in categories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
         </el-row>
       </div>
     </div>
@@ -92,7 +92,7 @@
         name: "commonIndex",
       data(){
         return{
-          mycategories:[],
+          categories:[],
           loading: true,
           input:'',
           hotkeys: [],
@@ -101,35 +101,35 @@
         }
       },
       methods:{
-        querySearchAsync(queryString,cb){
-          this.$http.post("/blog/hotkeys").then(response=>{
-            if (response!=null){
-              this.hotkeys=response.data.msg["hotkeys"]
-              cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-          cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
-        },
-        createStateFilter(queryString) {
-          return (input) => {
-            return (input.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-          };
-        },
-        handleSelect(){
-          this.search()
-        },
-        search(){
-          if (this.input.length>=1 && (this.$route.params.whatsearch!==this.input)){
-            this.$router.push("/index/search/"+this.input)
-            this.$store.commit('setmainloading',true)
-            this.$store.commit('setsearch',this.input)
-            document.documentElement.scrollTop=0
-            document.body.scrollTop=0
-          }
-        },
+        // querySearchAsync(queryString,cb){
+        //   this.$http.post("/blog/hotkeys").then(response=>{
+        //     if (response!=null){
+        //       this.hotkeys=response.data.msg["hotkeys"]
+        //       cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
+        //     }
+        //   }).catch(error=> {
+        //     console.log(error)
+        //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        //   })
+        //   cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
+        // },
+        // createStateFilter(queryString) {
+        //   return (input) => {
+        //     return (input.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+        //   };
+        // },
+        // handleSelect(){
+        //   this.search()
+        // },
+        // search(){
+        //   if (this.input.length>=1 && (this.$route.params.whatsearch!==this.input)){
+        //     this.$router.push("/index/search/"+this.input)
+        //     this.$store.commit('setmainloading',true)
+        //     this.$store.commit('setsearch',this.input)
+        //     document.documentElement.scrollTop=0
+        //     document.body.scrollTop=0
+        //   }
+        // },
         select(id){
           this.$store.commit('setHeight',0)
           this.$store.commit('setCommonCurrentPage',1)
@@ -143,12 +143,12 @@
         if (this.$route.params.whatsearch!=null){
           this.input=this.$route.params.whatsearch
         }
-        this.$http.post("/category/selectAllCategoryForCommon").then(response=>{
+        this.$http.post("/common/category/selectCategoryForCommon").then(response=>{
           if (response!=null){
-            this.mycategories=response.data.msg["mycategories"]
+            this.categories=response.data.data
             this.loading=false
-            for (let i = 0; i < this.mycategories.length; i++) {
-              this.$store.commit('setCategory',[this.mycategories[i].categoryId,this.mycategories[i].categoryName])
+            for (let i = 0; i < this.categories.length; i++) {
+              this.$store.commit('setCategory',[this.categories[i].categoryId,this.categories[i].categoryName])
             }
             document.onkeydown = function (e) {
               // 回车提交表单

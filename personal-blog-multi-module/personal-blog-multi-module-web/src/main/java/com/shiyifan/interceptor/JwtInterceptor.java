@@ -1,12 +1,11 @@
-package com.shiyifan.Interceptor;
+package com.shiyifan.interceptor;
 
 import com.alibaba.druid.util.StringUtils;
-import com.aliyuncs.dcdn.transform.v20180115.DescribeDcdnRefreshTasksResponseUnmarshaller;
 import com.google.gson.Gson;
 import com.shiyifan.JwtUtil;
 
+import com.shiyifan.ResultUtil;
 import com.shiyifan.pojo.CodeState;
-import com.shiyifan.pojo.Result;
 import io.jsonwebtoken.Claims;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,37 +50,40 @@ public class JwtInterceptor implements HandlerInterceptor {
                         request.setAttribute(CodeState.USER_CLAIMS_STR, claims);
                         return true;
                     } else {
-                        returnJson(response, CodeState.TOKEN_ERROR_CODE, CodeState.TOKEN_ERROR_STR);
+                        returnJson(response,0);
                     }
                 } else {
-                    returnJson(response, CodeState.TOKEN_ERROR_CODE, CodeState.TOKEN_ERROR_STR);
+                    returnJson(response,0);
                 }
             } else {
-                returnJson(response, CodeState.TOKEN_ERROR_CODE, CodeState.TOKEN_ERROR_STR);
+                returnJson(response, 0);
             }
         } catch (io.jsonwebtoken.MalformedJwtException | io.jsonwebtoken.SignatureException e) {
-            returnJson(response, CodeState.TOKEN_ERROR_CODE, CodeState.TOKEN_ERROR_STR);
+            returnJson(response, 0);
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            returnJson(response, CodeState.TOKEN_TIME_LIMIT_CODE, CodeState.TOKEN_TIME_LIMIT_STR);
+            returnJson(response, 1);
         }
         return false;
     }
 
     /**
+     * type:0 tokenError,type:1 tokenTimeLimit
+     *
      * @return void
      * @author ZouCha
-     * @date 2020-12-01 14:46:45
+     * @date 2020-12-05 12:27:23
      * @method returnJson
-     * @params [response, json]
+     * @params [response, type]
      **/
-    private void returnJson(HttpServletResponse response, int codeState, String msg) {
+    private void returnJson(HttpServletResponse response, int type) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=utf-8");
         try (PrintWriter writer = response.getWriter()) {
-            Result result = new Result();
-            result.setCodeState(codeState);
-            result.setMsg(msg);
-            writer.print(new Gson().toJson(result));
+            if (type == 0) {
+                writer.print(new Gson().toJson(ResultUtil.tokenError("TOKEN验证异常",null)));
+            } else {
+                writer.print(new Gson().toJson(ResultUtil.tokenTimeLimit("TOKEN已过期",null)));
+            }
         } catch (IOException e) {
             log.error(e);
         }

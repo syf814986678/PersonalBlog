@@ -2,38 +2,38 @@
     <div>
       <el-row style="margin-bottom: 5px">
         <el-col class="myblogtitle"  style="font-size: 45px;font-weight: bold;font-family: Arial;word-break: break-all;text-align: center">
-          {{this.myblog.blogTitle}}
+          {{this.blog.blogTitle}}
         </el-col>
       </el-row>
       <el-row style="margin-bottom: 5px">
         <el-image
           style="width: 100%;height: 300px"
           fit="fill"
-          :src="this.myblog.blogCoverImage">
+          :src="this.blog.blogCoverImage">
         </el-image>
       </el-row>
       <el-divider></el-divider>
       <el-row style="margin-top: 2px;box-shadow: 0 0 50px 0 rgba(0,0,0,0.8);padding: 2px 0px;text-align: center">
 
         <el-col style=" font-size: medium;font-weight: bold;font-family: Arial;word-break: break-all;background-color: #ff7f50" :span="6">
-          作者:{{this.myblog.myuser.userName}}
+          作者:{{this.blog.user.userName}}
         </el-col>
 
         <el-col style=" font-size: medium;font-weight: bold;font-family: Arial;word-break: break-all;background-color: greenyellow" :span="6">
-          类别:{{this.myblog.mycategory.categoryName}}
+          类别:{{this.blog.category.categoryName}}
         </el-col>
 
         <el-col style=" font-size: medium;font-weight: bold;font-family: Arial;background-color: powderblue" :span="6">
-          发布时间:{{this.myblog.createGmt}}
+          发布时间:{{this.blog.createGmt}}
         </el-col >
 
         <el-col style=" font-size: medium;font-weight: bold;font-family: Arial;background-color: deepskyblue" :span="6">
-          更新时间:{{this.myblog.updateGmt}}
+          更新时间:{{this.blog.updateGmt}}
         </el-col>
       </el-row>
       <el-divider></el-divider>
       <el-row style="margin-top: 30px;margin-bottom: 30px;">
-        <v-md-editor :value="myblog.blogContent" mode="preview" @copy-code-success="handleCopyCodeSuccess"></v-md-editor>
+        <v-md-editor :value="blog.blogContent" mode="preview" @copy-code-success="handleCopyCodeSuccess"></v-md-editor>
       </el-row>
     </div>
 </template>
@@ -43,16 +43,16 @@
         name: "showBlogDetailForCommon",
         data(){
           return{
-            myblog:{
+            blog:{
               blogId: '',
               blogTitle: '',
               blogCoverImage: '',
               blogContent: '',
-              myuser: {
+              user: {
                 userId: '',
                 userName: ''
               },
-              mycategory: {
+              category: {
                 categoryName: '',
                 categoryRank: '',
               },
@@ -70,11 +70,11 @@
             });
           },
           refresh(){
-            this.$http.post("/blog/selectBlogByIdForCommon/"+this.$route.params.blogid).then(response=>{
+            this.$http.post("/common/blog/selectBlogByIdForCommon/"+this.$route.params.blogid).then(response=>{
               if (response!=null){
-                this.myblog=response.data.msg["myblog"]
-                document.title=this.myblog.blogTitle
-                this.$store.commit('setmainloading',false)
+                this.blog=response.data.data
+                document.title=this.blog.blogTitle
+                this.$store.commit('setMainLoading',false)
               }
           }).catch(error=> {
               console.log(error)
@@ -88,7 +88,7 @@
         },
         watch: {
           '$route.params.blogid': function (to, from) {
-            this.$store.commit('setmainloading',true)
+            this.$store.commit('setMainLoading',true)
             document.documentElement.scrollTop=0
             document.body.scrollTop=0
             this.refresh()

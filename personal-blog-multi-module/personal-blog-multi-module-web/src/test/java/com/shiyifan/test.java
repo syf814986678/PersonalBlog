@@ -1,10 +1,16 @@
 package com.shiyifan;
 
 import com.shiyifan.mapper.BlogMapper;
+import com.shiyifan.mapper.CategoryMapper;
+import com.shiyifan.mapper.LoginMapper;
+import com.shiyifan.pojo.Category;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ZouCha
@@ -17,14 +23,29 @@ public class test {
     private AliYunUtil aliYunUtil;
     @Autowired
     private BlogMapper blogMapper;
+    @Autowired
+    private BlogUtil blogUtil;
+    @Autowired
+    private RedisUtil redisUtil;
+    @Autowired
+    private CategoryMapper categoryMapper;
+    @Autowired
+    private LoginMapper loginMapper;
 
-    @Test
-    public void testaliYunUtil(){
-        aliYunUtil.preLoadDcdn();
-        aliYunUtil.refreshDcdn();
-    }
+//    @Test
+//    public void testaliYunUtil(){
+//        aliYunUtil.preLoadDcdn();
+//        aliYunUtil.refreshDcdn();
+//    }
     @Test
     public void testmapper(){
-        System.out.println(blogMapper.selectBlogByBlogId("02039b6a22164e898e2f235b9e5f9cb3").toString());
+        try {
+            redisUtil.flushDb();
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

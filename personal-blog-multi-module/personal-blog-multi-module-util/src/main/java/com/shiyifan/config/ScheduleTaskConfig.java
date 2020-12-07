@@ -1,5 +1,6 @@
 package com.shiyifan.config;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.shiyifan.AliYunUtil;
 import com.shiyifan.VisitorUtil;
 import lombok.extern.log4j.Log4j2;
@@ -45,9 +46,16 @@ public class ScheduleTaskConfig {
      * @params []
      **/
     @Scheduled(cron = "0 0/30 * * * ? ")
-    private void dcdnConfigureTasks() {
-        aliYunUtil.refreshDcdn();
-        aliYunUtil.preLoadDcdn();
+    private void dcdnConfigureTasks() throws ClientException {
+        try {
+            aliYunUtil.refreshDcdn();
+            aliYunUtil.preLoadDcdn();
+        }
+        catch (ClientException e) {
+            log.error("阿里云Dcdn错误"+e.toString());
+            throw new ClientException("阿里云Dcdn错误"+e.toString());
+        }
+
     }
 
 }
