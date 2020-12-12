@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 @Order
 @Log4j2
-public class BlogServiceImpl implements BlogService, ApplicationRunner {
+public class BlogServiceImpl implements BlogService{
 
     @Autowired
     private BlogMapper blogMapper;
@@ -124,10 +124,5 @@ public class BlogServiceImpl implements BlogService, ApplicationRunner {
             throw new Exception("根据ID查找公共博客错误" + e.toString());
         }
         return blog;
-    }
-
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        blogUtil.flushDb();
     }
 }

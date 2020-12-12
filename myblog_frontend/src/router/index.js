@@ -32,21 +32,43 @@ const router=new Router({
       }
     },
     {
-      path: '/',
-      redirect: '/index/bloglist/all/all'
+      path: '/blog/:blogid',
+      component: BlogDetailForCommon,
+      meta: {
+        title: '博客详情',
+      }
     },
     {
-      path: '/index/bloglist',
-      redirect: '/index/bloglist/all/all'
+      path: '/',
+      redirect: '/bloglist/all/all'
     },
     {
       path: '/index',
+      redirect: '/bloglist/all/all'
+    },
+    {
+      path: '/bloglist',
+      redirect: '/bloglist/all/all'
+    },
+    {
+      path: '/bloglist/all',
+      redirect: '/bloglist/all/all'
+    },
+    {
+      path: '/bloglist',
       component: commonIndex,
-      redirect: '/index/bloglist/all/all',
+      redirect: '/bloglist/all/all',
       meta: {
         title: '首页',
       },
       children: [
+        {
+          path: 'blog/:blogid',
+          component: BlogDetailForCommon,
+          meta: {
+            title: '博客详情',
+          }
+        },
         {
           path: 'search/:whatsearch',
           component: BlogSearchForCommon,
@@ -55,17 +77,10 @@ const router=new Router({
           }
         },
         {
-          path: 'bloglist/:bloglist/:bloglist2',
+          path: ':bloglist/:bloglist2',
           component: BlogListForCommon,
           meta: {
             title: '博客列表',
-          }
-        },
-        {
-          path: 'blog/:blogid',
-          component: BlogDetailForCommon,
-          meta: {
-            title: '博客详情',
           }
         },
       ]

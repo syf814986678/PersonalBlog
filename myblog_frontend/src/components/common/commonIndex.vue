@@ -101,39 +101,39 @@
         }
       },
       methods:{
-        // querySearchAsync(queryString,cb){
-        //   this.$http.post("/blog/hotkeys").then(response=>{
-        //     if (response!=null){
-        //       this.hotkeys=response.data.msg["hotkeys"]
-        //       cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
-        //     }
-        //   }).catch(error=> {
-        //     console.log(error)
-        //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-        //   })
-        //   cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
-        // },
-        // createStateFilter(queryString) {
-        //   return (input) => {
-        //     return (input.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-        //   };
-        // },
-        // handleSelect(){
-        //   this.search()
-        // },
-        // search(){
-        //   if (this.input.length>=1 && (this.$route.params.whatsearch!==this.input)){
-        //     this.$router.push("/index/search/"+this.input)
-        //     this.$store.commit('setmainloading',true)
-        //     this.$store.commit('setsearch',this.input)
-        //     document.documentElement.scrollTop=0
-        //     document.body.scrollTop=0
-        //   }
-        // },
+        querySearchAsync(queryString,cb){
+          this.$http.post("/common/blog/hotkeys").then(response=>{
+            if (response!=null){
+              this.hotkeys=response.data.data
+              cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
+        },
+        createStateFilter(queryString) {
+          return (input) => {
+            return (input.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+          };
+        },
+        handleSelect(){
+          this.search()
+        },
+        search(){
+          if (this.input.length>=1 && (this.$route.params.whatsearch!==this.input)){
+            this.$router.push("/bloglist/search/"+this.input)
+            this.$store.commit('setmainloading',true)
+            this.$store.commit('setsearch',this.input)
+            document.documentElement.scrollTop=0
+            document.body.scrollTop=0
+          }
+        },
         select(id){
           this.$store.commit('setHeight',0)
           this.$store.commit('setCommonCurrentPage',1)
-          this.$router.push("/index/bloglist/category/"+id)
+          this.$router.push("/bloglist/category/"+id)
           document.documentElement.scrollTop=0
           document.body.scrollTop=0
         },

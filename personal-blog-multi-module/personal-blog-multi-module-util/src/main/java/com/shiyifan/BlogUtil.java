@@ -7,6 +7,8 @@ import com.shiyifan.pojo.Category;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ import java.util.List;
  **/
 @Component
 @Log4j2
-public class BlogUtil {
+public class BlogUtil implements ApplicationRunner {
     @Autowired
     private RedisUtil redisUtil;
 
@@ -171,6 +173,11 @@ public class BlogUtil {
      * @params []
      **/
     public void flushDb() {
+        redisUtil.flushDb();
+    }
+
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
         redisUtil.flushDb();
     }
 }

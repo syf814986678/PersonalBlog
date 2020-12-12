@@ -7,7 +7,7 @@
             <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
             <el-row style="margin-top: 10px;margin-bottom: 0">
               <el-col :span="24">
-                <p class="blogCategory" @click="select(blog.category.categoryId,blog.mycategory.categoryName)"><i class="el-icon-collection-tag myi"></i>{{blog.category.categoryName}}</p>
+                <p class="blogCategory" @click="select(blog.category.categoryId,blog.category.categoryName)"><i class="el-icon-collection-tag myi"></i>{{blog.category.categoryName}}</p>
               </el-col>
             </el-row>
             <el-row style="margin-top: 5px">
@@ -76,7 +76,7 @@
         }
       },
       select(id){
-        this.$router.push("/index/bloglist/category/"+id)
+        this.$router.push("/bloglist/category/"+id)
       },
       refresh(page){
         if (this.$route.params.bloglist==="all"){
@@ -115,6 +115,7 @@
               this.$http.post("/common/blog/selectTotalBlogsForCommon/"+this.$route.params.bloglist2).then(response=>{
                 if (response!=null){
                   this.total=response.data.data
+                  window.document.title = '博客类别: '+this.$store.state.category[this.$route.params.bloglist2]
                   setTimeout(() => {
                     if (this.total>1){
                       this.disabled=false
@@ -137,7 +138,7 @@
         }
       },
       showBlog(blogId){
-        this.$router.push("/index/blog/"+blogId)
+        this.$router.push("/bloglist/blog/"+blogId)
       },
     },
     created() {
