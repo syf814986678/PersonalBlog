@@ -5,13 +5,14 @@ import com.shiyifan.mapper.BlogMapper;
 import com.shiyifan.pojo.Blog;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author ZouCha
@@ -124,5 +125,19 @@ public class BlogServiceImpl implements BlogService{
             throw new Exception("根据ID查找公共博客错误" + e.toString());
         }
         return blog;
+    }
+
+    @Override
+    @Retryable(value = Exception.class)
+    public ArrayList<Map<String, Object>> searchContentByPage(String keyword, int pageNow, int pageSize) throws IOException {
+        log.info("方法:searchContentByPage开始");
+        ArrayList<Map<String, Object>> list = null;
+        try {
+            list = blogUtil.searchContentByPage(keyword, pageNow, pageSize);
+        } catch (IOException e) {
+            log.error("searchContentByPage错误" + e.toString());
+            throw new IOException("searchContentByPage错误" + e.toString());
+        }
+        return list;
     }
 }

@@ -23,11 +23,11 @@
                 v-model="visible">
                 <el-row>
                   <el-col :span="12"><span style="font-size: medium">id：</span></el-col>
-                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">{{ this.$store.state.myuser.userid}}</el-tag></el-col>
+                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">{{ this.$store.state.user.userId}}</el-tag></el-col>
                 </el-row>
                 <el-row style="margin-top: 0.5rem">
                   <el-col :span="12"><span style="font-size: medium">用户名：</span></el-col>
-                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">{{this.$store.state.myuser.username}}</el-tag></el-col>
+                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">{{this.$store.state.user.userName}}</el-tag></el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="24">

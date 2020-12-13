@@ -31,11 +31,10 @@ public class AdminLoginController {
     private JwtUtil jwtUtil;
     @PostMapping("/login")
     public Result login(@RequestParam("username") String username, @RequestParam("password") String password) throws Exception {
-
         try {
             User user =loginService.login(username, password);
             if (user!=null) {
-                return ResultUtil.success("登录成功",jwtUtil.createToken(user.getUserId(), user.getUserName()));
+                return ResultUtil.success("登录成功",new String[]{String.valueOf(user.getUserId()),jwtUtil.createToken(user.getUserId(), user.getUserName())});
             } else {
                 return ResultUtil.loginError("账号不存在或密码错误",null);
             }

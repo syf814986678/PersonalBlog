@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ZouCha
@@ -85,11 +86,16 @@ public class CommonBlogController {
         Blog blog = null;
         try {
             blog = blogService.selectBlogByIdForCommon(blogId);
+            if(blog!=null){
+                return ResultUtil.success(blog);
+            }
+            else {
+                return ResultUtil.operationError("博客不存在", null);
+            }
         } catch (Exception e) {
             log.error("根据ID查找公共博客错误" + e.toString());
             throw new Exception("根据ID查找公共博客错误" + e.toString());
         }
-        return ResultUtil.success(blog);
     }
 
     /**
@@ -109,7 +115,7 @@ public class CommonBlogController {
         ArrayList<HashMap<String, String>> hotkeys = new ArrayList<>();
         try {
             String s = "";
-            in = new InputStreamReader(new FileInputStream(searchPath+"/remote.txt"), StandardCharsets.UTF_8);
+            in = new InputStreamReader(new FileInputStream(searchPath + "/remote.txt"), StandardCharsets.UTF_8);
             br = new BufferedReader(in);
             while ((s = br.readLine()) != null) {
                 HashMap<String, String> stringMap = new HashMap<>(1);
@@ -121,5 +127,27 @@ public class CommonBlogController {
             throw new Exception("查找热词错误" + e.toString());
         }
         return ResultUtil.success(hotkeys);
+    }
+
+    /**
+     * 搜索博客
+     * 已修改(controller名称,restful风格)
+     *
+     * @return com.shiyifan.vo.Result
+     * @author ZouCha
+     * @date 2020-11-20 15:10:09
+     * @method search
+     * @params [keyword]
+     **/
+    @PostMapping("/search/{keyword}")
+    public Result search(@PathVariable("keyword") String keyword) throws Exception {
+        ArrayList<Map<String, Object>> list = null;
+        try {
+            list = blogService.searchContentByPage(keyword, 1, 30);
+        } catch (Exception e) {
+            log.error("搜索博客错误" + e.toString());
+            throw new Exception("搜索博客错误" + e.toString());
+        }
+        return ResultUtil.success(list);
     }
 }

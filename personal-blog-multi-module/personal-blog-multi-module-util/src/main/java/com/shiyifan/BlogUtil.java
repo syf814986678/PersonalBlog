@@ -5,14 +5,29 @@ import com.shiyifan.mapper.CategoryMapper;
 import com.shiyifan.pojo.Blog;
 import com.shiyifan.pojo.Category;
 import lombok.extern.log4j.Log4j2;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ZouCha
@@ -24,6 +39,9 @@ import java.util.List;
 public class BlogUtil implements ApplicationRunner {
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private ElasticsearchUtil elasticsearchUtil;
 
     @Autowired
     private BlogMapper blogMapper;
@@ -48,6 +66,9 @@ public class BlogUtil implements ApplicationRunner {
 
     @Value("${blog.categoryTotalBlogsForCommon}")
     private String categoryTotalBlogsForCommon;
+
+    @Value("${searchPath}")
+    private String searchPath;
 
     /**
      * @return void
@@ -160,9 +181,14 @@ public class BlogUtil implements ApplicationRunner {
      * @method setBlog
      * @params [blogId]
      **/
-    public void setBlog(String blogId) {
+    public void setBlog(String blogId) throws Exception {
         log.info("方法:setBlog开始");
-        redisUtil.set(blogId, blogMapper.selectBlogByIdForCommon(blogId));
+        try {
+            redisUtil.set(blogId, blogMapper.selectBlogByIdForCommon(blogId));
+        } catch (Exception e) {
+            log.error("setBlog错误" + e.toString());
+            throw new Exception("setBlog错误" + e.toString());
+        }
     }
 
     /**
@@ -173,11 +199,44 @@ public class BlogUtil implements ApplicationRunner {
      * @params []
      **/
     public void flushDb() {
+        log.info("方法:flushDb开始");
         redisUtil.flushDb();
+    }
+
+    /**
+     * @return java.util.ArrayList<java.util.Map < java.lang.String, java.lang.Object>>
+     * @author ZouCha
+     * @date 2020-12-13 12:20:03
+     * @method searchContentByPage
+     * @params [keyword, pageNow, pageSize]
+     **/
+    public ArrayList<Map<String, Object>> searchContentByPage(String keyword, int pageNow, int pageSize) throws IOException {
+        ArrayList<Map<String, Object>> list = null;
+        try {
+            list = elasticsearchUtil.searchContentByPage(keyword, pageNow, pageSize);
+            if (redisUtil.get(keyword) == null) {
+                redisUtil.set(keyword, 1);
+            } else {
+                redisUtil.incr(keyword, 1);
+                if (Integer.parseInt(String.valueOf(redisUtil.get(keyword))) == 5) {
+                    FileWriter fw = new FileWriter(searchPath + "/remote.txt", true);
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    // 往已有的文件上添加字符串
+                    bw.write(keyword + "\n");
+                    bw.close();
+                    fw.close();
+                }
+            }
+        } catch (IOException e) {
+            log.error("searchContentByPage错误" + e.toString());
+            throw new IOException("searchContentByPage错误");
+        }
+        return list;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        log.info("方法:flushDb开始");
         redisUtil.flushDb();
     }
 }

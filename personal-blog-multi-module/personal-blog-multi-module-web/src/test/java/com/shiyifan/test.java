@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class test {
     private CategoryMapper categoryMapper;
     @Autowired
     private LoginMapper loginMapper;
+    @Autowired
+    private BlogService blogService;
 
 //    @Test
 //    public void testaliYunUtil(){
@@ -38,14 +41,8 @@ public class test {
 //        aliYunUtil.refreshDcdn();
 //    }
     @Test
-    public void testmapper(){
-        try {
-            redisUtil.flushDb();
-
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+    public void testmapper() throws IOException {
+        blogService.searchContentByPage("测试", 1, 30);
 
     }
 }

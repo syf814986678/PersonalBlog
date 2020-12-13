@@ -36,7 +36,14 @@
     <select id="selectBlogByIdForCommon" resultMap="category_name_and_username">
         select *
         from myblog
-        where blog_id =#{blogId}
-          and is_deleted =0;
+        where blog_id = #{blogId}
+          and is_deleted = 0;
+    </select>
+
+    <select id="selectElasticSearchBlogByIdForCommon" resultType="com.shiyifan.pojo.ElasticSearchBlog">
+        select *
+        from myblog
+        where blog_id = #{blogId}
+          and is_deleted = 0
     </select>
 </mapper>

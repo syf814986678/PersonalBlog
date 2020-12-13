@@ -2,7 +2,7 @@
   <div style="margin-top: 220px">
     <el-form class="myform">
         <div style="text-align: center">
-          <h3>Login Form</h3>
+          <h3>Login</h3>
         </div>
       <el-form-item>
         <div class="myloginrow">
@@ -45,17 +45,21 @@
         },
         methods:{
           login(){
-            this.$http.post("/user/login","username="+this.username+"&password="+this.password).then(response=>{
+            this.$http.post("/admin/login","username="+this.username+"&password="+this.password).then(response=>{
               if (response!=null){
-                this.$store.commit('setmyuser',response.data.msg["myuser"]);
-                this.$store.commit('settoken',response.data.msg["token"]);
+                const user = {
+                  userId:response.data.data[0],
+                  userName:this.username,
+                };
+                this.$store.commit('setUser',user);
+                this.$store.commit('setToken',response.data.data[1]);
                 this.$router.push("/admin");
                 var d = new Date();
                 d.setTime(d.getTime()+(60*60*2*1000));
                 var expires = "expires="+d.toUTCString();
-                document.cookie = "myuserid="+response.data.msg["myuser"].userId+";"+expires;
-                document.cookie = "myusername="+response.data.msg["myuser"].userName+";"+expires;
-                document.cookie = "token="+response.data.msg["token"]+";"+expires;
+                document.cookie = "userId="+user.userId+";"+expires;
+                document.cookie = "userName="+user.userName+";"+expires;
+                document.cookie = "token="+response.data.data[1]+";"+expires;
               }
             }).catch(error=> {
               console.log(error)
@@ -64,7 +68,7 @@
           },
         },
         created() {
-          if (this.$store.state.myuser.userid!='' && this.$store.state.myuser.username!=''&& this.$store.state.token!=''){
+          if (this.$store.state.user.userId!=='' && this.$store.state.user.userName!==''&& this.$store.state.token!==''){
             this.$router.push("/admin")
           }
         }

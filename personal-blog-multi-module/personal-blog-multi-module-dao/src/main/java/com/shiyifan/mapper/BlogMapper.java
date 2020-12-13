@@ -2,6 +2,7 @@ package com.shiyifan.mapper;
 
 
 import com.shiyifan.pojo.Blog;
+import com.shiyifan.pojo.ElasticSearchBlog;
 import org.apache.ibatis.annotations.Mapper;
 
 import org.apache.ibatis.annotations.Param;
@@ -35,4 +36,13 @@ public interface BlogMapper {
      * @params [blogId]
      **/
     Blog selectBlogByIdForCommon(@Param("blogId") String blogId);
+
+    /**
+     * @return com.shiyifan.pojo.ElasticSearchBlog
+     * @author ZouCha
+     * @date 2020-12-13 12:07:11
+     * @method selectElasticSearchBlogByIdForCommon
+     * @params [blogId]
+     **/
+    ElasticSearchBlog selectElasticSearchBlogByIdForCommon(@Param("blogId") String blogId);
 }

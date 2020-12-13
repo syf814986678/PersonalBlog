@@ -124,8 +124,8 @@
         search(){
           if (this.input.length>=1 && (this.$route.params.whatsearch!==this.input)){
             this.$router.push("/bloglist/search/"+this.input)
-            this.$store.commit('setmainloading',true)
-            this.$store.commit('setsearch',this.input)
+            this.$store.commit('setMainLoading',true)
+            this.$store.commit('setSearch',this.input)
             document.documentElement.scrollTop=0
             document.body.scrollTop=0
           }

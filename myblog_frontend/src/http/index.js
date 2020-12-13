@@ -19,11 +19,11 @@ http.interceptors.request.use(function (config) {
 http.interceptors.response.use(function (response) {
   switch (response.data.codeState) {
     case 200:return response;
-    // case 201:store.commit('errorMsg',response.data.msg["OPERATION_ERROR"]);break;
-    // case 301:store.commit('errorMsg',response.data.msg["LOGIN_ERROR"]);store.commit('logout');break;
-    // case 701:store.commit('errorMsg',response.data.msg["TOKEN_ERROR"]);store.commit('logout');break;
-    // case 702:store.commit('errorMsg',response.data.msg["TOKEN_TIME_LIMIT_CODE"]);store.commit('logout');break;
-    // case 999:store.commit('errorMsg',response.data.msg["EXCEPTION"]);break;
+    case 201:store.commit('errorMsg',response.data.msg);break;
+    case 999:store.commit('errorMsg',response.data.msg);break;
+    case 301:store.commit('errorMsg',response.data.msg);store.commit('logout');break;
+    case 701:store.commit('errorMsg',response.data.msg);store.commit('logout');break;
+    case 702:store.commit('errorMsg',response.data.msg);store.commit('logout');break;
     // case 998:store.commit('errorMsg',response.data.OSS_EXCEPTION);break;
     default:break;
   }

@@ -1,11 +1,9 @@
 package com.shiyifan;
 
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScans;
+import org.springframework.retry.annotation.EnableRetry;
 
 /**
  * @author ZouCha
@@ -13,6 +11,7 @@ import org.springframework.context.annotation.ComponentScans;
  * @date 2020-11-@30 12:30
  **/
 @SpringBootApplication
+@EnableRetry
 public class PersonalBlogMultiModuleWeb {
     public static void main(String[] args) {
         SpringApplication.run(PersonalBlogMultiModuleWeb.class, args);

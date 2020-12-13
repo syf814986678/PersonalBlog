@@ -3,7 +3,9 @@ package com.shiyifan;
 
 import com.shiyifan.pojo.Blog;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @author ZouCha
@@ -37,4 +39,13 @@ public interface BlogService {
      * @params [blogId]
      **/
     Blog selectBlogByIdForCommon(String blogId) throws Exception;
+
+    /**
+     * @return java.util.ArrayList<java.util.Map < java.lang.String, java.lang.Object>>
+     * @author ZouCha
+     * @date 2020-12-13 11:46:12
+     * @method searchContentPage
+     * @params [keyword, pageNo, pageSize]
+     **/
+    ArrayList<Map<String, Object>> searchContentByPage(String keyword, int pageNow, int pageSize) throws IOException;
 }

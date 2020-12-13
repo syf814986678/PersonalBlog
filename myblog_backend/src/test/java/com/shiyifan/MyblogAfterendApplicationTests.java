@@ -3,6 +3,7 @@ package com.shiyifan;
 import com.google.gson.Gson;
 import com.shiyifan.dao.BlogMapper;
 import com.shiyifan.pojo.ElasticSearchBlog;
+import com.shiyifan.service.BlogService;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 @SpringBootTest
 @Log4j2
@@ -39,9 +41,13 @@ class MyblogAfterendApplicationTests {
         BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
         System.out.println(bulk.hasFailures());
     }
-//
-//    @Autowired
-//    private UserServiceImpl userService;
+
+    @Autowired
+    private BlogService blogService;
+    @Test
+    public void test2() throws IOException {
+        ArrayList<Map<String, Object>> test = blogService.searchContentPage("测试", 1, 30);
+    }
 
 //    @Autowired
 //    private TestMapper testMapper;

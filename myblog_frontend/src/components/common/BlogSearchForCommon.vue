@@ -11,7 +11,7 @@
             fit="fill"></el-image>
         </el-col>
         <el-col :span="18" class="mycontent1">
-          <h2 style="background-color: rgba(184,134,11,0.38)"><el-link v-html="result.blogTitle" :href="'/#/index/blog/'+result.blogId" target="_blank" style="font-size: 25px"></el-link></h2>
+          <h2 style="background-color: rgba(184,134,11,0.38)"><el-link v-html="result.blogTitle" :href="'/#/bloglist/blog/'+result.blogId" target="_blank" style="font-size: 25px"></el-link></h2>
           <div v-html="result.blogContent" style="text-align:left;overflow: auto;word-break: break-all;margin: 0 10px;font-size: 20px;line-height: 30px;height: 100px"></div>
           <el-row style="margin-bottom: 5px">
             <el-col :span="6">
@@ -32,7 +32,7 @@
         </el-col>
         <el-col :span="24" class="mycontent2">
           <div style="margin: 0 5px">
-            <h2 style="background-color: rgba(184,134,11,0.38)"><el-link v-html="result.blogTitle" :href="'/#/index/blog/'+result.blogId" target="_blank" style="font-size: 25px"></el-link></h2>
+            <h2 style="background-color: rgba(184,134,11,0.38)"><el-link v-html="result.blogTitle" :href="'/#/bloglist/blog/'+result.blogId" target="_blank" style="font-size: 25px"></el-link></h2>
             <div v-html="result.blogContent" style="text-align:left;overflow: auto;word-break: break-all;margin: 0 10px;font-size: 20px;line-height: 30px;height: 100px"></div>
             <el-row style="margin-bottom: 5px">
               <el-col :span="6">
@@ -88,7 +88,7 @@
             pageNow:1,
             pageSize:10,
             total:null,
-            allresults:[],
+            allResults:[],
             lazy: true,
           }
         },
@@ -98,18 +98,19 @@
             document.body.scrollTop=0
             document.getElementById("myelmain").scrollTop=1
             this.pageNow=page;
-            this.results=this.allresults.slice((this.pageNow-1)*this.pageSize,this.pageNow*this.pageSize);
+            this.results=this.allResults.slice((this.pageNow-1)*this.pageSize,this.pageNow*this.pageSize);
           },
           refresh(){
-            if (this.$store.state.whatsearch!==''){
-              window.document.title = '博客搜索: '+this.$store.state.whatsearch
+            if (this.$store.state.whatSearch!==''){
+              window.document.title = '博客搜索: '+this.$store.state.whatSearch
             }
-            this.$http.post("/blog/search/"+this.$route.params.whatsearch).then(response=>{
+            this.$http.post("/common/blog/search/"+this.$route.params.whatsearch).then(response=>{
               if (response!=null){
-                this.allresults=response.data.msg["results"];
-                this.total=response.data.msg["total"]
-                this.results=this.allresults.slice((this.pageNow-1)*this.pageSize,this.pageNow*this.pageSize);
-                this.$store.commit('setmainloading',false)
+                console.log(response)
+                this.allResults=response.data.data;
+                this.total=this.allResults.length
+                this.results=this.allResults.slice((this.pageNow-1)*this.pageSize,this.pageNow*this.pageSize);
+                this.$store.commit('setMainLoading',false)
                 if (this.results.length>4){
                   setTimeout(() => {
                     document.getElementById("myelmain").scrollTop=1
@@ -132,8 +133,8 @@
       watch:{
         '$route.params.whatsearch': function (to, from) {
           this.pageNow=1;
-          this.$store.commit('setmainloading',true)
-          this.allresults.length=0
+          this.$store.commit('setMainLoading',true)
+          this.allResults.length=0
           this.results.length=0
           this.total=0
           this.refresh();

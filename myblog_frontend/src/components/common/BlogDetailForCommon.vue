@@ -62,6 +62,18 @@
           }
         },
         methods:{
+          cleanBlog(){
+            this.blog.blogId=''
+            this.blog.blogTitle=''
+            this.blog.blogCoverImage=''
+            this.blog.blogContent=''
+            this.blog.user.userId=''
+            this.blog.user.userName=''
+            this.blog.category.categoryName=''
+            this.blog.category.categoryRank=''
+            this.blog.createGmt=''
+            this.blog.updateGmt=''
+          },
           handleCopyCodeSuccess(){
             this.$message({
               message: '代码复制成功',
@@ -88,6 +100,7 @@
         },
         watch: {
           '$route.params.blogid': function (to, from) {
+            this.cleanBlog()
             this.$store.commit('setMainLoading',true)
             document.documentElement.scrollTop=0
             document.body.scrollTop=0
