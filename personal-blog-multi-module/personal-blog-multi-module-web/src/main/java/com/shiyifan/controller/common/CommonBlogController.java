@@ -3,7 +3,6 @@ package com.shiyifan.controller.common;
 import com.shiyifan.BlogService;
 import com.shiyifan.ResultUtil;
 import com.shiyifan.pojo.Blog;
-import com.shiyifan.pojo.CodeState;
 import com.shiyifan.pojo.Result;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -25,7 +23,6 @@ import java.util.Map;
  * @date 2020-12-02 18:35
  **/
 @RestController
-@CrossOrigin
 @Log4j2
 @RequestMapping("/common/blog")
 public class CommonBlogController {
@@ -80,7 +77,6 @@ public class CommonBlogController {
      * @method selectBlogByIdForCommon
      * @params [blogId]
      **/
-
     @PostMapping("/selectBlogByIdForCommon/{blogId}")
     public Result selectBlogByIdForCommon(@PathVariable("blogId") String blogId) throws Exception {
         Blog blog = null;

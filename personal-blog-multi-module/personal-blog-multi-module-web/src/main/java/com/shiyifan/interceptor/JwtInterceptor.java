@@ -77,7 +77,7 @@ public class JwtInterceptor implements HandlerInterceptor {
      **/
     private void returnJson(HttpServletResponse response, int type) {
         response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=utf-8");
+        response.setContentType("application/json; charset=utf-8");
         try (PrintWriter writer = response.getWriter()) {
             if (type == 0) {
                 writer.print(new Gson().toJson(ResultUtil.tokenError("TOKEN验证异常",null)));

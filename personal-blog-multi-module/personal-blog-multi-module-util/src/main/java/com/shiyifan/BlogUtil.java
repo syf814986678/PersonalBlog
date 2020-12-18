@@ -194,6 +194,35 @@ public class BlogUtil implements ApplicationRunner {
     /**
      * @return void
      * @author ZouCha
+     * @date 2020-12-17 14:40:22
+     * @method getTotalBlogForAdmin
+     * @params [userId]
+     **/
+    public Integer getTotalBlogsForAdmin(int userId) {
+        log.info("方法:getTotalBlogsForAdmin开始");
+        return (Integer) redisUtil.get(userTotalBlogs + userId);
+    }
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2020-12-17 14:41:54
+     * @method setTotalBlogForAdmin
+     * @params [userId]
+     **/
+    public void setTotalBlogsForAdmin(int userId) throws Exception {
+        log.info("方法:setTotalBlogForAdmin开始");
+        try {
+            redisUtil.set(userTotalBlogs + userId, blogMapper.selectTotalBlogsForAdmin(userId));
+        } catch (Exception e) {
+            log.error("setTotalBlogsForAdmin错误" + e.toString());
+            throw new Exception("setTotalBlogsForAdmin错误" + e.toString());
+        }
+    }
+
+    /**
+     * @return void
+     * @author ZouCha
      * @date 2020-12-07 18:48:04
      * @method flushDb
      * @params []

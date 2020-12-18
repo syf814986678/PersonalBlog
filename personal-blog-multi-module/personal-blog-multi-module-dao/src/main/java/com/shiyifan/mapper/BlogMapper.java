@@ -38,11 +38,11 @@ public interface BlogMapper {
     Blog selectBlogByIdForCommon(@Param("blogId") String blogId);
 
     /**
-     * @return com.shiyifan.pojo.ElasticSearchBlog
+     * @return java.lang.Integer
      * @author ZouCha
-     * @date 2020-12-13 12:07:11
-     * @method selectElasticSearchBlogByIdForCommon
-     * @params [blogId]
+     * @date 2020-12-17 14:10:05
+     * @method selectTotalBlogForAdmin
+     * @params [userId]
      **/
-    ElasticSearchBlog selectElasticSearchBlogByIdForCommon(@Param("blogId") String blogId);
+    Integer selectTotalBlogsForAdmin(@Param("userId") int userId);
 }

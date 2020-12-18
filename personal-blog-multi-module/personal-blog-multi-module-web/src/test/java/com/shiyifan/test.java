@@ -42,7 +42,7 @@ public class test {
 //    }
     @Test
     public void testmapper() throws IOException {
-        blogService.searchContentByPage("测试", 1, 30);
+        System.out.println(blogUtil.getTotalBlogsForAdmin(1));
 
     }
 }

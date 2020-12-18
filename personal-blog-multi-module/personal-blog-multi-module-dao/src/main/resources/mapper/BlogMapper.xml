@@ -40,6 +40,14 @@
           and is_deleted = 0;
     </select>
 
+    <select id="selectTotalBlogsForAdmin" resultType="_int">
+        select count(blog_user_id)
+        from myblog
+        where blog_user_id = #{userId}
+          and is_deleted = 0
+    </select>
+
+
     <select id="selectElasticSearchBlogByIdForCommon" resultType="com.shiyifan.pojo.ElasticSearchBlog">
         select *
         from myblog
