@@ -80,10 +80,10 @@
       },
       refresh(page){
         if (this.$route.params.bloglist==="all"){
-          this.$http.post("/common/blog/selectBlogListByPageForCommon/"+0+"/"+page+"/"+this.pageSize).then(response=>{
+          this.$http.post("/blog/common/selectBlogListByPageForCommon/"+0+"/"+page+"/"+this.pageSize).then(response=>{
             if (response!=null){
               this.blogs=response.data.data
-              this.$http.post("/common/blog/selectTotalBlogsForCommon/"+0).then(response=>{
+              this.$http.post("/blog/common/selectTotalBlogsForCommon/"+0).then(response=>{
                 if (response!=null){
                   this.total=response.data.data
                   setTimeout(() => {
@@ -100,7 +100,6 @@
                 console.log(error)
                 this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
               })
-
             }
           }).catch(error=> {
             console.log(error)
@@ -108,11 +107,11 @@
           })
         }
         else if (this.$route.params.bloglist==="category"){
-          this.$http.post("/common/blog/selectBlogListByPageForCommon/"+this.$route.params.bloglist2+"/"+page+"/"+this.pageSize).then(response=>{
+          this.$http.post("/blog/common/selectBlogListByPageForCommon/"+this.$route.params.bloglist2+"/"+page+"/"+this.pageSize).then(response=>{
             console.log(response)
             if (response!=null){
               this.blogs=response.data.data
-              this.$http.post("/common/blog/selectTotalBlogsForCommon/"+this.$route.params.bloglist2).then(response=>{
+              this.$http.post("/blog/common/selectTotalBlogsForCommon/"+this.$route.params.bloglist2).then(response=>{
                 if (response!=null){
                   this.total=response.data.data
                   window.document.title = '博客类别: '+this.$store.state.category[this.$route.params.bloglist2]

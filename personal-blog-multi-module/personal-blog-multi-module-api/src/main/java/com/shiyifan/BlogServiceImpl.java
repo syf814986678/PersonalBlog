@@ -22,7 +22,7 @@ import java.util.Map;
 @Service
 @Order
 @Log4j2
-public class BlogServiceImpl implements BlogService{
+public class BlogServiceImpl implements BlogService {
 
     @Autowired
     private BlogMapper blogMapper;
@@ -48,18 +48,18 @@ public class BlogServiceImpl implements BlogService{
             for (int i = 1; i <= pageNow; i++) {
                 int start = (i - 1) * pageSize;
                 int end = (i * pageSize) - 1;
-                List<Object> blogListInRedis;
+                ArrayList<Blog> blogListInRedis;
                 if (categoryId == 0) {
-                    blogListInRedis = blogUtil.getBlogListForCommon(start, end);
+                    blogListInRedis = blogUtil.getBlogListByPageForCommon(start, end);
                     if (blogListInRedis.size() == 0) {
                         blogUtil.initBlogListForCommon();
-                        blogListInRedis = blogUtil.getBlogListForCommon(start, end);
+                        blogListInRedis = blogUtil.getBlogListByPageForCommon(start, end);
                     }
                 } else {
-                    blogListInRedis = blogUtil.getCategoryBlogListForCommon(categoryId, start, end);
+                    blogListInRedis = blogUtil.getCategoryBlogListByPageForCommon(categoryId, start, end);
                     if (blogListInRedis.size() == 0) {
                         blogUtil.initCategoryBlogListForCommon();
-                        blogListInRedis = blogUtil.getCategoryBlogListForCommon(categoryId, start, end);
+                        blogListInRedis = blogUtil.getCategoryBlogListByPageForCommon(categoryId, start, end);
                     }
                 }
                 blogListForCommon.addAll((ArrayList<Blog>) (Object) blogListInRedis);
@@ -115,10 +115,10 @@ public class BlogServiceImpl implements BlogService{
         log.info("方法:selectBlogByIdForCommon开始");
         Blog blog = null;
         try {
-            blog = blogUtil.getBlog(blogId);
+            blog = blogUtil.getBlogForCommon(blogId);
             if (blog == null) {
-                blogUtil.setBlog(blogId);
-                blog = blogUtil.getBlog(blogId);
+                blogUtil.setBlogForCommon(blogId);
+                blog = blogUtil.getBlogForCommon(blogId);
             }
         } catch (Exception e) {
             log.error("根据ID查找公共博客错误" + e.toString());
@@ -127,17 +127,92 @@ public class BlogServiceImpl implements BlogService{
         return blog;
     }
 
+    /**
+     * @return java.util.ArrayList<java.util.Map < java.lang.String, java.lang.Object>>
+     * @author ZouCha
+     * @date 2020-12-19 16:03:07
+     * @method searchContentByPageForCommon
+     * @params [keyword, pageNow, pageSize]
+     **/
     @Override
     @Retryable(value = Exception.class)
-    public ArrayList<Map<String, Object>> searchContentByPage(String keyword, int pageNow, int pageSize) throws IOException {
-        log.info("方法:searchContentByPage开始");
+    public ArrayList<Map<String, Object>> searchContentByPageForCommon(String keyword, int pageNow, int pageSize) throws IOException {
+        log.info("方法:searchContentByPageForCommon开始");
         ArrayList<Map<String, Object>> list = null;
         try {
-            list = blogUtil.searchContentByPage(keyword, pageNow, pageSize);
+            list = blogUtil.searchContentByPageForCommon(keyword, pageNow, pageSize);
         } catch (IOException e) {
-            log.error("searchContentByPage错误" + e.toString());
-            throw new IOException("searchContentByPage错误" + e.toString());
+            log.error("searchContentByPageForCommon错误" + e.toString());
+            throw new IOException("searchContentByPageForCommon错误" + e.toString());
         }
         return list;
+    }
+
+    /**
+     * @return java.util.ArrayList<com.shiyifan.pojo.Blog>
+     * @author ZouCha
+     * @date 2020-12-19 16:19:34
+     * @method selectBlogByPageForAdmin
+     * @params [userId, pageNow, pageSize]
+     **/
+    @Override
+    public ArrayList<Blog> selectBlogListByPageForAdmin(int userId, int categoryId, int pageNow, int pageSize) throws Exception {
+        log.info("方法:selectBlogListByPageForAdmin开始");
+        int start = (pageNow - 1) * pageSize;
+        int end = (pageNow * pageSize) - 1;
+        ArrayList<Blog> blogs = null;
+        try {
+            if (categoryId == 0) {
+                blogs = blogUtil.getBlogListByPageForAdmin(userId, start, end);
+                if (blogs.size() == 0) {
+                    blogUtil.initBlogListForAdmin(userId);
+                    blogs = blogUtil.getBlogListByPageForAdmin(userId, start, end);
+                }
+            }
+//            else {
+//                blogs = blogUtil.getcate(userId, start, end);
+//                if (blogs.size() == 0) {
+//                    blogUtil.initBlogListForAdmin(userId);
+//                    blogs = blogUtil.getBlogListByPageForAdmin(userId, start, end);
+//                }
+//            }
+        } catch (Exception e) {
+            log.error("selectBlogListByPageForAdmin错误" + e.toString());
+            throw new Exception("selectBlogListByPageForAdmin错误" + e.toString());
+        }
+        return blogs;
+    }
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2020-12-19 16:12:32
+     * @method selectTotalBlogsForAdmin
+     * @params [userId]
+     **/
+    @Override
+    public Integer selectTotalBlogsForAdmin(int userId,int categoryId) throws Exception {
+        log.info("方法:selectTotalBlogsForAdmin开始");
+        Integer totalBlogsForAdmin = null;
+        try {
+            if (categoryId == 0) {
+                totalBlogsForAdmin = blogUtil.getTotalBlogsForAdmin(userId);
+                if (totalBlogsForAdmin == null) {
+                    blogUtil.initBlogListForAdmin(userId);
+                    totalBlogsForAdmin = blogUtil.getTotalBlogsForAdmin(userId);
+                }
+            }
+//            else {
+//                totalBlogsForAdmin = blogUtil.getTotalBlogsForAdmin(userId);
+//                if (totalBlogsForAdmin == null) {
+//                    blogUtil.initBlogListForAdmin(userId);
+//                    totalBlogsForAdmin = blogUtil.getTotalBlogsForAdmin(userId);
+//                }
+//            }
+        } catch (Exception e) {
+            log.error("selectTotalBlogsForAdmin错误" + e.toString());
+            throw new Exception("selectTotalBlogsForAdmin错误" + e.toString());
+        }
+        return totalBlogsForAdmin;
     }
 }

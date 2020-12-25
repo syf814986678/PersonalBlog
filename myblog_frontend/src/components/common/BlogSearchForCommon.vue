@@ -104,7 +104,7 @@
             if (this.$store.state.whatSearch!==''){
               window.document.title = '博客搜索: '+this.$store.state.whatSearch
             }
-            this.$http.post("/common/blog/search/"+this.$route.params.whatsearch).then(response=>{
+            this.$http.post("/blog/common/search/"+this.$route.params.whatsearch).then(response=>{
               if (response!=null){
                 console.log(response)
                 this.allResults=response.data.data;

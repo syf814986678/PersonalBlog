@@ -4,6 +4,7 @@ package com.shiyifan.mapper;
 import com.shiyifan.pojo.Blog;
 import com.shiyifan.pojo.Category;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -25,4 +26,6 @@ public interface CategoryMapper {
      * @params []
      **/
     ArrayList<Category> selectCategoryForCommon();
+
+    ArrayList<Category> selectCategoryForAdmin(@Param("userId") int userId);
 }

@@ -34,7 +34,7 @@ public class ScheduleTaskConfig {
      * @params []
      **/
     @Scheduled(cron = "0 0 0 1/1 * ? ")
-    private void deleteVisitorConfigureTasks() {
+    private void deleteVisitorConfigureTasks() throws Exception {
         visitorUtil.deleteVisitor(1);
     }
 

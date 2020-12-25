@@ -40,7 +40,7 @@
 
         },
         created() {
-          this.$http.post("/admin/blog/selectTotalBlogsForAdmin").then(response=>{
+          this.$http.post("/blog/admin/selectTotalBlogsForAdmin/0").then(response=>{
             if (response!=null){
               this.totalBlogNums=response.data.data;
               this.$notify({
@@ -54,22 +54,22 @@
             console.log(error)
             this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
           })
-          // this.$http.post("/blog/getVisitNums/0").then(response=>{
-          //   if (response!=null){
-          //     this.todayVisitors=response.data.msg["visitNums"];
-          //   }
-          // }).catch(error=> {
-          //   console.log(error)
-          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          // })
-          // this.$http.post("/blog/getVisitNums/1").then(response=>{
-          //   if (response!=null){
-          //     this.yesterdayVisitors=response.data.msg["visitNums"];
-          //   }
-          // }).catch(error=> {
-          //   console.log(error)
-          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          // })
+          this.$http.post("/blog/admin/getVisitNumsForAdmin/0").then(response=>{
+            if (response!=null){
+              this.todayVisitors=response.data.data;
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+          this.$http.post("/blog/admin/getVisitNumsForAdmin/1").then(response=>{
+            if (response!=null){
+              this.yesterdayVisitors=response.data.data;
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
         },
     }
 </script>

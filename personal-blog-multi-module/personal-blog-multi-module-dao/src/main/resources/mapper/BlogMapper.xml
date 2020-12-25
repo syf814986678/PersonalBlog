@@ -44,9 +44,22 @@
         select count(blog_user_id)
         from myblog
         where blog_user_id = #{userId}
+        <if test="categoryId != 0">
+            and blog_category_id =#{categoryId}
+        </if>
           and is_deleted = 0
     </select>
 
+    <select id="selectBlogListByPageForAdmin" resultMap="category_name_and_username">
+        select blog_id,blog_title,blog_cover_image,blog_category_id,blog_user_id,is_deleted,create_gmt,update_gmt
+        from myblog
+        where is_deleted =0
+        <if test="categoryId != 0">
+            and blog_category_id =#{categoryId}
+        </if>
+        and blog_user_id=#{userId}
+        order by create_gmt desc
+    </select>
 
     <select id="selectElasticSearchBlogByIdForCommon" resultType="com.shiyifan.pojo.ElasticSearchBlog">
         select *

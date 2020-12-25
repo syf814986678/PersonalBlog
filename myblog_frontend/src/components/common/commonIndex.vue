@@ -102,7 +102,7 @@
       },
       methods:{
         querySearchAsync(queryString,cb){
-          this.$http.post("/common/blog/hotkeys").then(response=>{
+          this.$http.post("/blog/common/hotkeys").then(response=>{
             if (response!=null){
               this.hotkeys=response.data.data
               cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
@@ -143,7 +143,7 @@
         if (this.$route.params.whatsearch!=null){
           this.input=this.$route.params.whatsearch
         }
-        this.$http.post("/common/category/selectCategoryForCommon").then(response=>{
+        this.$http.post("/category/common/selectCategoryForCommon").then(response=>{
           if (response!=null){
             this.categories=response.data.data
             this.loading=false

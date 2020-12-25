@@ -28,9 +28,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/admin/blog/**")
-                .addPathPatterns("/admin/category/**")
-                .addPathPatterns("/admin/upload/**");
-
+                .addPathPatterns("/blog/admin/**")
+                .addPathPatterns("/category/admin/**")
+                .addPathPatterns("/upload/admin/**");
     }
 }

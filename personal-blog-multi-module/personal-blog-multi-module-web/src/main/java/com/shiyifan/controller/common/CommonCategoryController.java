@@ -17,7 +17,7 @@ import java.util.ArrayList;
  **/
 @RestController
 @Log4j2
-@RequestMapping("/common/category")
+@RequestMapping("/category/common")
 public class CommonCategoryController {
 
     @Autowired

@@ -39,11 +39,11 @@ public class ElasticsearchUtil {
     /**
      * @return java.util.ArrayList<java.util.Map < java.lang.String, java.lang.Object>>
      * @author ZouCha
-     * @date 2020-12-13 12:10:13
-     * @method searchContentPage
+     * @date 2020-12-19 16:03:36
+     * @method searchContentByPageForCommon
      * @params [keyword, pageNow, pageSize]
      **/
-    public ArrayList<Map<String, Object>> searchContentByPage(String keyword, int pageNow, int pageSize) throws IOException {
+    public ArrayList<Map<String, Object>> searchContentByPageForCommon(String keyword, int pageNow, int pageSize) throws IOException {
         int start = (pageNow - 1) * pageSize;
         ArrayList<Map<String, Object>> list = new ArrayList<>();
         try {

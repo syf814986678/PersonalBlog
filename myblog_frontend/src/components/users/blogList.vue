@@ -1,11 +1,11 @@
 <template>
   <div style="margin: 0 auto">
-    <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" border :row-class-name="tableRowClassName" :data="mydata">
+    <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" border :row-class-name="tableRowClassName" :data="myData">
       <el-table-column :resizable="false" type="index" :index="indexMethod" align="center" label="编号" width="50"></el-table-column>
       <el-table-column show-overflow-tooltip align="center" label="博客标题" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px"  type="danger">{{scope.row.blogTitle}}</el-tag></el-table-column>
       <el-table-column align="center" label="封面图片" width="275" v-slot="scope"><el-image style="width: 250px;height: 100px" :src="scope.row.blogCoverImage" fit="fill"></el-image></el-table-column>
-      <el-table-column sortable align="center" prop="mycategory.categoryName" label="博客类别" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="warning">{{scope.row.mycategory.categoryName}}</el-tag></el-table-column>
-      <el-table-column align="center" label="类别权重" width="78" v-slot="scope"><el-tag effect="dark" type="warning">{{scope.row.mycategory.categoryRank}}</el-tag></el-table-column>
+      <el-table-column sortable align="center" prop="category.categoryName" label="博客类别" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="warning">{{scope.row.category.categoryName}}</el-tag></el-table-column>
+      <el-table-column align="center" label="类别权重" width="78" v-slot="scope"><el-tag effect="dark" type="warning">{{scope.row.category.categoryRank}}</el-tag></el-table-column>
       <el-table-column sortable align="center" prop="createGmt" label="创建时间" width="150" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{scope.row.createGmt}}</el-tag></el-table-column>
       <el-table-column sortable align="center" prop="updateGmt" label="更新时间" width="150" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{scope.row.updateGmt}}</el-tag></el-table-column>
       <el-table-column align="center">
@@ -38,14 +38,14 @@
             size="mini"
             type="success"
             plain
-            @click="selectblog(scope.$index, scope.row)"
+            @click="selectBlog(scope.$index, scope.row)"
           >编辑</el-button>
           <el-button
             style="margin-top: 10px;margin-left: 0"
             size="mini"
             type="danger"
             plain
-            @click="showdeletedialog(scope.$index, scope.row)"
+            @click="showDeleteDialog(scope.$index, scope.row)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -57,7 +57,7 @@
       :hide-on-single-page="true"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage"
-      :page-size="pagesize"
+      :page-size="pageSize"
       :total="total"
       layout="prev, pager, next, total"
     >
@@ -68,22 +68,22 @@
       :hide-on-single-page="true"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage"
-      :page-size="pagesize"
+      :page-size="pageSize"
       :total="total"
       layout="prev, pager, next, jumper, total"
     >
     </el-pagination>
-    <el-dialog v-loading="dialogloading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" id="eldialog" width="90%" title="修改博客" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
-      <el-form inline-message :model="formdata" :rules="rules" ref="form" @submit.native.prevent>
+    <el-dialog v-loading="dialogLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" id="eldialog" width="90%" title="修改博客" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+      <el-form inline-message :model="formData" :rules="rules" ref="form" @submit.native.prevent>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item prop="blogTitle" class="myitem">
-              <el-input v-model="formdata.blogTitle" placeholder="博客标题"></el-input>
+              <el-input v-model="formData.blogTitle" placeholder="博客标题"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item prop="mycategory.categoryId" class="myitem">
-              <el-select :loading="selectloading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" v-model="formdata.mycategory.categoryId"  placeholder="博客类别" style="width: 100%">
+            <el-form-item prop="category.categoryId" class="myitem">
+              <el-select :loading="selectLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" v-model="formData.category.categoryId"  placeholder="博客类别" style="width: 100%">
                 <el-option v-for="option in options" :label="option.categoryName" :value="option.categoryId" :key="option.categoryId"></el-option>
               </el-select>
             </el-form-item>
@@ -97,7 +97,7 @@
           <el-col :span="12">
             <el-row>
               <el-form-item prop="blogCoverImage" class="myitem">
-                <el-input :disabled="true" v-model="formdata.blogCoverImage" placeholder="博客封面地址" style="margin-top: 15px"></el-input>
+                <el-input :disabled="true" v-model="formData.blogCoverImage" placeholder="博客封面地址" style="margin-top: 15px"></el-input>
               </el-form-item>
             </el-row>
             <el-row style="margin-top: 15px;text-align: center">
@@ -106,10 +106,10 @@
           </el-col>
           <el-col :span="12">
             <el-form-item class="myitem">
-              <div class="avatar-uploader" @click="choosefile">
-                <el-image style="width: 100%; height: 120px" v-if="formdata.blogCoverImage" :src="formdata.blogCoverImage" fit="fill"></el-image>
+              <div class="avatar-uploader" @click="chooseFile">
+                <el-image style="width: 100%; height: 120px" v-if="formData.blogCoverImage" :src="formData.blogCoverImage" fit="fill"></el-image>
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                <input type="file" accept="image/png,image/jpeg" id="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" @change="getfile"/>
+                <input type="file" accept="image/png,image/jpeg" id="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" @change="getFile"/>
               </div>
             </el-form-item>
           </el-col>
@@ -119,7 +119,7 @@
         <el-divider></el-divider>
 
         <el-form-item prop="blogContent" class="myitem">
-          <v-md-editor v-model="formdata.blogContent" height="740px" :disabled-menus="[]" @upload-image="handleUploadImage"
+          <v-md-editor v-model="formData.blogContent" height="740px" :disabled-menus="[]" @upload-image="handleUploadImage"
                        :include-level="[1, 6]"
                        left-toolbar="undo redo clear | tip customToolbar h bold italic strikethrough image| ul ol table hr | link code"
                        right-toolbar="preview toc sync-scroll fullscreen"
@@ -203,12 +203,12 @@ export default {
           ],
         },
       },
-      mydata: [],
-      formdata: {
+      myData: [],
+      formData: {
         blogTitle: '',
         blogCoverImage: '',
         blogContent: '',
-        mycategory: {
+        category: {
           categoryId: '',
           categoryName: '',
         },
@@ -216,17 +216,17 @@ export default {
       options: [],
       search: '',
       loading: true,
-      dialogloading: true,
-      selectloading: false,
+      dialogLoading: true,
+      selectLoading: false,
       dialogFormVisible: false,
       currentPage: this.$store.state.currentPage,
-      pagesize: 5,
+      pageSize: 5,
       total: null,
       rules: {
         blogTitle: [
           {required: true, message: '请输入博客标题', trigger: 'blur' },
         ],
-        mycategory: {
+        category: {
           categoryId: [
             { required: true, message: '请选择博客类型', trigger: 'change' }
           ],
@@ -242,27 +242,22 @@ export default {
     }
   },
   methods:{
-    choosefile(){
+    chooseFile(){
       document.getElementById("file").click()
     },
-    async getfile(){
+    async getFile(){
       // console.log(document.getElementById("file").files[0])
-      const mymessage = this.$message({
+      const message = this.$message({
         message: '封面图片上传中',
         iconClass: "el-icon-loading",
         center: true,
         duration: 0,
       });
-      // let now= Date.parse(new Date()) / 1000;
-      // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
-      // {
-      //   await this.gettoken(0);
-      // }
-      await this.getupload(document.getElementById("file").files[0],0)
-      mymessage.close()
+      await this.getUpload(document.getElementById("file").files[0],0)
+      message.close()
     },
     querySearchAsync(queryString,cb){
-      this.$http.post("/blog/hotkeys").then(response=>{
+      this.$http.post("/blog/common/hotkeys").then(response=>{
         if (response!=null){
           this.hotkeys=response.data.msg["hotkeys"]
           cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
@@ -279,11 +274,11 @@ export default {
       };
     },
     handleSelect(){
-      this.searchblog()
+      this.searchBlog()
     },
-    searchblog(){
+    searchBlog(){
       if (this.search.length>=1){
-        window.open("/#/index/search/"+this.search)
+        window.open("/#/bloglist/search/"+this.search)
       }
     },
     handleCopyCodeSuccess(){
@@ -293,22 +288,29 @@ export default {
         duration: 2000
       });
     },
-    randomImage(){
-      this.$http.post("/upload/randomBlogCoverImage").then(response=>{
+    // randomImage(){
+    //   this.$http.post("/upload/randomBlogCoverImage").then(response=>{
+    //     if (response!=null){
+    //       this.formData.blogCoverImage=response.data.msg["blogCoverImage"];
+    //     }
+    //   }).catch(error=> {
+    //     console.log(error)
+    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //   })
+    // },
+    refreshDate(pageNow,pageSize){
+      this.$http.post("/blog/admin/selectBlogListByPageForAdmin/"+0+"/"+pageSize+"/"+pageNow).then(response=>{
         if (response!=null){
-          this.formdata.blogCoverImage=response.data.msg["blogCoverImage"];
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
-    },
-    refreshdate(pageNow,pageSize){
-      this.$http.post("/blog/selectBlogsByPage/"+pageSize+"/"+pageNow).then(response=>{
-        if (response!=null){
-          this.mydata=response.data.msg["myblogs"];
-          this.total=response.data.msg["totalBlogNums"];
-          this.loading=false;
+          this.myData=response.data.data;
+          this.$http.post("/blog/admin/selectTotalBlogsForAdmin/"+0).then(response=>{
+            if (response!=null){
+              this.total=response.data.data;
+              this.loading=false;
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
         }
       }).catch(error=> {
         console.log(error)
@@ -317,7 +319,7 @@ export default {
     },
     handleCurrentChange(page){
       this.$store.commit('setCurrentPage',page)
-      this.refreshdate(page,this.pagesize);
+      this.refreshDate(page,this.pageSize);
     },
     tableRowClassName({row, rowIndex}) {
       if (rowIndex % 2 ) {
@@ -328,15 +330,15 @@ export default {
       }
     },
     indexMethod(index) {
-      return (this.currentPage - 1) * this.pagesize + index + 1;
+      return (this.currentPage - 1) * this.pageSize + index + 1;
     },
-    showdeletedialog(index, row) {
+    showDeleteDialog(index, row) {
       this.$confirm('此操作将永久删除该条博客, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.deleteblog(row.blogId,row.mycategory.categoryId);
+        this.deleteBlog(row.blogId,row.mycategory.categoryId);
       }).catch(() => {
         this.$notify({
           title: '取消',
@@ -346,157 +348,157 @@ export default {
         });
       });
     },
-    deleteblog(blogid,categoryid) {
-      this.$http.post("/blog/deleteBlog/"+blogid+"/"+categoryid).then(response=>{
-        if (response!=null){
-          this.$notify({
-            title: '删除成功',
-            message: response.data.msg["delete"],
-            type: 'success',
-            duration: 2500
-          });
-          this.refreshdate(this.currentPage,this.pagesize);
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
-    },
+    // deleteBlog(blogid,categoryid) {
+    //   this.$http.post("/blog/deleteBlog/"+blogid+"/"+categoryid).then(response=>{
+    //     if (response!=null){
+    //       this.$notify({
+    //         title: '删除成功',
+    //         message: response.data.msg["delete"],
+    //         type: 'success',
+    //         duration: 2500
+    //       });
+    //       this.refreshDate(this.currentPage,this.pageSize);
+    //     }
+    //   }).catch(error=> {
+    //     console.log(error)
+    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //   })
+    // },
     cancel(){
       this.dialogFormVisible=false;
     },
-    selectblog(index, row) {
-      this.$http.post("/blog/selectBlogById/"+row.blogId).then(response=>{
-        if (response!=null){
-          this.formdata=response.data.msg["myblog"];
-          this.$http.post("/category/selectAllBlogCategory").then(response=>{
-            if (response!=null){
-              this.options=response.data.msg["mycategories"];
-              this.dialogFormVisible=true;
-              this.dialogloading=false;
-              setTimeout(() => {
-                document.getElementById("eldialog").scrollTop=143
-              }, 100)
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
-    },
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.dialogloading=true;
-          this.$notify({
-            title: '更新中',
-            message: "更新中，请稍等！",
-            type: 'warning',
-            duration: 1000
-          });
-          this.$http.post("/blog/updateBlog",this.formdata).then(response=>{
-            if (response!=null){
-              this.$notify({
-                title: '更新成功',
-                message: response.data.msg["update"],
-                type: 'success',
-                duration: 2500
-              });
-              this.refreshdate(this.currentPage,this.pagesize)
-              this.dialogFormVisible=false
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-        }
-        else {
-          return false;
-        }
-      });
-    },
+    // selectBlog(index, row) {
+    //   this.$http.post("/blog/selectBlogById/"+row.blogId).then(response=>{
+    //     if (response!=null){
+    //       this.formData=response.data.msg["myblog"];
+    //       this.$http.post("/category/selectAllBlogCategory").then(response=>{
+    //         if (response!=null){
+    //           this.options=response.data.msg["mycategories"];
+    //           this.dialogFormVisible=true;
+    //           this.dialogLoading=false;
+    //           setTimeout(() => {
+    //             document.getElementById("eldialog").scrollTop=143
+    //           }, 100)
+    //         }
+    //       }).catch(error=> {
+    //         console.log(error)
+    //         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //       })
+    //     }
+    //   }).catch(error=> {
+    //     console.log(error)
+    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //   })
+    // },
+    // submitForm(formName) {
+    //   this.$refs[formName].validate((valid) => {
+    //     if (valid) {
+    //       this.dialogLoading=true;
+    //       this.$notify({
+    //         title: '更新中',
+    //         message: "更新中，请稍等！",
+    //         type: 'warning',
+    //         duration: 1000
+    //       });
+    //       this.$http.post("/blog/updateBlog",this.formData).then(response=>{
+    //         if (response!=null){
+    //           this.$notify({
+    //             title: '更新成功',
+    //             message: response.data.msg["update"],
+    //             type: 'success',
+    //             duration: 2500
+    //           });
+    //           this.refreshDate(this.currentPage,this.pageSize)
+    //           this.dialogFormVisible=false
+    //         }
+    //       }).catch(error=> {
+    //         console.log(error)
+    //         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //       })
+    //     }
+    //     else {
+    //       return false;
+    //     }
+    //   });
+    // },
     showBlog(row){
-      window.open("/#/index/blog/"+row.blogId)
+      window.open("/#/bloglist/blog/"+row.blogId)
     },
-    randomName(filename,len) {
-      len = len || 32;
-      var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
-      var maxPos = chars.length;
-      var pwd = '';
-      for (var i = 0; i < len; i++) {
-        pwd += chars.charAt(Math.floor(Math.random() * maxPos));
-      }
-      return pwd+filename.substring(filename.lastIndexOf("."))
-    },
-    async handleUploadImage(event, insertImage, files) {
-      // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-      // let now= Date.parse(new Date()) / 1000;
-      // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
-      // {
-      //   await this.gettoken(1);
-      // }
-      await this.getupload(files[0],1)
-      insertImage({
-        url:this.filename,
-        desc: '博客图片',
-      });
-    },
-    async gettoken(type){
-      await this.$http.get("/upload/getOssToken/"+type).then((response) => {
-        if (response!=null){
-          this.$store.commit('setOSS',response.data)
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
-    },
-    async getupload(file,type){
-      await this.gettoken(type)
-      var formdata = new FormData();
-      formdata.append('key', this.$store.state.OSS.dir+this.randomName(file.name,10));
-      formdata.append('policy', this.$store.state.OSS.policy);
-      formdata.append('OSSAccessKeyId', this.$store.state.OSS.accessid);
-      formdata.append('success_action_status', '200');
-      formdata.append('callback', this.$store.state.OSS.callback);
-      formdata.append('signature', this.$store.state.OSS.signature);
-      formdata.append('file', file);
-      await this.$http({
-        url: this.$store.state.OSS.host,
-        method: 'post',
-        data: formdata,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }).then((response) => {
-        if (response!=null){
-          if (type===0){
-            this.formdata.blogCoverImage=response.data.filename
-          }
-          else if (type===1) {
-            this.filename=response.data.filename
-          }
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
-    },
+    // randomName(filename,len) {
+    //   len = len || 32;
+    //   const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+    //   const maxPos = chars.length;
+    //   let pwd = '';
+    //   for (let i = 0; i < len; i++) {
+    //     pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+    //   }
+    //   return pwd+filename.substring(filename.lastIndexOf("."))
+    // },
+    // async handleUploadImage(event, insertImage, files) {
+    //   // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
+    //   // let now= Date.parse(new Date()) / 1000;
+    //   // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
+    //   // {
+    //   //   await this.getToken(1);
+    //   // }
+    //   await this.getUpload(files[0],1)
+    //   insertImage({
+    //     url:this.filename,
+    //     desc: '博客图片',
+    //   });
+    // },
+    // async getToken(type){
+    //   await this.$http.get("/upload/getOssToken/"+type).then((response) => {
+    //     if (response!=null){
+    //       this.$store.commit('setOSS',response.data)
+    //     }
+    //   }).catch(error=> {
+    //     console.log(error)
+    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //   })
+    // },
+    // async getUpload(file,type){
+    //   await this.getToken(type)
+    //   const formData = new FormData();
+    //   formData.append('key', this.$store.state.OSS.dir+this.randomName(file.name,10));
+    //   formData.append('policy', this.$store.state.OSS.policy);
+    //   formData.append('OSSAccessKeyId', this.$store.state.OSS.accessId);
+    //   formData.append('success_action_status', '200');
+    //   formData.append('callback', this.$store.state.OSS.callback);
+    //   formData.append('signature', this.$store.state.OSS.signature);
+    //   formData.append('file', file);
+    //   await this.$http({
+    //     url: this.$store.state.OSS.host,
+    //     method: 'post',
+    //     data: formData,
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data',
+    //     },
+    //   }).then((response) => {
+    //     if (response!=null){
+    //       if (type===0){
+    //         this.formData.blogCoverImage=response.data.filename
+    //       }
+    //       else if (type===1) {
+    //         this.filename=response.data.filename
+    //       }
+    //     }
+    //   }).catch(error=> {
+    //     console.log(error)
+    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //   })
+    // },
   },
   created() {
     const that = this;
-    this.refreshdate(this.currentPage,this.pagesize);
+    this.refreshDate(this.currentPage,this.pageSize);
     document.onkeydown = function (e) {
       // 回车提交表单
       // 兼容FF和IE和Opera
       var theEvent = window.event || e;
       var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
       if (document.activeElement.id==="myinput1"&& code === 13) {
-        that.searchblog()
+        that.searchBlog()
         document.getElementById('myinput1').blur();
       }
     }

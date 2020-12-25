@@ -44,8 +44,26 @@ public interface BlogService {
      * @return java.util.ArrayList<java.util.Map < java.lang.String, java.lang.Object>>
      * @author ZouCha
      * @date 2020-12-13 11:46:12
-     * @method searchContentPage
+     * @method searchContentPageForCommon
      * @params [keyword, pageNo, pageSize]
      **/
-    ArrayList<Map<String, Object>> searchContentByPage(String keyword, int pageNow, int pageSize) throws IOException;
+    ArrayList<Map<String, Object>> searchContentByPageForCommon(String keyword, int pageNow, int pageSize) throws IOException;
+
+    /**
+     * @return java.util.ArrayList<com.shiyifan.pojo.Blog>
+     * @author ZouCha
+     * @date 2020-12-19 16:04:53
+     * @method selectBlogListByPageForAdmin
+     * @params [userId, pageNow, pageSize]
+     **/
+    ArrayList<Blog> selectBlogListByPageForAdmin(int userId, int categoryId, int pageNow, int pageSize) throws Exception;
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2020-12-20 13:41:05
+     * @method selectTotalBlogsForAdmin
+     * @params [userId]
+     **/
+    Integer selectTotalBlogsForAdmin(int userId, int categoryId) throws Exception;
 }

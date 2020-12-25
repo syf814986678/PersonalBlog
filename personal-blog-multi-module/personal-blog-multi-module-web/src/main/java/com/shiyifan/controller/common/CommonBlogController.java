@@ -24,7 +24,7 @@ import java.util.Map;
  **/
 @RestController
 @Log4j2
-@RequestMapping("/common/blog")
+@RequestMapping("/blog/common")
 public class CommonBlogController {
     @Autowired
     private BlogService blogService;
@@ -139,7 +139,7 @@ public class CommonBlogController {
     public Result search(@PathVariable("keyword") String keyword) throws Exception {
         ArrayList<Map<String, Object>> list = null;
         try {
-            list = blogService.searchContentByPage(keyword, 1, 30);
+            list = blogService.searchContentByPageForCommon(keyword, 1, 30);
         } catch (Exception e) {
             log.error("搜索博客错误" + e.toString());
             throw new Exception("搜索博客错误" + e.toString());

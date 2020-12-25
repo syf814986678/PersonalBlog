@@ -82,7 +82,7 @@
             });
           },
           refresh(){
-            this.$http.post("/common/blog/selectBlogByIdForCommon/"+this.$route.params.blogid).then(response=>{
+            this.$http.post("/blog/common/selectBlogByIdForCommon/"+this.$route.params.blogid).then(response=>{
               if (response!=null){
                 this.blog=response.data.data
                 document.title=this.blog.blogTitle

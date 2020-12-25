@@ -3,6 +3,7 @@ package com.shiyifan;
 import com.shiyifan.mapper.BlogMapper;
 import com.shiyifan.mapper.CategoryMapper;
 import com.shiyifan.mapper.LoginMapper;
+import com.shiyifan.pojo.Blog;
 import com.shiyifan.pojo.Category;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,9 @@ public class test {
 //    }
     @Test
     public void testmapper() throws IOException {
-        System.out.println(blogUtil.getTotalBlogsForAdmin(1));
+        ArrayList<Blog> test=null;
+        test=blogUtil.getBlogListByPageForAdmin(1, 0, 5);
+        System.out.println(test==null);
 
     }
 }

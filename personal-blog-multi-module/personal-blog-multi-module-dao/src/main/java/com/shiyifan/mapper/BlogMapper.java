@@ -2,7 +2,6 @@ package com.shiyifan.mapper;
 
 
 import com.shiyifan.pojo.Blog;
-import com.shiyifan.pojo.ElasticSearchBlog;
 import org.apache.ibatis.annotations.Mapper;
 
 import org.apache.ibatis.annotations.Param;
@@ -40,9 +39,18 @@ public interface BlogMapper {
     /**
      * @return java.lang.Integer
      * @author ZouCha
-     * @date 2020-12-17 14:10:05
-     * @method selectTotalBlogForAdmin
-     * @params [userId]
+     * @date 2020-12-20 13:26:01
+     * @method selectTotalBlogsForAdmin
+     * @params [userId, categoryId]
      **/
-    Integer selectTotalBlogsForAdmin(@Param("userId") int userId);
+    Integer selectTotalBlogsForAdmin(@Param("userId") int userId, @Param("categoryId") int categoryId);
+
+    /**
+     * @return java.util.ArrayList<com.shiyifan.pojo.Blog>
+     * @author ZouCha
+     * @date 2020-12-20 12:38:23
+     * @method selectBlogListByPageForAdmin
+     * @params [categoryId]
+     **/
+    ArrayList<Blog> selectBlogListByPageForAdmin(@Param("userId") int userId, @Param("categoryId") int categoryId);
 }
