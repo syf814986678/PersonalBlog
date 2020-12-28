@@ -8,14 +8,12 @@
         <association property="category" column="blog_category_id" select="selectCategoryById"/>
         <association property="user" column="blog_user_id" select="selectUserById"/>
     </resultMap>
-
     <select id="selectCategoryById" resultType="com.shiyifan.pojo.Category">
         select category_id, category_name
         from mycategory
         where category_id = #{blog_category_id}
           and is_deleted = 0
     </select>
-
     <select id="selectUserById" resultType="com.shiyifan.pojo.User">
         select user_id, user_name
         from myuser
@@ -40,16 +38,6 @@
           and is_deleted = 0;
     </select>
 
-    <select id="selectTotalBlogsForAdmin" resultType="_int">
-        select count(blog_user_id)
-        from myblog
-        where blog_user_id = #{userId}
-        <if test="categoryId != 0">
-            and blog_category_id =#{categoryId}
-        </if>
-          and is_deleted = 0
-    </select>
-
     <select id="selectBlogListByPageForAdmin" resultMap="category_name_and_username">
         select blog_id,blog_title,blog_cover_image,blog_category_id,blog_user_id,is_deleted,create_gmt,update_gmt
         from myblog
@@ -59,6 +47,16 @@
         </if>
         and blog_user_id=#{userId}
         order by create_gmt desc
+    </select>
+
+    <select id="selectTotalBlogsForAdmin" resultType="_int">
+        select count(blog_user_id)
+        from myblog
+        where blog_user_id = #{userId}
+        <if test="categoryId != 0">
+            and blog_category_id =#{categoryId}
+        </if>
+          and is_deleted = 0
     </select>
 
     <select id="selectElasticSearchBlogByIdForCommon" resultType="com.shiyifan.pojo.ElasticSearchBlog">

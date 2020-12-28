@@ -19,4 +19,13 @@ public interface CategoryService {
      * @params []
      **/
     ArrayList<Category> selectCategoryForCommon() throws Exception;
+
+    /**
+     * @return java.util.ArrayList<com.shiyifan.pojo.Category>
+     * @author ZouCha
+     * @date 2020-12-27 15:46:16
+     * @method selectCategoryForAdmin
+     * @params [userId]
+     **/
+    ArrayList<Category> selectCategoryForAdmin(int userId) throws Exception;
 }

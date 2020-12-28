@@ -33,22 +33,6 @@ public class AdminBlogController {
     @Autowired
     private BlogService blogService;
 
-
-//    @PostMapping("/selectTotalBlogsForAdmin")
-//    public Result selectTotalBlogsForAdmin(HttpServletRequest request) throws Exception {
-//        Claims claims = null;
-//        Integer totalBlogsForAdmin = null;
-//        try {
-//            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
-//            int userId = (int) claims.get("userId");
-//            totalBlogsForAdmin = blogService.selectTotalBlogsForAdmin(userId,0);
-//        } catch (Exception e) {
-//            log.error("selectTotalBlogNumsForAdmin错误" + e.toString());
-//            throw new Exception("selectTotalBlogNumsForAdmin错误" + e.toString());
-//        }
-//        return ResultUtil.success(totalBlogsForAdmin);
-//    }
-
     /**
      * 获取访问人数
      * 已修改(controller名称,restful风格)
@@ -106,13 +90,13 @@ public class AdminBlogController {
      * @params []
      **/
     @PostMapping("/selectTotalBlogsForAdmin/{categoryId}")
-    public Result selectTotalBlogsForAdmin(HttpServletRequest request,@PathVariable("categoryId") int categoryId) throws Exception {
+    public Result selectTotalBlogsForAdmin(HttpServletRequest request, @PathVariable("categoryId") int categoryId) throws Exception {
         Claims claims = null;
         Integer totalBlogsForAdmin = null;
         try {
             claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
             int userId = (int) claims.get("userId");
-            totalBlogsForAdmin = blogService.selectTotalBlogsForAdmin(userId,categoryId);
+            totalBlogsForAdmin = blogService.selectTotalBlogsForAdmin(userId, categoryId);
         } catch (Exception e) {
             log.error("selectTotalBlogsForAdmin错误" + e.toString());
             throw new Exception("selectTotalBlogsForAdmin错误" + e.toString());
@@ -120,5 +104,7 @@ public class AdminBlogController {
         return ResultUtil.success(totalBlogsForAdmin);
 
     }
+
+
 
 }

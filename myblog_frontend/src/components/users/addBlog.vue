@@ -19,7 +19,7 @@
       </el-col>
       <el-col :span="12">
         <el-form-item prop="mycategory.categoryId" class="myitem">
-          <el-select :loading="loading" v-model="form.mycategory.categoryId" placeholder="博客类别" style="width: 100%">
+          <el-select :loading="loading" v-model="form.category.categoryId" placeholder="博客类别" style="width: 100%">
             <el-option v-for="option in options" :label="option.categoryName" :value="option.categoryId" :key="option.categoryId"></el-option>
           </el-select>
         </el-form-item>
@@ -41,10 +41,10 @@
       </el-col>
       <el-col :span="12">
         <el-form-item class="myitem">
-          <div class="avatar-uploader" @click="choosefile">
+          <div class="avatar-uploader" @click="chooseFile">
             <el-image style="width: 100%; height: 120px" v-if="form.blogCoverImage" :src="form.blogCoverImage" fit="fill"></el-image>
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            <input type="file" accept="image/png,image/jpeg" id="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" @change="getfile"/>
+            <input type="file" accept="image/png,image/jpeg" id="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" @change="getFile"/>
           </div>
         </el-form-item>
       </el-col>
@@ -142,11 +142,11 @@ export default {
           blogTitle: '',
           blogCoverImage: '',
           blogContent: '',
-          myuser: {
-            userId: this.$store.state.myuser.userid,
-            userName: this.$store.state.myuser.username,
+          user: {
+            userId: this.$store.state.user.userId,
+            userName: this.$store.state.user.userName,
           },
-          mycategory: {
+          category: {
             categoryId: '',
             categoryName: '',
           },
@@ -155,7 +155,7 @@ export default {
           blogTitle: [
             {required: true, message: '请输入博客标题', trigger: 'blur' },
           ],
-          mycategory: {
+          category: {
             categoryId: [
               { required: true, message: '请选择博客类型', trigger: 'change' }
             ],
@@ -172,24 +172,19 @@ export default {
       }
     },
     methods: {
-      choosefile(){
+      chooseFile(){
         document.getElementById("file").click()
       },
-      async getfile(){
+      async getFile(){
         // console.log(document.getElementById("file").files[0])
-        const mymessage = this.$message({
+        const message = this.$message({
           message: '封面图片上传中',
           iconClass: "el-icon-loading",
           center: true,
           duration: 0,
         });
-        // let now= Date.parse(new Date()) / 1000;
-        // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
-        // {
-        //   await this.gettoken(0);
-        // }
-        await this.getupload(document.getElementById("file").files[0],0)
-        mymessage.close()
+        // await this.getUpLoad(document.getElementById("file").files[0],0)
+        message.close()
       },
       handleCopyCodeSuccess(){
         this.$message({
@@ -199,176 +194,169 @@ export default {
         });
       },
       randomImage(){
-        this.$http.post("/upload/randomBlogCoverImage").then(response=>{
+        this.$http.post("/upload/admin/randomBlogCoverImage").then(response=>{
           if (response!=null){
-            this.form.blogCoverImage=response.data.msg["blogCoverImage"];
+            this.form.blogCoverImage=response.data.data;
           }
         }).catch(error=> {
           console.log(error)
           this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
         })
       },
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.loading=true
-            this.$notify({
-              title: '发布中',
-              message: "发布中，请稍等！",
-              type: 'warning',
-              duration: 1000
-            });
-            this.$http.post("/blog/addBlog",this.form).then(response=>{
-              if (response!=null){
-                this.$notify({
-                  title: '发布成功',
-                  message: response.data.msg["add"],
-                  type: 'success',
-                  duration: 2500
-                });
-                this.cancel();
-                this.$router.push("/admin/showBlogList");
-              }
-            }).catch(error=> {
-              console.log(error)
-              this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-            })
-          }
-          else {
-            this.$store.commit('errorMsg',"有非空数据未填写!")
-            return false;
-          }
-        });
-      },
+      // submitForm(formName) {
+      //   this.$refs[formName].validate((valid) => {
+      //     if (valid) {
+      //       this.loading=true
+      //       this.$notify({
+      //         title: '发布中',
+      //         message: "发布中，请稍等！",
+      //         type: 'warning',
+      //         duration: 1000
+      //       });
+      //       this.$http.post("/blog/addBlog",this.form).then(response=>{
+      //         if (response!=null){
+      //           this.$notify({
+      //             title: '发布成功',
+      //             message: response.data.msg["add"],
+      //             type: 'success',
+      //             duration: 2500
+      //           });
+      //           this.cancel();
+      //           this.$router.push("/admin/showBlogList");
+      //         }
+      //       }).catch(error=> {
+      //         console.log(error)
+      //         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      //       })
+      //     }
+      //     else {
+      //       this.$store.commit('errorMsg',"有非空数据未填写!")
+      //       return false;
+      //     }
+      //   });
+      // },
       cancel(){
         this.$refs.form.clearValidate()
         this.$refs.form.resetFields()
       },
       randomName(filename,len) {
         len = len || 32;
-        var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
-        var maxPos = chars.length;
-        var pwd = '';
-        for (var i = 0; i < len; i++) {
+        const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+        const maxPos = chars.length;
+        let pwd = '';
+        for (let i = 0; i < len; i++) {
           pwd += chars.charAt(Math.floor(Math.random() * maxPos));
         }
         return pwd+filename.substring(filename.lastIndexOf("."))
       },
-      async handleUploadImage(event, insertImage, files) {
-        // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-        // let now= Date.parse(new Date()) / 1000;
-        // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
-        // {
-        //   await this.gettoken(1);
-        // }
-
-        await this.getupload(files[0],1)
-        insertImage({
-          url:this.filename,
-          desc: '博客图片',
-        });
-      },
-      async gettoken(type){
-        await this.$http.get("/upload/getOssToken/"+type).then((response) => {
-          if (response!=null){
-            this.$store.commit('setOSS',response.data)
-          }
-        }).catch(error=> {
-          console.log(error)
-          this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-        })
-      },
-      async getupload(file,type){
-        await this.gettoken(type)
-        var formdata = new FormData();
-        formdata.append('key', this.$store.state.OSS.dir+this.randomName(file.name,10));
-        formdata.append('policy', this.$store.state.OSS.policy);
-        formdata.append('OSSAccessKeyId', this.$store.state.OSS.accessid);
-        formdata.append('success_action_status', '200');
-        formdata.append('callback', this.$store.state.OSS.callback);
-        formdata.append('signature', this.$store.state.OSS.signature);
-        formdata.append('file', file);
-        await this.$http({
-          url: this.$store.state.OSS.host,
-          method: 'post',
-          data: formdata,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }).then((response) => {
-          if (response!=null){
-            if (type===0){
-              this.form.blogCoverImage=response.data.filename
-            }
-            else if (type===1) {
-              this.filename=response.data.filename
-            }
-          }
-        }).catch(error=> {
-          console.log(error)
-          this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-        })
-      },
+      // async handleUploadImage(event, insertImage, files) {
+      //   await this.getupload(files[0],1)
+      //   insertImage({
+      //     url:this.filename,
+      //     desc: '博客图片',
+      //   });
+      // },
+      // async getToken(type){
+      //   await this.$http.get("/upload/getOssToken/"+type).then((response) => {
+      //     if (response!=null){
+      //       this.$store.commit('setOSS',response.data)
+      //     }
+      //   }).catch(error=> {
+      //     console.log(error)
+      //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      //   })
+      // },
+      // async getUpLoad(file,type){
+      //   await this.getToken(type)
+      //   const formData = new FormData();
+      //   formData.append('key', this.$store.state.OSS.dir+this.randomName(file.name,10));
+      //   formData.append('policy', this.$store.state.OSS.policy);
+      //   formData.append('OSSAccessKeyId', this.$store.state.OSS.accessId);
+      //   formData.append('success_action_status', '200');
+      //   formData.append('callback', this.$store.state.OSS.callback);
+      //   formData.append('signature', this.$store.state.OSS.signature);
+      //   formData.append('file', file);
+      //   await this.$http({
+      //     url: this.$store.state.OSS.host,
+      //     method: 'post',
+      //     data: formData,
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //     },
+      //   }).then((response) => {
+      //     if (response!=null){
+      //       if (type===0){
+      //         this.form.blogCoverImage=response.data.filename
+      //       }
+      //       else if (type===1) {
+      //         this.filename=response.data.filename
+      //       }
+      //     }
+      //   }).catch(error=> {
+      //     console.log(error)
+      //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      //   })
+      // },
     },
     created() {
-      this.$http.post("/category/selectAllBlogCategory").then(response=>{
+      this.$http.post("/category/admin/selectCategoryForAdmin").then(response=>{
         if (response!=null){
-          this.options=response.data.msg["mycategories"];
+          this.options=response.data.data;
           this.loading=false;
         }
       }).catch(error=> {
         console.log(error)
         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
       })
-      this.$http.post("/blog/getTempBlog").then(response=>{
-        if (response!=null){
-          if (response.data.msg["myblog"]!=="SUCCESS"){
-            this.$notify({
-              title: '加载博客',
-              message: "加载暂存博客成功",
-              type: 'success',
-              duration: 2500
-            });
-            if (myblog.blogTitle!==""){
-              this.form.blogTitle=myblog.blogTitle
-            }
-            if (myblog.blogCoverImage!==""){
-              this.form.blogCoverImage=myblog.blogCoverImage
-            }
-            if (myblog.blogContent!==""){
-              this.form.blogContent=myblog.blogContent
-            }
-            if (myblog.mycategory.categoryId!==""){
-              this.form.mycategory.categoryId=myblog.mycategory.categoryId
-            }
-            if (myblog.mycategory.categoryName!==""){
-              this.form.mycategory.categoryName=myblog.mycategory.categoryName
-            }
-          }
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
+      // this.$http.post("/blog/getTempBlog").then(response=>{
+      //   if (response!=null){
+      //     if (response.data.msg["myblog"]!=="SUCCESS"){
+      //       this.$notify({
+      //         title: '加载博客',
+      //         message: "加载暂存博客成功",
+      //         type: 'success',
+      //         duration: 2500
+      //       });
+      //       if (myblog.blogTitle!==""){
+      //         this.form.blogTitle=myblog.blogTitle
+      //       }
+      //       if (myblog.blogCoverImage!==""){
+      //         this.form.blogCoverImage=myblog.blogCoverImage
+      //       }
+      //       if (myblog.blogContent!==""){
+      //         this.form.blogContent=myblog.blogContent
+      //       }
+      //       if (myblog.mycategory.categoryId!==""){
+      //         this.form.mycategory.categoryId=myblog.mycategory.categoryId
+      //       }
+      //       if (myblog.mycategory.categoryName!==""){
+      //         this.form.mycategory.categoryName=myblog.mycategory.categoryName
+      //       }
+      //     }
+      //   }
+      // }).catch(error=> {
+      //   console.log(error)
+      //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      // })
     },
-    beforeRouteLeave (to, from, next) {
-      if (this.form.blogContent!==""){
-        this.$http.post("/blog/setTempBlog",this.form).then(response=>{
-          if (response!=null){
-            this.$notify({
-              title: '暂存博客',
-              message: response.data.msg["setTempBlog"],
-              type: 'success',
-              duration: 2500
-            });
-          }
-        }).catch(error=> {
-          console.log(error)
-          this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-        })
-      }
-      next();
-    }
+    // beforeRouteLeave (to, from, next) {
+    //   if (this.form.blogContent!==""){
+    //     this.$http.post("/blog/setTempBlog",this.form).then(response=>{
+    //       if (response!=null){
+    //         this.$notify({
+    //           title: '暂存博客',
+    //           message: response.data.msg["setTempBlog"],
+    //           type: 'success',
+    //           duration: 2500
+    //         });
+    //       }
+    //     }).catch(error=> {
+    //       console.log(error)
+    //       this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //     })
+    //   }
+    //   next();
+    // }
   }
 </script>
 <style scoped>

@@ -119,7 +119,7 @@ public class BlogUtil implements ApplicationRunner {
      **/
     public ArrayList<Blog> getBlogListByPageForCommon(int start, int end) {
         log.info("方法:getBlogListForCommon开始");
-        return (ArrayList<Blog>)(Object) redisUtil.lGet(blogsForCommon, start, end);
+        return (ArrayList<Blog>) (Object) redisUtil.lGet(blogsForCommon, start, end);
     }
 
     /**
@@ -143,7 +143,7 @@ public class BlogUtil implements ApplicationRunner {
      **/
     public ArrayList<Blog> getCategoryBlogListByPageForCommon(int categoryId, int start, int end) {
         log.info("方法:getCategoryBlogListForCommon开始");
-        return (ArrayList<Blog>)(Object) redisUtil.lGet(categoryBlogsForCommon + categoryId, start, end);
+        return (ArrayList<Blog>) (Object) redisUtil.lGet(categoryBlogsForCommon + categoryId, start, end);
     }
 
     /**
@@ -281,7 +281,31 @@ public class BlogUtil implements ApplicationRunner {
      **/
     public ArrayList<Blog> getBlogListByPageForAdmin(int userId, int start, int end) {
         log.info("方法:getBlogListByPageForAdmin开始");
-        return (ArrayList<Blog>)(Object) redisUtil.lGet(blogsForAdmin + userId, start, end);
+        return (ArrayList<Blog>) (Object) redisUtil.lGet(blogsForAdmin + userId, start, end);
+    }
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2020-12-27 15:12:21
+     * @method getCategoryTotalBlogsForAdmin
+     * @params [userId, categoryId]
+     **/
+    public Integer getCategoryTotalBlogsForAdmin(int userId, int categoryId) {
+        log.info("方法:getCategoryTotalBlogsForAdmin开始");
+        return (Integer) redisUtil.get(categoryTotalBlogsForAdmin + userId + categoryId);
+    }
+
+    /**
+     * @return java.util.ArrayList<com.shiyifan.pojo.Blog>
+     * @author ZouCha
+     * @date 2020-12-27 15:16:15
+     * @method getCategoryBlogListByPageForAdmin
+     * @params [userId, categoryId, start, end]
+     **/
+    public ArrayList<Blog> getCategoryBlogListByPageForAdmin(int userId, int categoryId, int start, int end) {
+        log.info("方法:getCategoryBlogListByPageForAdmin开始");
+        return (ArrayList<Blog>) (Object) redisUtil.lGet(categoryBlogsForAdmin + userId + categoryId, start, end);
     }
 
     /**

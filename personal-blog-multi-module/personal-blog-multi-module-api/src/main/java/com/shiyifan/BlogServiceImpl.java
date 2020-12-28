@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,7 +41,7 @@ public class BlogServiceImpl implements BlogService {
      **/
     @Override
     public ArrayList<Blog> selectBlogListByPageForCommon(int categoryId, int pageNow, int pageSize) throws Exception {
-        log.info("方法:selectBlogListByPageForCommon开始");
+        log.info("方法:selectBlogListByPageForCommon开始,categoryId:"+categoryId+",pageNow:"+pageNow+",pageSize:"+pageSize);
         ArrayList<Blog> blogListForCommon = new ArrayList<>();
         try {
             for (int i = 1; i <= pageNow; i++) {
@@ -80,7 +79,7 @@ public class BlogServiceImpl implements BlogService {
      **/
     @Override
     public Integer selectTotalBlogsForCommon(int categoryId) throws Exception {
-        log.info("方法:selectTotalBlogsForCommon开始");
+        log.info("方法:selectTotalBlogsForCommon开始,categoryId:"+categoryId);
         Integer totalBlogsForCommon;
         try {
             if (categoryId == 0) {
@@ -112,7 +111,7 @@ public class BlogServiceImpl implements BlogService {
      **/
     @Override
     public Blog selectBlogByIdForCommon(String blogId) throws Exception {
-        log.info("方法:selectBlogByIdForCommon开始");
+        log.info("方法:selectBlogByIdForCommon开始,blogId:"+blogId);
         Blog blog = null;
         try {
             blog = blogUtil.getBlogForCommon(blogId);
@@ -137,7 +136,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Retryable(value = Exception.class)
     public ArrayList<Map<String, Object>> searchContentByPageForCommon(String keyword, int pageNow, int pageSize) throws IOException {
-        log.info("方法:searchContentByPageForCommon开始");
+        log.info("方法:searchContentByPageForCommon开始,keyword:"+keyword+",pageNow:"+pageNow+",pageSize:"+pageSize);
         ArrayList<Map<String, Object>> list = null;
         try {
             list = blogUtil.searchContentByPageForCommon(keyword, pageNow, pageSize);
@@ -157,7 +156,7 @@ public class BlogServiceImpl implements BlogService {
      **/
     @Override
     public ArrayList<Blog> selectBlogListByPageForAdmin(int userId, int categoryId, int pageNow, int pageSize) throws Exception {
-        log.info("方法:selectBlogListByPageForAdmin开始");
+        log.info("方法:selectBlogListByPageForAdmin开始,userId:"+userId+",categoryId:"+categoryId+",pageNow:"+pageNow+",pageSize:"+pageSize);
         int start = (pageNow - 1) * pageSize;
         int end = (pageNow * pageSize) - 1;
         ArrayList<Blog> blogs = null;
@@ -168,14 +167,13 @@ public class BlogServiceImpl implements BlogService {
                     blogUtil.initBlogListForAdmin(userId);
                     blogs = blogUtil.getBlogListByPageForAdmin(userId, start, end);
                 }
+            } else {
+                blogs = blogUtil.getCategoryBlogListByPageForAdmin(userId, categoryId, start, end);
+                if (blogs.size() == 0) {
+                    blogUtil.initCategoryBlogListForAdmin(userId);
+                    blogs = blogUtil.getCategoryBlogListByPageForAdmin(userId, categoryId, start, end);
+                }
             }
-//            else {
-//                blogs = blogUtil.getcate(userId, start, end);
-//                if (blogs.size() == 0) {
-//                    blogUtil.initBlogListForAdmin(userId);
-//                    blogs = blogUtil.getBlogListByPageForAdmin(userId, start, end);
-//                }
-//            }
         } catch (Exception e) {
             log.error("selectBlogListByPageForAdmin错误" + e.toString());
             throw new Exception("selectBlogListByPageForAdmin错误" + e.toString());
@@ -191,8 +189,8 @@ public class BlogServiceImpl implements BlogService {
      * @params [userId]
      **/
     @Override
-    public Integer selectTotalBlogsForAdmin(int userId,int categoryId) throws Exception {
-        log.info("方法:selectTotalBlogsForAdmin开始");
+    public Integer selectTotalBlogsForAdmin(int userId, int categoryId) throws Exception {
+        log.info("方法:selectTotalBlogsForAdmin开始,userId:"+userId+",categoryId:"+categoryId);
         Integer totalBlogsForAdmin = null;
         try {
             if (categoryId == 0) {
@@ -201,14 +199,13 @@ public class BlogServiceImpl implements BlogService {
                     blogUtil.initBlogListForAdmin(userId);
                     totalBlogsForAdmin = blogUtil.getTotalBlogsForAdmin(userId);
                 }
+            } else {
+                totalBlogsForAdmin = blogUtil.getCategoryTotalBlogsForAdmin(userId, categoryId);
+                if (totalBlogsForAdmin == null) {
+                    blogUtil.initCategoryBlogListForAdmin(userId);
+                    totalBlogsForAdmin = blogUtil.getCategoryTotalBlogsForAdmin(userId, categoryId);
+                }
             }
-//            else {
-//                totalBlogsForAdmin = blogUtil.getTotalBlogsForAdmin(userId);
-//                if (totalBlogsForAdmin == null) {
-//                    blogUtil.initBlogListForAdmin(userId);
-//                    totalBlogsForAdmin = blogUtil.getTotalBlogsForAdmin(userId);
-//                }
-//            }
         } catch (Exception e) {
             log.error("selectTotalBlogsForAdmin错误" + e.toString());
             throw new Exception("selectTotalBlogsForAdmin错误" + e.toString());

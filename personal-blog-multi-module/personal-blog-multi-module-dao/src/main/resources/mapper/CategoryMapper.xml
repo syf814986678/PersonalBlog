@@ -13,7 +13,7 @@
     </select>
 
     <select id="selectCategoryForAdmin" resultType="com.shiyifan.pojo.Category">
-        select category_id, category_name, category_rank, create_gmt, update_gmt
+        select category_id, category_name, category_rank, category_user_id, create_gmt, update_gmt
         from mycategory
         where category_user_id = #{userId}
           and is_deleted = 0

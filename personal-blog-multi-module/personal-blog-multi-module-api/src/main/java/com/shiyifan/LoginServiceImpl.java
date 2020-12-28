@@ -21,6 +21,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public User login(String username, String password) throws Exception {
+        log.info("方法:login开始");
         User user = null;
         try {
             user = loginMapper.login(username);

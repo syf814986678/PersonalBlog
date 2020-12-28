@@ -36,16 +36,24 @@ public class test {
     @Autowired
     private BlogService blogService;
 
-//    @Test
+    //    @Test
 //    public void testaliYunUtil(){
 //        aliYunUtil.preLoadDcdn();
 //        aliYunUtil.refreshDcdn();
 //    }
     @Test
-    public void testmapper() throws IOException {
-        ArrayList<Blog> test=null;
-        test=blogUtil.getBlogListByPageForAdmin(1, 0, 5);
-        System.out.println(test==null);
+    public void testmapper() throws Exception {
+        for (int i = 0; i < 3; i++) {
+            System.out.println("==========================第"+i+"次============================");
+            ArrayList<Blog> blogs = null;
+            blogs = blogUtil.getBlogListByPageForAdmin(3, 0, 5);
+            if (blogs.size() == 0) {
+                blogUtil.initBlogListForAdmin(3);
+                blogs = blogUtil.getBlogListByPageForAdmin(3, 0, 5);
+            }
+            System.out.println(blogs);
+            System.out.println("======================================================");
+        }
 
     }
 }
