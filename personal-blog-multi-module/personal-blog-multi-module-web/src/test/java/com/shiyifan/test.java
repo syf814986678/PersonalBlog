@@ -36,15 +36,15 @@ public class test {
     @Autowired
     private BlogService blogService;
 
-    //    @Test
-//    public void testaliYunUtil(){
-//        aliYunUtil.preLoadDcdn();
-//        aliYunUtil.refreshDcdn();
-//    }
+    @Test
+    public void test() throws Exception {
+        System.out.println(Md5Util.getMd5Str("123456"));
+    }
+
     @Test
     public void testmapper() throws Exception {
         for (int i = 0; i < 3; i++) {
-            System.out.println("==========================第"+i+"次============================");
+            System.out.println("==========================第" + i + "次============================");
             ArrayList<Blog> blogs = null;
             blogs = blogUtil.getBlogListByPageForAdmin(3, 0, 5);
             if (blogs.size() == 0) {

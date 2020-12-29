@@ -169,6 +169,7 @@ export default {
         },
         loading: true,
         filename:'',
+        type:-1,
       }
     },
     methods: {
@@ -183,7 +184,7 @@ export default {
           center: true,
           duration: 0,
         });
-        // await this.getUpLoad(document.getElementById("file").files[0],0)
+        await this.getUpLoad(document.getElementById("file").files[0],0)
         message.close()
       },
       handleCopyCodeSuccess(){
@@ -256,47 +257,52 @@ export default {
       //     desc: '博客图片',
       //   });
       // },
-      // async getToken(type){
-      //   await this.$http.get("/upload/getOssToken/"+type).then((response) => {
-      //     if (response!=null){
-      //       this.$store.commit('setOSS',response.data)
-      //     }
-      //   }).catch(error=> {
-      //     console.log(error)
-      //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      //   })
-      // },
-      // async getUpLoad(file,type){
-      //   await this.getToken(type)
-      //   const formData = new FormData();
-      //   formData.append('key', this.$store.state.OSS.dir+this.randomName(file.name,10));
-      //   formData.append('policy', this.$store.state.OSS.policy);
-      //   formData.append('OSSAccessKeyId', this.$store.state.OSS.accessId);
-      //   formData.append('success_action_status', '200');
-      //   formData.append('callback', this.$store.state.OSS.callback);
-      //   formData.append('signature', this.$store.state.OSS.signature);
-      //   formData.append('file', file);
-      //   await this.$http({
-      //     url: this.$store.state.OSS.host,
-      //     method: 'post',
-      //     data: formData,
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //     },
-      //   }).then((response) => {
-      //     if (response!=null){
-      //       if (type===0){
-      //         this.form.blogCoverImage=response.data.filename
-      //       }
-      //       else if (type===1) {
-      //         this.filename=response.data.filename
-      //       }
-      //     }
-      //   }).catch(error=> {
-      //     console.log(error)
-      //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      //   })
-      // },
+      async getToken(type){
+        let now= Date.parse(new Date()) / 1000;
+        if (this.$store.state.OSS.expire < now + 3 || this.$store.state.OSS.expire===0 || this.type!==type){
+          this.type=type;
+          await this.$http.post("/upload/admin/getToken/"+type).then((response) => {
+            if (response!=null){
+              this.$store.commit('setOSS',response.data.data)
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+        }
+
+      },
+      async getUpLoad(file,type){
+        await this.getToken(type)
+        const formData = new FormData();
+        formData.append('key', this.$store.state.OSS.dir+this.randomName(file.name,10));
+        formData.append('policy', this.$store.state.OSS.policy);
+        formData.append('OSSAccessKeyId', this.$store.state.OSS.accessId);
+        formData.append('success_action_status', '200');
+        formData.append('callback', this.$store.state.OSS.callback);
+        formData.append('signature', this.$store.state.OSS.signature);
+        formData.append('file', file);
+        await this.$http({
+          url: this.$store.state.OSS.host,
+          method: 'post',
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }).then((response) => {
+          if (response!=null){
+            if (type===0){
+              this.form.blogCoverImage=response.data.data["filename"]
+            }
+            else if (type===1) {
+              this.filename=response.data.data["filename"]
+            }
+          }
+        }).catch(error=> {
+          console.log(error)
+          this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        })
+      },
     },
     created() {
       this.$http.post("/category/admin/selectCategoryForAdmin").then(response=>{

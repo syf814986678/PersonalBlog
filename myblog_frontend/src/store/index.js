@@ -49,13 +49,13 @@ export default new Vuex.Store({
       state.commonCurrentPage=page
     },
     setOSS(state,data){
-      state.OSS.accessId=data.msg["accessId"]
-      state.OSS.host=data.msg["host"]
-      state.OSS.policy=data.msg["policy"]
-      state.OSS.signature=data.msg["signature"]
-      state.OSS.callback=data.msg["callback"]
-      state.OSS.expire=data.msg["expire"]
-      state.OSS.dir=data.msg["dir"]
+      state.OSS.accessId=data["accessId"]
+      state.OSS.host=data["host"]
+      state.OSS.policy=data["policy"]
+      state.OSS.signature=data["signature"]
+      state.OSS.callback=data["callback"]
+      state.OSS.expire=data["expire"]
+      state.OSS.dir=data["dir"]
     },
     setUser(state,user){
       state.user.userId=user.userId

@@ -436,11 +436,11 @@ export default {
     // },
     // async handleUploadImage(event, insertImage, files) {
     //   // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-    //   // let now= Date.parse(new Date()) / 1000;
-    //   // if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
-    //   // {
-    //   //   await this.getToken(1);
-    //   // }
+    //   let now= Date.parse(new Date()) / 1000;
+    //   if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
+    //   {
+    //     await this.getToken(1);
+    //   }
     //   await this.getUpload(files[0],1)
     //   insertImage({
     //     url:this.filename,

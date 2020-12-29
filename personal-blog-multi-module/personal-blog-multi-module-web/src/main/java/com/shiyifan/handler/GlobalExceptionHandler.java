@@ -1,5 +1,6 @@
 package com.shiyifan.handler;
 
+import com.aliyun.oss.OSSException;
 import com.shiyifan.ResultUtil;
 import com.shiyifan.pojo.Result;
 import lombok.extern.log4j.Log4j2;
@@ -20,5 +21,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Result handleException() {
         return ResultUtil.exception("系统出现异常!", null);
+    }
+    @ExceptionHandler(OSSException.class)
+    public Result handleOssException(){
+        return ResultUtil.exception("Oss回调异常！", null);
     }
 }

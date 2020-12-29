@@ -2,8 +2,10 @@ package com.shiyifan.controller.admin;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.OSSException;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.*;
+import com.google.gson.Gson;
 import com.shiyifan.ResultUtil;
 import com.shiyifan.pojo.CodeState;
 import com.shiyifan.pojo.Result;
@@ -103,7 +105,7 @@ public class AdminUploadController {
                 dir.append("myblog/BlogContentImage/").append(userId).append("-").append(userName).append("/");
             }
             // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。
-            String callbackUrl = "https://47.103.1.235:8989/upload/admin/callback";
+            String callbackUrl = "http://syf16.xicp.net/upload/admin/callback";
             long expireTime = 30;
             long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
             Date expiration = new Date(expireEndTime);
@@ -140,5 +142,31 @@ public class AdminUploadController {
             ossClient.shutdown();
         }
         return ResultUtil.success(result);
+    }
+
+    /**
+     * 上传Oss回调
+     *
+     * @return java.lang.String
+     * @author ZouCha
+     * @date 2020-11-20 15:12:59
+     * @method callback
+     * @params [request]
+     **/
+    @RequestMapping("/callback")
+    public Result callback(HttpServletRequest request) throws OSSException {
+        HashMap<String, Object> map = null;
+        try {
+            map = new HashMap<>(5);
+            map.put("filename","https://picture.chardance.cloud/".concat(String.valueOf(request.getAttribute("filename"))));
+            map.put("size", request.getAttribute("size"));
+            map.put("mimeType", request.getAttribute("mimeType"));
+            map.put("width", request.getAttribute("width"));
+            map.put("height", request.getAttribute("height"));
+        } catch (Exception e) {
+            log.error("callback错误" + e.toString());
+            throw new OSSException("callback错误" + e.toString());
+        }
+        return ResultUtil.success(map);
     }
 }

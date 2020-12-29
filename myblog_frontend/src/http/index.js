@@ -6,11 +6,14 @@ const http = axios.create({
 })
 //请求拦截
 http.interceptors.request.use(function (config) {
-  if (config.url === "http://chardance-picture.oss-cn-shanghai.aliyuncs.com") {
-    return config
-  } else if (store.state.token !== '') {
-    config.headers.Authorization = 'Bearer ' + store.state.token
-  }
+  // if (config.url === "https://chardance-picture.oss-cn-shanghai.aliyuncs.com") {
+  //   return config
+  // } else if (store.state.token !== '') {
+  //   config.headers.Authorization = 'Bearer ' + store.state.token
+  // }
+  if (store.state.token !== '') {
+      config.headers.Authorization = 'Bearer ' + store.state.token
+    }
   return config
 }, function (error) {
   return Promise.reject(error)
