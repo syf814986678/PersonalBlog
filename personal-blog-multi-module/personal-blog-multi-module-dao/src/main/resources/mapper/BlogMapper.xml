@@ -59,10 +59,31 @@
           and is_deleted = 0
     </select>
 
-    <select id="selectElasticSearchBlogByIdForCommon" resultType="com.shiyifan.pojo.ElasticSearchBlog">
+    <insert id="addBlogForAdmin">
+        insert into myblog
+        values (#{blog.blogId},#{blog.blogTitle},#{blog.blogCoverImage},#{blog.blogContent},#{blog.category.categoryId},#{userId},0,null,null)
+    </insert>
+
+    <select id="selectBlogForRedisForAdmin" resultMap="category_name_and_username">
+        select blog_id,blog_title,blog_cover_image,blog_category_id,blog_user_id,is_deleted,create_gmt,update_gmt
+        from myblog
+        where blog_user_id =#{userId}
+          and blog_id=#{blogId}
+          and is_deleted =0;
+    </select>
+
+    <select id="selectElasticSearchBlogByIdForAdmin" resultType="com.shiyifan.pojo.ElasticSearchBlog">
         select *
         from myblog
         where blog_id = #{blogId}
+          and blog_user_id =#{userId}
           and is_deleted = 0
     </select>
+
+    <update id="deleteBlogByIdForAdmin">
+        update myblog
+        set is_deleted =1,update_gmt = CURRENT_TIMESTAMP
+        where blog_id =#{blogId}
+          and blog_user_id =#{userId}
+    </update>
 </mapper>

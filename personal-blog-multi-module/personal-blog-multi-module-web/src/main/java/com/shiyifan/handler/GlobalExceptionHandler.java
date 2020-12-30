@@ -24,6 +24,6 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(OSSException.class)
     public Result handleOssException(){
-        return ResultUtil.exception("Oss回调异常！", null);
+        return ResultUtil.ossException("Oss回调异常！", null);
     }
 }

@@ -21,7 +21,7 @@ public class User implements Serializable {
     private String userName;
     private String userPassword;
     private String userRole;
-    private String isDeleted;
+    private int isDeleted;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createGmt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

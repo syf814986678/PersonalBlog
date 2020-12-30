@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 /**
@@ -102,9 +101,83 @@ public class AdminBlogController {
             throw new Exception("selectTotalBlogsForAdmin错误" + e.toString());
         }
         return ResultUtil.success(totalBlogsForAdmin);
-
     }
 
+    /**
+     * @return com.shiyifan.pojo.Result
+     * @author ZouCha
+     * @date 2020-12-30 09:30:31
+     * @method getTempBlogForAdmin
+     * @params [request]
+     **/
+    @PostMapping("/getTempBlogForAdmin")
+    public Result getTempBlogForAdmin(HttpServletRequest request) throws Exception {
+        Claims claims = null;
+        Blog tempBlogForAdmin = null;
+        try {
+            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
+            int userId = (int) claims.get("userId");
+            tempBlogForAdmin = blogService.getTempBlogForAdmin(userId);
+        } catch (Exception e) {
+            log.error("getTempBlogForAdmin错误" + e.toString());
+            throw new Exception("getTempBlogForAdmin错误" + e.toString());
+        }
+        return ResultUtil.success(tempBlogForAdmin);
+    }
 
+    /**
+     * @return com.shiyifan.pojo.Result
+     * @author ZouCha
+     * @date 2020-12-30 10:03:55
+     * @method setTempBlogForAdmin
+     * @params [request, blog]
+     **/
+    @PostMapping("/setTempBlogForAdmin")
+    public Result setTempBlogForAdmin(HttpServletRequest request, @RequestBody Blog blog) throws Exception {
+        Claims claims = null;
+        try {
+            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
+            int userId = (int) claims.get("userId");
+            blogService.setTempBlogForAdmin(userId, blog);
+        } catch (Exception e) {
+            log.error("setTempBlogForAdmin错误" + e.toString());
+            throw new Exception("setTempBlogForAdmin错误" + e.toString());
+        }
+        return ResultUtil.success(null);
+    }
 
+    /**
+     * @return com.shiyifan.pojo.Result
+     * @author ZouCha
+     * @date 2020-12-30 14:26:59
+     * @method addBlogForAdmin
+     * @params [request, blog]
+     **/
+    @PostMapping("/addBlogForAdmin")
+    public Result addBlogForAdmin(HttpServletRequest request, @RequestBody Blog blog) throws Exception {
+        Claims claims = null;
+        try {
+            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
+            int userId = (int) claims.get("userId");
+            blogService.addBlogForAdmin(userId, blog);
+        } catch (Exception e) {
+            log.error("addBlogForAdmin错误" + e.toString());
+            throw new Exception("addBlogForAdmin错误" + e.toString());
+        }
+        return ResultUtil.success(null);
+    }
+
+    @PostMapping("/deleteBlogForAdmin/{blogId}/{categoryId}")
+    public Result deleteBlogForAdmin(HttpServletRequest request, @PathVariable("blogId") String blogId,@PathVariable("categoryId") int categoryId) throws Exception {
+        Claims claims = null;
+        try {
+            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
+            int userId = (int) claims.get("userId");
+            blogService.deleteBlogForAdmin(userId, blogId, categoryId);
+        } catch (Exception e) {
+            log.error("deleteBlogForAdmin错误" + e.toString());
+            throw new Exception("deleteBlogForAdmin错误" + e.toString());
+        }
+        return ResultUtil.success(null);
+    }
 }

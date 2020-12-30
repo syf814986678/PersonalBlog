@@ -66,4 +66,40 @@ public interface BlogService {
      * @params [userId]
      **/
     Integer selectTotalBlogsForAdmin(int userId, int categoryId) throws Exception;
+
+    /**
+     * @return void
+     * @author ZouCha
+     * @date 2020-12-30 09:34:44
+     * @method setTempBlogForAdmin
+     * @params [userId, blog]
+     **/
+    void setTempBlogForAdmin(int userId, Blog blog) throws Exception;
+
+    /**
+     * @return com.shiyifan.pojo.Blog
+     * @author ZouCha
+     * @date 2020-12-30 09:40:10
+     * @method getTempBlogForAdmin
+     * @params [userId]
+     **/
+    Blog getTempBlogForAdmin(int userId);
+
+    /**
+     * @return java.lang.Boolean
+     * @author ZouCha
+     * @date 2020-12-30 10:06:12
+     * @method addBlogForAdmin
+     * @params [userId, blog]
+     **/
+    Boolean addBlogForAdmin(int userId, Blog blog) throws Exception;
+
+    /**
+     * @return java.lang.Boolean
+     * @author ZouCha
+     * @date 2020-12-30 14:50:15
+     * @method deleteBlogForAdmin
+     * @params [userId, blogId, categoryId]
+     **/
+    Boolean deleteBlogForAdmin(int userId, String blogId, int categoryId) throws Exception;
 }

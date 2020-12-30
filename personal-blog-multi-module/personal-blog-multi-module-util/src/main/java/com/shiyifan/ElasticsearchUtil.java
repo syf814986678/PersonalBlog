@@ -1,9 +1,9 @@
 package com.shiyifan;
 
 import com.google.gson.Gson;
-import com.shiyifan.mapper.BlogMapper;
 import com.shiyifan.pojo.ElasticSearchBlog;
 import lombok.extern.log4j.Log4j2;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -43,7 +43,9 @@ public class ElasticsearchUtil {
      * @method searchContentByPageForCommon
      * @params [keyword, pageNow, pageSize]
      **/
+    @Retryable(value = IOException.class)
     public ArrayList<Map<String, Object>> searchContentByPageForCommon(String keyword, int pageNow, int pageSize) throws IOException {
+        log.info("方法:searchContentByPageForCommon开始,keyword:" + keyword + ",pageNow:" + pageNow + ",pageSize:" + pageSize);
         int start = (pageNow - 1) * pageSize;
         ArrayList<Map<String, Object>> list = new ArrayList<>();
         try {
@@ -69,21 +71,22 @@ public class ElasticsearchUtil {
                 list.add(sourceAsMap);
             }
         } catch (IOException e) {
-            log.error(e);
-            throw new IOException();
+            log.error("searchContentByPageForCommon错误" + e);
+            throw new IOException("searchContentByPageForCommon错误" + e);
         }
         return list;
     }
 
     /**
-     * @return java.lang.Boolean
+     * @return void
      * @author ZouCha
-     * @date 2020-12-13 11:55:27
-     * @method addElasticsearchBlog
-     * @params [blogId]
+     * @date 2020-12-30 13:46:56
+     * @method addElasticsearchBlogForAdmin
+     * @params [elasticSearchBlog]
      **/
     @Retryable(value = IOException.class)
-    public Boolean addElasticsearchBlog(ElasticSearchBlog elasticSearchBlog) throws IOException {
+    public void addElasticsearchBlogForAdmin(ElasticSearchBlog elasticSearchBlog) throws IOException {
+        log.info("方法:addElasticsearchBlogForAdmin开始,userId:" + elasticSearchBlog.getBlogUser());
         try {
             IndexRequest indexRequest = new IndexRequest("blogindex");
             indexRequest.timeout("2s");
@@ -92,9 +95,28 @@ public class ElasticsearchUtil {
             indexRequest.source(gson.toJson(elasticSearchBlog), XContentType.JSON);
             restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
-            log.error(e);
-            throw new IOException();
+            log.error("addElasticsearchBlogForAdmin错误" + e);
+            throw new IOException("addElasticsearchBlogForAdmin错误" + e);
         }
-        return true;
+    }
+
+    /**
+     * @return void
+     * @author ZouCha
+     * @date 2020-12-30 15:57:39
+     * @method deleteElasticsearchBlogForAdmin
+     * @params [blogId]
+     **/
+    @Retryable(value = IOException.class)
+    public void deleteElasticsearchBlogForAdmin(String blogId) throws IOException {
+        log.info("方法:deleteElasticsearchBlogForAdmin开始,blogId:" + blogId);
+        try {
+            DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
+            deleteRequest.timeout("2s");
+            restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            log.error("deleteElasticsearchBlogForAdmin错误" + e);
+            throw new IOException("deleteElasticsearchBlogForAdmin错误" + e);
+        }
     }
 }

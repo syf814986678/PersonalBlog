@@ -17,7 +17,7 @@
             v-model="search"
             :fetch-suggestions="querySearchAsync"
             placeholder="请输入搜索内容"
-            @select="handleSelect"
+            @select="searchBlog"
             suffix-icon=" el-icon-s-opportunity"
             prefix-icon="el-icon-search">
             <template slot-scope="{ item }">
@@ -273,9 +273,6 @@ export default {
         return (input.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
       };
     },
-    handleSelect(){
-      this.searchBlog()
-    },
     searchBlog(){
       if (this.search.length>=1){
         window.open("/#/bloglist/search/"+this.search)
@@ -288,16 +285,16 @@ export default {
         duration: 2000
       });
     },
-    // randomImage(){
-    //   this.$http.post("/upload/randomBlogCoverImage").then(response=>{
-    //     if (response!=null){
-    //       this.formData.blogCoverImage=response.data.msg["blogCoverImage"];
-    //     }
-    //   }).catch(error=> {
-    //     console.log(error)
-    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //   })
-    // },
+    randomImage() {
+      this.$http.post("/upload/admin/randomBlogCoverImage").then(response => {
+        if (response != null) {
+          this.form.blogCoverImage = response.data.data;
+        }
+      }).catch(error => {
+        console.log(error)
+        this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+      })
+    },
     refreshDate(pageNow,pageSize){
       this.$http.post("/blog/admin/selectBlogListByPageForAdmin/"+0+"/"+pageSize+"/"+pageNow).then(response=>{
         if (response!=null){
@@ -338,7 +335,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.deleteBlog(row.blogId,row.mycategory.categoryId);
+        this.deleteBlog(row.blogId,row.category.categoryId);
       }).catch(() => {
         this.$notify({
           title: '取消',
@@ -348,22 +345,22 @@ export default {
         });
       });
     },
-    // deleteBlog(blogid,categoryid) {
-    //   this.$http.post("/blog/deleteBlog/"+blogid+"/"+categoryid).then(response=>{
-    //     if (response!=null){
-    //       this.$notify({
-    //         title: '删除成功',
-    //         message: response.data.msg["delete"],
-    //         type: 'success',
-    //         duration: 2500
-    //       });
-    //       this.refreshDate(this.currentPage,this.pageSize);
-    //     }
-    //   }).catch(error=> {
-    //     console.log(error)
-    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //   })
-    // },
+    deleteBlog(blogId,categoryId) {
+      this.$http.post("/blog/admin/deleteBlogForAdmin/"+blogId+"/"+categoryId).then(response=>{
+        if (response!=null){
+          this.$notify({
+            title: '删除成功',
+            message: response.data.msg["delete"],
+            type: 'success',
+            duration: 2500
+          });
+          this.refreshDate(this.currentPage,this.pageSize);
+        }
+      }).catch(error=> {
+        console.log(error)
+        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      })
+    },
     cancel(){
       this.dialogFormVisible=false;
     },
@@ -424,70 +421,68 @@ export default {
     showBlog(row){
       window.open("/#/bloglist/blog/"+row.blogId)
     },
-    // randomName(filename,len) {
-    //   len = len || 32;
-    //   const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
-    //   const maxPos = chars.length;
-    //   let pwd = '';
-    //   for (let i = 0; i < len; i++) {
-    //     pwd += chars.charAt(Math.floor(Math.random() * maxPos));
-    //   }
-    //   return pwd+filename.substring(filename.lastIndexOf("."))
-    // },
-    // async handleUploadImage(event, insertImage, files) {
-    //   // 拿到 files 之后上传到文件服务器，然后向编辑框中插入对应的内容
-    //   let now= Date.parse(new Date()) / 1000;
-    //   if ((this.$store.state.OSS.expire < now + 3) || this.$store.state.OSS.expire===0)
-    //   {
-    //     await this.getToken(1);
-    //   }
-    //   await this.getUpload(files[0],1)
-    //   insertImage({
-    //     url:this.filename,
-    //     desc: '博客图片',
-    //   });
-    // },
-    // async getToken(type){
-    //   await this.$http.get("/upload/getOssToken/"+type).then((response) => {
-    //     if (response!=null){
-    //       this.$store.commit('setOSS',response.data)
-    //     }
-    //   }).catch(error=> {
-    //     console.log(error)
-    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //   })
-    // },
-    // async getUpload(file,type){
-    //   await this.getToken(type)
-    //   const formData = new FormData();
-    //   formData.append('key', this.$store.state.OSS.dir+this.randomName(file.name,10));
-    //   formData.append('policy', this.$store.state.OSS.policy);
-    //   formData.append('OSSAccessKeyId', this.$store.state.OSS.accessId);
-    //   formData.append('success_action_status', '200');
-    //   formData.append('callback', this.$store.state.OSS.callback);
-    //   formData.append('signature', this.$store.state.OSS.signature);
-    //   formData.append('file', file);
-    //   await this.$http({
-    //     url: this.$store.state.OSS.host,
-    //     method: 'post',
-    //     data: formData,
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data',
-    //     },
-    //   }).then((response) => {
-    //     if (response!=null){
-    //       if (type===0){
-    //         this.formData.blogCoverImage=response.data.filename
-    //       }
-    //       else if (type===1) {
-    //         this.filename=response.data.filename
-    //       }
-    //     }
-    //   }).catch(error=> {
-    //     console.log(error)
-    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //   })
-    // },
+    randomName(filename,len) {
+      len = len || 32;
+      const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+      const maxPos = chars.length;
+      let pwd = '';
+      for (let i = 0; i < len; i++) {
+        pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+      }
+      return pwd+filename.substring(filename.lastIndexOf("."))
+    },
+    async handleUploadImage(event, insertImage, files) {
+      await this.getUpLoad(files[0],1)
+      insertImage({
+        url:this.filename,
+        desc: '博客图片',
+      });
+    },
+    async getToken(type) {
+      let now = Date.parse(new Date()) / 1000;
+      if (this.$store.state.OSS.expire < now + 3 || this.$store.state.OSS.expire === 0 || this.type !== type) {
+        this.type = type;
+        await this.$http.post("/upload/admin/getToken/" + type).then((response) => {
+          if (response != null) {
+            this.$store.commit('setOSS', response.data.data)
+          }
+        }).catch(error => {
+          console.log(error)
+          this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+        })
+      }
+
+    },
+    async getUpLoad(file, type) {
+      await this.getToken(type)
+      const formData = new FormData();
+      formData.append('key', this.$store.state.OSS.dir + this.randomName(file.name, 10));
+      formData.append('policy', this.$store.state.OSS.policy);
+      formData.append('OSSAccessKeyId', this.$store.state.OSS.accessId);
+      formData.append('success_action_status', '200');
+      formData.append('callback', this.$store.state.OSS.callback);
+      formData.append('signature', this.$store.state.OSS.signature);
+      formData.append('file', file);
+      await this.$http({
+        url: this.$store.state.OSS.host,
+        method: 'post',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }).then((response) => {
+        if (response != null) {
+          if (type === 0) {
+            this.form.blogCoverImage = response.data.data["filename"]
+          } else if (type === 1) {
+            this.filename = response.data.data["filename"]
+          }
+        }
+      }).catch(error => {
+        console.log(error)
+        this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+      })
+    },
   },
   created() {
     const that = this;

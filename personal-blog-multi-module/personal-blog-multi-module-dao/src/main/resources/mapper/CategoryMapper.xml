@@ -19,4 +19,28 @@
           and is_deleted = 0
         order by category_rank desc
     </select>
+
+    <select id="getCategoryRankForAdmin" resultType="_int">
+        select category_rank
+        from mycategory
+        where category_id =#{categoryId}
+          and category_user_id =#{userId}
+          and is_deleted =0
+    </select>
+
+    <update id="addCategoryRankForAdmin" >
+        update mycategory
+        set category_rank=category_rank+1
+        where category_id =#{categoryId}
+          and category_user_id= #{userId}
+          and is_deleted =0
+    </update>
+
+    <update id="deleteCategoryRankForAdmin" >
+        update mycategory
+        set category_rank=category_rank-1
+        where category_id =#{categoryId}
+          and category_user_id= #{userId}
+          and is_deleted =0
+    </update>
 </mapper>

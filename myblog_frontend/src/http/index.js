@@ -6,14 +6,9 @@ const http = axios.create({
 })
 //请求拦截
 http.interceptors.request.use(function (config) {
-  // if (config.url === "https://chardance-picture.oss-cn-shanghai.aliyuncs.com") {
-  //   return config
-  // } else if (store.state.token !== '') {
-  //   config.headers.Authorization = 'Bearer ' + store.state.token
-  // }
-  if (store.state.token !== '') {
-      config.headers.Authorization = 'Bearer ' + store.state.token
-    }
+  if (config.url.indexOf("/admin/")!==-1 && store.state.token !== ''){
+    config.headers.Authorization = 'Bearer ' + store.state.token
+  }
   return config
 }, function (error) {
   return Promise.reject(error)
@@ -41,7 +36,9 @@ http.interceptors.response.use(function (response) {
       store.commit('errorMsg', response.data.msg);
       store.commit('logout');
       break;
-    // case 998:store.commit('errorMsg',response.data.OSS_EXCEPTION);break;
+    case 998:
+      store.commit('errorMsg', response.data.msg);
+      break;
     default:
       break;
   }

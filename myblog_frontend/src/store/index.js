@@ -76,9 +76,9 @@ export default new Vuex.Store({
       state.token=''
       sessionStorage.removeItem('vuex')
       router.push("/login")
-      var d = new Date();
+      const d = new Date();
       d.setTime(d.getTime()+(-1*1000));
-      var expires = "expires="+d.toUTCString();
+      const expires = "expires=" + d.toUTCString();
       document.cookie = "userId=;"+expires;
       document.cookie = "userName=;"+expires;
       document.cookie = "token=;"+expires;
