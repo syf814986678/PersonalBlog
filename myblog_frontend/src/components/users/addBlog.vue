@@ -180,7 +180,7 @@ export default {
     chooseFile() {
       document.getElementById("file").click()
     },
-    async getFile() {
+    getFile() {
       // console.log(document.getElementById("file").files[0])
       const message = this.$message({
         message: '封面图片上传中',
@@ -188,7 +188,7 @@ export default {
         center: true,
         duration: 0,
       });
-      await this.getUpLoad(document.getElementById("file").files[0], 0)
+      this.getUpLoad(document.getElementById("file").files[0], 0)
       message.close()
     },
     handleCopyCodeSuccess() {
@@ -213,7 +213,7 @@ export default {
         if (valid) {
           this.loading=true
           this.$notify({
-            title: '发布中',
+            title: '发布博客',
             message: "发布中，请稍等！",
             type: 'warning',
             duration: 1000
@@ -221,7 +221,7 @@ export default {
           this.$http.post("/blog/admin/addBlogForAdmin",this.form).then(response=>{
             if (response!=null){
               this.$notify({
-                title: '博客发布',
+                title: '发布博客',
                 message: "发布成功",
                 type: 'success',
                 duration: 2500
@@ -254,18 +254,18 @@ export default {
       }
       return pwd + filename.substring(filename.lastIndexOf("."))
     },
-    async handleUploadImage(event, insertImage, files) {
-      await this.getUpLoad(files[0],1)
+    handleUploadImage(event, insertImage, files) {
+      this.getUpLoad(files[0],1)
       insertImage({
         url:this.filename,
         desc: '博客图片',
       });
     },
-    async getToken(type) {
+    getToken(type) {
       let now = Date.parse(new Date()) / 1000;
       if (this.$store.state.OSS.expire < now + 3 || this.$store.state.OSS.expire === 0 || this.type !== type) {
         this.type = type;
-        await this.$http.post("/upload/admin/getToken/" + type).then((response) => {
+        this.$http.post("/upload/admin/getToken/" + type).then((response) => {
           if (response != null) {
             this.$store.commit('setOSS', response.data.data)
           }
@@ -276,8 +276,8 @@ export default {
       }
 
     },
-    async getUpLoad(file, type) {
-      await this.getToken(type)
+    getUpLoad(file, type) {
+      this.getToken(type)
       const formData = new FormData();
       formData.append('key', this.$store.state.OSS.dir + this.randomName(file.name, 10));
       formData.append('policy', this.$store.state.OSS.policy);
@@ -286,7 +286,7 @@ export default {
       formData.append('callback', this.$store.state.OSS.callback);
       formData.append('signature', this.$store.state.OSS.signature);
       formData.append('file', file);
-      await this.$http({
+      this.$http({
         url: this.$store.state.OSS.host,
         method: 'post',
         data: formData,
@@ -308,7 +308,7 @@ export default {
     },
   },
   created() {
-    this.$http.post("/category/admin/selectCategoryForAdmin").then(response => {
+    this.$http.post("/category/admin/selectCategoryForAdmin/0/0").then(response => {
       if (response != null) {
         this.options = response.data.data;
         this.loading = false;

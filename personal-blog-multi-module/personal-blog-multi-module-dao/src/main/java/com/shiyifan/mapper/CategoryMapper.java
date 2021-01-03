@@ -1,7 +1,6 @@
 package com.shiyifan.mapper;
 
 
-import com.shiyifan.pojo.Blog;
 import com.shiyifan.pojo.Category;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,11 +29,11 @@ public interface CategoryMapper {
     /**
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>
      * @author ZouCha
-     * @date 2020-12-30 10:21:02
+     * @date 2021-01-02 18:39:41
      * @method selectCategoryForAdmin
-     * @params [userId]
+     * @params [userId, pageNow, pageSize]
      **/
-    ArrayList<Category> selectCategoryForAdmin(@Param("userId") int userId);
+    ArrayList<Category> selectCategoryForAdmin(@Param("userId") int userId, @Param("pageNow") int pageNow, @Param("pageSize") int pageSize);
 
     /**
      * @return java.lang.Integer
@@ -62,5 +61,23 @@ public interface CategoryMapper {
      * @params [userId, categoryId]
      **/
     void deleteCategoryRankForAdmin(@Param("userId") int userId, @Param("categoryId") int categoryId);
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2021-01-02 14:07:25
+     * @method getCategoryIdForAdmin
+     * @params [userId, blogId]
+     **/
+    Integer getCategoryIdForAdmin(@Param("userId") int userId, @Param("blogId") String blogId);
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2021-01-02 19:03:21
+     * @method getTotalCategoriesForAdmin
+     * @params [userId]
+     **/
+    Integer getTotalCategoriesForAdmin(@Param("userId") int userId);
 
 }

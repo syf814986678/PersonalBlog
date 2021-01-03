@@ -2,10 +2,8 @@ package com.shiyifan.interceptor;
 
 import com.alibaba.druid.util.StringUtils;
 import com.aliyun.oss.common.utils.BinaryUtil;
-import com.aliyun.oss.internal.RequestParameters;
 import com.google.gson.Gson;
 import com.shiyifan.JwtUtil;
-
 import com.shiyifan.ResultUtil;
 import com.shiyifan.pojo.CodeState;
 import io.jsonwebtoken.Claims;
@@ -15,7 +13,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,9 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * @author ZouCha
@@ -78,7 +72,6 @@ public class JwtInterceptor implements HandlerInterceptor {
                         if (doCheck(authStr, authorizationByte, retString)) {
                             String[] strings = ossCallbackBody.split("&");
                             for (String string : strings) {
-                                ;
                                 String[] split = string.split("=");
                                 request.setAttribute(split[0], URLDecoder.decode(split[1], StandardCharsets.UTF_8));
                             }

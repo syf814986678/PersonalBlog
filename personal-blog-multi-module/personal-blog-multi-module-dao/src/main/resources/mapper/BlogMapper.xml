@@ -56,34 +56,65 @@
         <if test="categoryId != 0">
             and blog_category_id =#{categoryId}
         </if>
-          and is_deleted = 0
+        and is_deleted = 0
     </select>
 
     <insert id="addBlogForAdmin">
         insert into myblog
-        values (#{blog.blogId},#{blog.blogTitle},#{blog.blogCoverImage},#{blog.blogContent},#{blog.category.categoryId},#{userId},0,null,null)
+        values (#{blog.blogId}, #{blog.blogTitle}, #{blog.blogCoverImage}, #{blog.blogContent},
+                #{blog.category.categoryId}, #{userId}, 0, null, null)
     </insert>
 
     <select id="selectBlogForRedisForAdmin" resultMap="category_name_and_username">
-        select blog_id,blog_title,blog_cover_image,blog_category_id,blog_user_id,is_deleted,create_gmt,update_gmt
+        select blog_id,
+               blog_title,
+               blog_cover_image,
+               blog_category_id,
+               blog_user_id,
+               is_deleted,
+               create_gmt,
+               update_gmt
         from myblog
-        where blog_user_id =#{userId}
-          and blog_id=#{blogId}
-          and is_deleted =0;
+        where blog_user_id = #{userId}
+          and blog_id = #{blogId}
+          and is_deleted = 0;
     </select>
 
     <select id="selectElasticSearchBlogByIdForAdmin" resultType="com.shiyifan.pojo.ElasticSearchBlog">
         select *
         from myblog
         where blog_id = #{blogId}
-          and blog_user_id =#{userId}
+          and blog_user_id = #{userId}
           and is_deleted = 0
     </select>
 
     <update id="deleteBlogByIdForAdmin">
         update myblog
-        set is_deleted =1,update_gmt = CURRENT_TIMESTAMP
-        where blog_id =#{blogId}
-          and blog_user_id =#{userId}
+        set is_deleted =1,
+            update_gmt = CURRENT_TIMESTAMP
+        where blog_id = #{blogId}
+          and blog_user_id = #{userId}
     </update>
+
+    <update id="updateBlogByIdForAdmin">
+        update myblog
+        <set>
+            <if test="blog.blogTitle != null">blog_title =#{blog.blogTitle},</if>
+            <if test="blog.blogCoverImage != null">blog_cover_image =#{blog.blogCoverImage},</if>
+            <if test="blog.blogContent != null">blog_content =#{blog.blogContent},</if>
+            <if test="blog.category.categoryId != null">blog_category_id =#{blog.category.categoryId}</if>
+        </set>
+        ,update_gmt = CURRENT_TIMESTAMP
+        where blog_id =#{blog.blogId}
+        and blog_user_id =#{userId}
+        and is_deleted =0
+    </update>
+
+    <select id="selectBlogByIdForAdmin" resultMap="category_name_and_username">
+        select *
+        from myblog
+        where blog_id = #{blogId}
+          and blog_user_id = #{userId}
+          and is_deleted = 0;
+    </select>
 </mapper>

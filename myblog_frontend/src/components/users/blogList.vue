@@ -5,9 +5,8 @@
       <el-table-column show-overflow-tooltip align="center" label="博客标题" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px"  type="danger">{{scope.row.blogTitle}}</el-tag></el-table-column>
       <el-table-column align="center" label="封面图片" width="275" v-slot="scope"><el-image style="width: 250px;height: 100px" :src="scope.row.blogCoverImage" fit="fill"></el-image></el-table-column>
       <el-table-column sortable align="center" prop="category.categoryName" label="博客类别" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="warning">{{scope.row.category.categoryName}}</el-tag></el-table-column>
-      <el-table-column align="center" label="类别权重" width="78" v-slot="scope"><el-tag effect="dark" type="warning">{{scope.row.category.categoryRank}}</el-tag></el-table-column>
-      <el-table-column sortable align="center" prop="createGmt" label="创建时间" width="150" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{scope.row.createGmt}}</el-tag></el-table-column>
-      <el-table-column sortable align="center" prop="updateGmt" label="更新时间" width="150" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{scope.row.updateGmt}}</el-tag></el-table-column>
+      <el-table-column sortable align="center" prop="createGmt" label="创建时间" width="164" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{scope.row.createGmt}}</el-tag></el-table-column>
+      <el-table-column sortable align="center" prop="updateGmt" label="更新时间" width="164" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{scope.row.updateGmt}}</el-tag></el-table-column>
       <el-table-column align="center">
         <template slot="header" slot-scope="scope">
           <el-autocomplete
@@ -245,7 +244,7 @@ export default {
     chooseFile(){
       document.getElementById("file").click()
     },
-    async getFile(){
+    getFile(){
       // console.log(document.getElementById("file").files[0])
       const message = this.$message({
         message: '封面图片上传中',
@@ -253,7 +252,7 @@ export default {
         center: true,
         duration: 0,
       });
-      await this.getUpload(document.getElementById("file").files[0],0)
+      this.getUpLoad(document.getElementById("file").files[0],0)
       message.close()
     },
     querySearchAsync(queryString,cb){
@@ -288,7 +287,7 @@ export default {
     randomImage() {
       this.$http.post("/upload/admin/randomBlogCoverImage").then(response => {
         if (response != null) {
-          this.form.blogCoverImage = response.data.data;
+          this.formData.blogCoverImage = response.data.data;
         }
       }).catch(error => {
         console.log(error)
@@ -349,8 +348,8 @@ export default {
       this.$http.post("/blog/admin/deleteBlogForAdmin/"+blogId+"/"+categoryId).then(response=>{
         if (response!=null){
           this.$notify({
-            title: '删除成功',
-            message: response.data.msg["delete"],
+            title: '删除博客',
+            message: "删除成功",
             type: 'success',
             duration: 2500
           });
@@ -364,60 +363,60 @@ export default {
     cancel(){
       this.dialogFormVisible=false;
     },
-    // selectBlog(index, row) {
-    //   this.$http.post("/blog/selectBlogById/"+row.blogId).then(response=>{
-    //     if (response!=null){
-    //       this.formData=response.data.msg["myblog"];
-    //       this.$http.post("/category/selectAllBlogCategory").then(response=>{
-    //         if (response!=null){
-    //           this.options=response.data.msg["mycategories"];
-    //           this.dialogFormVisible=true;
-    //           this.dialogLoading=false;
-    //           setTimeout(() => {
-    //             document.getElementById("eldialog").scrollTop=143
-    //           }, 100)
-    //         }
-    //       }).catch(error=> {
-    //         console.log(error)
-    //         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //       })
-    //     }
-    //   }).catch(error=> {
-    //     console.log(error)
-    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //   })
-    // },
-    // submitForm(formName) {
-    //   this.$refs[formName].validate((valid) => {
-    //     if (valid) {
-    //       this.dialogLoading=true;
-    //       this.$notify({
-    //         title: '更新中',
-    //         message: "更新中，请稍等！",
-    //         type: 'warning',
-    //         duration: 1000
-    //       });
-    //       this.$http.post("/blog/updateBlog",this.formData).then(response=>{
-    //         if (response!=null){
-    //           this.$notify({
-    //             title: '更新成功',
-    //             message: response.data.msg["update"],
-    //             type: 'success',
-    //             duration: 2500
-    //           });
-    //           this.refreshDate(this.currentPage,this.pageSize)
-    //           this.dialogFormVisible=false
-    //         }
-    //       }).catch(error=> {
-    //         console.log(error)
-    //         this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //       })
-    //     }
-    //     else {
-    //       return false;
-    //     }
-    //   });
-    // },
+    selectBlog(index, row) {
+      this.$http.post("/blog/admin/selectBlogByIdForAdmin/"+row.blogId).then(response=>{
+        if (response!=null){
+          this.formData=response.data.data;
+          this.$http.post("/category/admin/selectCategoryForAdmin/0/0").then(response=>{
+            if (response!=null){
+              this.options = response.data.data;
+              this.dialogFormVisible=true;
+              this.dialogLoading=false;
+              setTimeout(() => {
+                document.getElementById("eldialog").scrollTop=143
+              }, 100)
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+        }
+      }).catch(error=> {
+        console.log(error)
+        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      })
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.dialogLoading=true;
+          this.$notify({
+            title: '更新博客',
+            message: "更新中，请稍等！",
+            type: 'warning',
+            duration: 1000
+          });
+          this.$http.post("/blog/admin/updateBlogForAdmin",this.formData).then(response=>{
+            if (response!=null){
+              this.$notify({
+                title: '更新博客',
+                message: "更新成功",
+                type: 'success',
+                duration: 2500
+              });
+              this.refreshDate(this.currentPage,this.pageSize)
+              this.dialogFormVisible=false
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
+        }
+        else {
+          return false;
+        }
+      });
+    },
     showBlog(row){
       window.open("/#/bloglist/blog/"+row.blogId)
     },
@@ -431,18 +430,18 @@ export default {
       }
       return pwd+filename.substring(filename.lastIndexOf("."))
     },
-    async handleUploadImage(event, insertImage, files) {
-      await this.getUpLoad(files[0],1)
+    handleUploadImage(event, insertImage, files) {
+      this.getUpLoad(files[0],1)
       insertImage({
         url:this.filename,
         desc: '博客图片',
       });
     },
-    async getToken(type) {
+    getToken(type) {
       let now = Date.parse(new Date()) / 1000;
       if (this.$store.state.OSS.expire < now + 3 || this.$store.state.OSS.expire === 0 || this.type !== type) {
         this.type = type;
-        await this.$http.post("/upload/admin/getToken/" + type).then((response) => {
+        this.$http.post("/upload/admin/getToken/" + type).then((response) => {
           if (response != null) {
             this.$store.commit('setOSS', response.data.data)
           }
@@ -453,8 +452,8 @@ export default {
       }
 
     },
-    async getUpLoad(file, type) {
-      await this.getToken(type)
+    getUpLoad(file, type) {
+      this.getToken(type)
       const formData = new FormData();
       formData.append('key', this.$store.state.OSS.dir + this.randomName(file.name, 10));
       formData.append('policy', this.$store.state.OSS.policy);
@@ -463,7 +462,7 @@ export default {
       formData.append('callback', this.$store.state.OSS.callback);
       formData.append('signature', this.$store.state.OSS.signature);
       formData.append('file', file);
-      await this.$http({
+      this.$http({
         url: this.$store.state.OSS.host,
         method: 'post',
         data: formData,

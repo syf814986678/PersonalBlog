@@ -2,7 +2,6 @@ package com.shiyifan;
 
 
 import com.shiyifan.pojo.Category;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.ArrayList;
 
@@ -24,11 +23,11 @@ public interface CategoryService {
     /**
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>
      * @author ZouCha
-     * @date 2020-12-27 15:46:16
+     * @date 2021-01-02 18:34:30
      * @method selectCategoryForAdmin
-     * @params [userId]
+     * @params [userId, pageNow, pageSize]
      **/
-    ArrayList<Category> selectCategoryForAdmin(int userId) throws Exception;
+    ArrayList<Category> selectCategoryForAdmin(int userId, int pageNow, int pageSize) throws Exception;
 
     /**
      * @return java.lang.Integer
@@ -56,4 +55,22 @@ public interface CategoryService {
      * @params [userId, categoryId]
      **/
     void deleteCategoryRankForAdmin(int userId, int categoryId) throws Exception;
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2021-01-02 14:08:16
+     * @method getCategoryIdForAdmin
+     * @params [userId, blogId]
+     **/
+    Integer getCategoryIdForAdmin(int userId, String blogId) throws Exception;
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2021-01-02 19:04:40
+     * @method getTotalCategoriesForAdmin
+     * @params [userId]
+     **/
+    Integer getTotalCategoriesForAdmin(int userId) throws Exception;
 }

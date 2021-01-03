@@ -44,16 +44,24 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>
      * @author ZouCha
-     * @date 2020-12-27 15:46:33
+     * @date 2021-01-02 18:34:45
      * @method selectCategoryForAdmin
-     * @params [userId]
+     * @params [userId, pageNow, pageSize]
      **/
     @Override
-    public ArrayList<Category> selectCategoryForAdmin(int userId) throws Exception {
+    public ArrayList<Category> selectCategoryForAdmin(int userId, int pageNow, int pageSize) throws Exception {
         log.info("方法:selectCategoryForAdmin开始,userId:" + userId);
         ArrayList<Category> categories = null;
+        int start = 0;
+        int end = 0;
+        if (pageSize == 0) {
+            end = Integer.MAX_VALUE;
+        } else {
+            start = (pageNow - 1) * pageSize;
+            end = (pageNow * pageSize) - 1;
+        }
         try {
-            categories = categoryMapper.selectCategoryForAdmin(userId);
+            categories = categoryMapper.selectCategoryForAdmin(userId, start, end);
         } catch (Exception e) {
             log.error("selectCategoryForAdmin错误" + e.toString());
             throw new Exception("selectCategoryForAdmin错误" + e.toString());
@@ -115,5 +123,45 @@ public class CategoryServiceImpl implements CategoryService {
             log.error("deleteCategoryRankForAdmin错误" + e.toString());
             throw new Exception("deleteCategoryRankForAdmin错误" + e.toString());
         }
+    }
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2021-01-02 18:35:01
+     * @method getCategoryIdForAdmin
+     * @params [userId, blogId]
+     **/
+    @Override
+    public Integer getCategoryIdForAdmin(int userId, String blogId) throws Exception {
+        log.info("方法:getCategoryIdForAdmin开始,userId:" + userId + ",blogId:" + blogId);
+        Integer categoryIdForAdmin = null;
+        try {
+            categoryIdForAdmin = categoryMapper.getCategoryIdForAdmin(userId, blogId);
+        } catch (Exception e) {
+            log.error("getCategoryIdForAdmin错误" + e.toString());
+            throw new Exception("getCategoryIdForAdmin错误" + e.toString());
+        }
+        return categoryIdForAdmin;
+    }
+
+    /**
+     * @return java.lang.Integer
+     * @author ZouCha
+     * @date 2021-01-02 19:04:57
+     * @method getTotalCategoriesForAdmin
+     * @params [userId]
+     **/
+    @Override
+    public Integer getTotalCategoriesForAdmin(int userId) throws Exception {
+        log.info("方法:getTotalCategoriesForAdmin开始,userId:" + userId);
+        Integer totalCategoriesForAdmin = null;
+        try {
+            totalCategoriesForAdmin = categoryMapper.getTotalCategoriesForAdmin(userId);
+        } catch (Exception e) {
+            log.error("getTotalCategoriesForAdmin错误" + e.toString());
+            throw new Exception("getTotalCategoriesForAdmin错误" + e.toString());
+        }
+        return totalCategoriesForAdmin;
     }
 }

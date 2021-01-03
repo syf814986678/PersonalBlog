@@ -288,7 +288,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean deleteBlogForAdmin(int userId, String blogId, int categoryId) throws Exception {
-        log.info("方法:deleteBlogForAdmin开始,userId:" + userId+",blogId:"+blogId+",categoryId"+categoryId);
+        log.info("方法:deleteBlogForAdmin开始,userId:" + userId + ",blogId:" + blogId + ",categoryId" + categoryId);
         try {
             blogUtil.deleteBlogInRedisAndElasticSearchForAdmin(userId, blogId);
             blogMapper.deleteBlogByIdForAdmin(userId, blogId);
@@ -299,5 +299,59 @@ public class BlogServiceImpl implements BlogService {
             throw new Exception("deleteBlogForAdmin错误" + e);
         }
         return true;
+    }
+
+    /**
+     * @return java.lang.Boolean
+     * @author ZouCha
+     * @date 2021-01-02 18:16:29
+     * @method updateBlogForAdmin
+     * @params [userId, blog]
+     **/
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateBlogForAdmin(int userId, Blog blog) throws Exception {
+        log.info("方法:updateBlogForAdmin开始,userId:" + userId);
+        try {
+            Integer categoryIdForAdminInDb = categoryService.getCategoryIdForAdmin(userId, blog.getBlogId());
+            if (categoryIdForAdminInDb == null) {
+                return false;
+            }
+            if (categoryIdForAdminInDb != blog.getCategory().getCategoryId()) {
+                categoryService.deleteCategoryRankForAdmin(userId, categoryIdForAdminInDb);
+                categoryService.addCategoryRankForAdmin(userId, blog.getCategory().getCategoryId());
+                Integer categoryRankForAdmin = categoryService.getCategoryRankForAdmin(userId, blog.getCategory().getCategoryId());
+                blog.setBlogTitle(blog.getBlogTitle().replace(blog.getBlogTitle().substring(blog.getBlogTitle().indexOf("(")), "")
+                        + "(" + arabicNumToChineseNumUtil.arabicNumToChineseNum(++categoryRankForAdmin) + ")");
+            }
+            blogMapper.updateBlogByIdForAdmin(userId, blog);
+            Blog newBlog = blogMapper.selectBlogForRedisForAdmin(userId, blog.getBlogId());
+            blogUtil.updateBlogInRedisAndElasticSearchForAdmin(userId, newBlog);
+        } catch (Exception e) {
+            log.error("updateBlogForAdmin错误" + e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new Exception("updateBlogForAdmin错误" + e);
+        }
+        return true;
+    }
+
+    /**
+     * @return com.shiyifan.pojo.Blog
+     * @author ZouCha
+     * @date 2021-01-02 18:16:36
+     * @method selectBlogByIdForAdmin
+     * @params [userId, blogId]
+     **/
+    @Override
+    public Blog selectBlogByIdForAdmin(int userId, String blogId) throws Exception {
+        log.info("方法:selectBlogByIdForAdmin开始,blogId:" + blogId);
+        Blog blog = null;
+        try {
+            blog = blogMapper.selectBlogByIdForAdmin(userId, blogId);
+        } catch (Exception e) {
+            log.error("selectBlogByIdForAdmin错误" + e.toString());
+            throw new Exception("selectBlogByIdForAdmin错误" + e.toString());
+        }
+        return blog;
     }
 }

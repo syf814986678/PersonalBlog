@@ -111,12 +111,32 @@ public class ElasticsearchUtil {
     public void deleteElasticsearchBlogForAdmin(String blogId) throws IOException {
         log.info("方法:deleteElasticsearchBlogForAdmin开始,blogId:" + blogId);
         try {
+            int i=1/0;
             DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
             deleteRequest.timeout("2s");
             restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
             log.error("deleteElasticsearchBlogForAdmin错误" + e);
             throw new IOException("deleteElasticsearchBlogForAdmin错误" + e);
+        }
+    }
+
+    /**
+     * @return void
+     * @author ZouCha
+     * @date 2021-01-02 18:16:51
+     * @method updateElasticsearchBlogForAdmin
+     * @params [elasticSearchBlog]
+     **/
+    @Retryable(value = Exception.class)
+    public void updateElasticsearchBlogForAdmin(ElasticSearchBlog elasticSearchBlog) throws IOException {
+        log.info("方法:updateElasticsearchBlogForAdmin开始,blogId:" + elasticSearchBlog.getBlogId());
+        try {
+            deleteElasticsearchBlogForAdmin(elasticSearchBlog.getBlogId());
+            addElasticsearchBlogForAdmin(elasticSearchBlog);
+        } catch (IOException e) {
+            log.error("updateElasticsearchBlogForAdmin错误" + e);
+            throw new IOException("updateElasticsearchBlogForAdmin错误" + e);
         }
     }
 }

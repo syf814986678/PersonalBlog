@@ -5,7 +5,6 @@ import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.OSSException;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.*;
-import com.google.gson.Gson;
 import com.shiyifan.ResultUtil;
 import com.shiyifan.pojo.CodeState;
 import com.shiyifan.pojo.Result;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -105,7 +103,7 @@ public class AdminUploadController {
                 dir.append("myblog/BlogContentImage/").append(userId).append("-").append(userName).append("/");
             }
             // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。
-            String callbackUrl = "http://syf16.xicp.net/upload/admin/callback";
+            String callbackUrl = "http://api.noahsark1.vip/upload/admin/callback";
             long expireTime = 30;
             long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
             Date expiration = new Date(expireEndTime);
@@ -153,7 +151,7 @@ public class AdminUploadController {
      * @method callback
      * @params [request]
      **/
-    @RequestMapping("/callback")
+    @PostMapping ("/callback")
     public Result callback(HttpServletRequest request) throws OSSException {
         HashMap<String, Object> map = null;
         try {

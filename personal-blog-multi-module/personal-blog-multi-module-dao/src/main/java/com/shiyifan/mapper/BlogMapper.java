@@ -90,4 +90,22 @@ public interface BlogMapper {
      * @params [userId, blogId]
      **/
     void deleteBlogByIdForAdmin(@Param("userId") int userId, @Param("blogId") String blogId);
+
+    /**
+     * @return void
+     * @author ZouCha
+     * @date 2021-01-02 15:41:42
+     * @method updateBlogByIdForAdmin
+     * @params [userId, blog]
+     **/
+    void updateBlogByIdForAdmin(@Param("userId") int userId, @Param("blog") Blog blog);
+
+    /**
+     * @return com.shiyifan.pojo.Blog
+     * @author ZouCha
+     * @date 2021-01-02 17:06:34
+     * @method selectBlogByIdForAdmin
+     * @params [userId, blogId]
+     **/
+    Blog selectBlogByIdForAdmin(@Param("userId") int userId, @Param("blogId") String blogId);
 }

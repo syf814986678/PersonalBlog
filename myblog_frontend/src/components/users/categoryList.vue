@@ -1,6 +1,6 @@
 <template>
   <div style="margin: 0 auto;">
-    <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" border :data="mydata.filter(data => !search || data.categoryName.toLowerCase().includes(search.toLowerCase()))" :row-class-name="tableRowClassName">
+    <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" border :data="myData.filter(data => !search || data.categoryName.toLowerCase().includes(search.toLowerCase()))" :row-class-name="tableRowClassName">
       <el-table-column :resizable="false" type="index" :index="indexMethod" align="center" label="编号" width="50"></el-table-column>
       <el-table-column :resizable="false" align="center" label="类别ID" width="100"><template slot-scope="scope"><el-tag style="font-size: 15px" effect="dark">{{scope.row.categoryId}}</el-tag></template></el-table-column>
       <el-table-column show-overflow-tooltip align="center" label="类别名称"><template slot-scope="scope"><el-tag effect="dark" type="danger">{{scope.row.categoryName}}</el-tag></template></el-table-column>
@@ -35,7 +35,7 @@
       :hide-on-single-page="true"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage"
-      :page-size="pagesize"
+      :page-size="pageSize"
       :total="total"
       layout="prev, pager, next, total"
     >
@@ -46,14 +46,15 @@
       :hide-on-single-page="true"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage"
-      :page-size="pagesize"
+      :page-size="pageSize"
       :total="total"
       layout="prev, pager, next, jumper, total"
     >
     </el-pagination>
     <el-row>
-      <el-button :disabled="loading" @click="showdialog" type="success" style="float: right;margin-top: 10px;margin-bottom: 0">添加类别</el-button>
+      <el-button :disabled="loading" @click="showDialog" type="success" style="float: right;margin-top: 10px;margin-bottom: 0">添加类别</el-button>
     </el-row>
+
     <el-dialog width="80%" :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <div class="pc">
         <el-row style="box-shadow: 0 0 12px 0 rgb(245,155,106);padding:30px 0">
@@ -61,7 +62,7 @@
             <el-tag type="danger" effect="dark" style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);height: 38px;font-size: 13px;padding-top: 4px;float: right">类别名称</el-tag>
           </el-col>
           <el-col :span="16" style="text-align: center">
-            <el-input v-model="cagetoryname" placeholder="输入类别名称" style="border-radius: 4px;box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width: 80%"></el-input>
+            <el-input v-model="categoryName" placeholder="输入类别名称" style="border-radius: 4px;box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width: 80%"></el-input>
           </el-col>
           <el-col :span="4">
             <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);float: left" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
@@ -73,7 +74,8 @@
           <el-tag type="danger" effect="dark"  style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width:200px;height: 38px;font-size: 13px;padding-top: 4px">类别名称</el-tag>
         </el-row>
         <el-row style="margin: 30px auto">
-          <el-input v-model="cagetoryname" placeholder="输入类别名称" style="border-radius: 4px;box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);"></el-input>
+          <el-input v-model="categoryName
+         " placeholder="输入类别名称" style="border-radius: 4px;box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);"></el-input>
         </el-row>
         <el-row style="text-align: center">
           <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width: 200px" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
@@ -89,24 +91,31 @@ export default {
   data(){
     return{
       addOrUpdate: true,//true为添加,false为更新
-      mydata: [],
-      cagetoryname: '',
+      myData: [],
+      categoryName: '',
       categoryId: '',
       search: '',
       loading: true,
       dialogFormVisible: false,
       currentPage: 1,
-      pagesize: 11,
+      pageSize: 11,
       total: null,
     }
   },
   methods: {
-    refreshdate(userid,pageNow,pageSize){
-      this.$http.post("/category/selectBlogCategoryByPage/"+pageSize+"/"+pageNow).then(response=>{
+    refreshDate(pageNow,pageSize){
+      this.$http.post("/category/admin/selectCategoryForAdmin/"+pageSize+"/"+pageNow).then(response=>{
         if (response!=null){
-          this.mydata=response.data.msg["mycategories"];
-          this.total=response.data.msg["totalCategoryNums"];
-          this.loading=false;
+          this.myData=response.data.data;
+          this.$http.post("/category/admin/getTotalCategoriesForAdmin/").then(response=>{
+            if (response!=null){
+              this.total=response.data.data;
+              this.loading=false;
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
         }
       }).catch(error=> {
         console.log(error)
@@ -125,106 +134,106 @@ export default {
       }
     },
     handleCurrentChange(page){
-      this.refreshdate(this.$store.state.myuser.userid,page,this.pagesize);
+      this.refreshDate(this.$store.state.user.userId,page,this.pageSize);
     },
-    addcategory(){
-      if (this.cagetoryname===''){
-        return this.$store.commit('errorMsg',"请输入类别名称")
-      }
-      this.$http.post("/category/addCategory/"+this.cagetoryname).then(response=>{
-        if (response!=null){
-          this.$notify({
-            title: '添加成功',
-            message: response.data.msg["add"],
-            type: 'success',
-            duration: 2500
-          });
-          this.dialogFormVisible=false
-          this.refreshdate(this.$store.state.myuser.userid,this.currentPage,this.pagesize);
-          this.cagetoryname=''
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
-    },
-    updatecategory(){
-      if (this.cagetoryname===''){
-        return this.$store.commit('errorMsg',"请输入类别名称")
-      }
-      this.$http.post("/category/updateCategory/"+this.categoryId+"/"+this.cagetoryname).then(response=>{
-        if (response!=null){
-          this.$notify({
-            title: '修改成功',
-            message: response.data.msg["update"],
-            type: 'success',
-            duration: 2500
-          });
-          this.dialogFormVisible=false
-          this.refreshdate(this.$store.state.myuser.userid,this.currentPage,this.pagesize);
-          this.cagetoryname=''
-          this.categoryId=''
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
-    },
-    selectcategory(index, row) {
-      this.cagetoryname=''
-      this.categoryId=''
-      this.addOrUpdate=false
-      this.$http.post("/category/selectCategoryById/"+row.categoryId).then(response=>{
-        if (response!=null){
-          this.cagetoryname=response.data.msg["mycategory"].categoryName;
-          this.categoryId=response.data.msg["mycategory"].categoryId;
-          this.dialogFormVisible=true;
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
-    },
-    showdialog(){
-      this.cagetoryname=''
+    // addCategory(){
+    //   if (this.categoryName ===''){
+    //     return this.$store.commit('errorMsg',"请输入类别名称")
+    //   }
+    //   this.$http.post("/category/addCategory/"+this.categoryName).then(response=>{
+    //     if (response!=null){
+    //       this.$notify({
+    //         title: '添加成功',
+    //         message: response.data.msg["add"],
+    //         type: 'success',
+    //         duration: 2500
+    //       });
+    //       this.dialogFormVisible=false
+    //       this.refreshDate(this.$store.state.user.userId,this.currentPage,this.pageSize);
+    //       this.categoryName =''
+    //     }
+    //   }).catch(error=> {
+    //     console.log(error)
+    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //   })
+    // },
+    // updateCategory(){
+    //   if (this.categoryName ===''){
+    //     return this.$store.commit('errorMsg',"请输入类别名称")
+    //   }
+    //   this.$http.post("/category/updateCategory/"+this.categoryId+"/"+this.categoryName).then(response=>{
+    //     if (response!=null){
+    //       this.$notify({
+    //         title: '修改成功',
+    //         message: response.data.msg["update"],
+    //         type: 'success',
+    //         duration: 2500
+    //       });
+    //       this.dialogFormVisible=false
+    //       this.refreshDate(this.$store.state.user.userId,this.currentPage,this.pageSize);
+    //       this.categoryName =''
+    //       this.categoryId=''
+    //     }
+    //   }).catch(error=> {
+    //     console.log(error)
+    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //   })
+    // },
+    // selectCategory(index, row) {
+    //   this.categoryName =''
+    //   this.categoryId=''
+    //   this.addOrUpdate=false
+    //   this.$http.post("/category/selectCategoryById/"+row.categoryId).then(response=>{
+    //     if (response!=null){
+    //       this.categoryName =response.data.msg["mycategory"].categoryName;
+    //       this.categoryId=response.data.msg["mycategory"].categoryId;
+    //       this.dialogFormVisible=true;
+    //     }
+    //   }).catch(error=> {
+    //     console.log(error)
+    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //   })
+    // },
+    showDialog(){
+      this.categoryName =''
       this.dialogFormVisible=true
       this.addOrUpdate=true
     },
-    showdeletedialog(index, row) {
-      this.$confirm('此操作将永久删除该类别, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.deletecategory(row.categoryId);
-      }).catch(() => {
-        this.$notify({
-          title: '取消',
-          message: '删除取消',
-          type: 'warning',
-          duration: 2500
-        });
-      });
-    },
-    deletecategory(categoryid) {
-      this.$http.post("/category/deleteCategory/"+categoryid).then(response=>{
-        if (response!=null){
-          this.$notify({
-            title: '删除成功',
-            message: response.data.msg["delete"],
-            type: 'success',
-            duration: 2500
-          });
-          this.refreshdate(this.$store.state.myuser.userid,this.currentPage,this.pagesize);
-        }
-      }).catch(error=> {
-        console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-      })
-    },
+    // showDeletedialog(index, row) {
+    //   this.$confirm('此操作将永久删除该类别, 是否继续?', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   }).then(() => {
+    //     this.deleteCategory(row.categoryId);
+    //   }).catch(() => {
+    //     this.$notify({
+    //       title: '取消',
+    //       message: '删除取消',
+    //       type: 'warning',
+    //       duration: 2500
+    //     });
+    //   });
+    // },
+    // deleteCategory(categoryid) {
+    //   this.$http.post("/category/deleteCategory/"+categoryid).then(response=>{
+    //     if (response!=null){
+    //       this.$notify({
+    //         title: '删除成功',
+    //         message: response.data.msg["delete"],
+    //         type: 'success',
+    //         duration: 2500
+    //       });
+    //       this.refreshDate(this.$store.state.user.userId,this.currentPage,this.pageSize);
+    //     }
+    //   }).catch(error=> {
+    //     console.log(error)
+    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+    //   })
+    // },
   },
   created() {
-    this.refreshdate(this.$store.state.myuser.userid,this.currentPage,this.pagesize);
+    this.refreshDate(this.currentPage,this.pageSize);
   }
 }
 </script>

@@ -102,4 +102,24 @@ public interface BlogService {
      * @params [userId, blogId, categoryId]
      **/
     Boolean deleteBlogForAdmin(int userId, String blogId, int categoryId) throws Exception;
+
+    /**
+     * @return java.lang.Boolean
+     * @author ZouCha
+     * @date 2021-01-02 14:00:02
+     * @method updateBlogForAdmin
+     * @params [userId, blog]
+     **/
+    Boolean updateBlogForAdmin(int userId, Blog blog) throws Exception;
+
+    /**
+     * @return com.shiyifan.pojo.Blog
+     * @author ZouCha
+     * @date 2021-01-02 17:07:11
+     * @method selectBlogByIdForAdmin
+     * @params [userId, blogId]
+     **/
+    Blog selectBlogByIdForAdmin(int userId, String blogId) throws Exception;
+
+
 }

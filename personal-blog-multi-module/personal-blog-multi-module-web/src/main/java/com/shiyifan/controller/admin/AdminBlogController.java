@@ -167,8 +167,15 @@ public class AdminBlogController {
         return ResultUtil.success(null);
     }
 
+    /**
+     * @return com.shiyifan.pojo.Result
+     * @author ZouCha
+     * @date 2021-01-02 16:56:51
+     * @method deleteBlogForAdmin
+     * @params [request, blogId, categoryId]
+     **/
     @PostMapping("/deleteBlogForAdmin/{blogId}/{categoryId}")
-    public Result deleteBlogForAdmin(HttpServletRequest request, @PathVariable("blogId") String blogId,@PathVariable("categoryId") int categoryId) throws Exception {
+    public Result deleteBlogForAdmin(HttpServletRequest request, @PathVariable("blogId") String blogId, @PathVariable("categoryId") int categoryId) throws Exception {
         Claims claims = null;
         try {
             claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
@@ -179,5 +186,41 @@ public class AdminBlogController {
             throw new Exception("deleteBlogForAdmin错误" + e.toString());
         }
         return ResultUtil.success(null);
+    }
+
+    /**
+     * @return com.shiyifan.pojo.Result
+     * @author ZouCha
+     * @date 2021-01-02 16:56:56
+     * @method updateBlogForAdmin
+     * @params [request, blog]
+     **/
+    @PostMapping("/updateBlogForAdmin")
+    public Result updateBlogForAdmin(HttpServletRequest request, @RequestBody Blog blog) throws Exception {
+        Claims claims = null;
+        try {
+            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
+            int userId = (int) claims.get("userId");
+            blogService.updateBlogForAdmin(userId, blog);
+        } catch (Exception e) {
+            log.error("updateBlogForAdmin错误" + e.toString());
+            throw new Exception("updateBlogForAdmin错误" + e.toString());
+        }
+        return ResultUtil.success(null);
+    }
+
+    @PostMapping("/selectBlogByIdForAdmin/{blogId}")
+    public Result selectBlogByIdForAdmin(HttpServletRequest request,@PathVariable("blogId") String blogId) throws Exception {
+        Claims claims = null;
+        Blog blog = null;
+        try {
+            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
+            int userId = (int) claims.get("userId");
+            blog = blogService.selectBlogByIdForAdmin(userId,blogId);
+        } catch (Exception e) {
+            log.error("updateBlogForAdmin错误" + e.toString());
+            throw new Exception("updateBlogForAdmin错误" + e.toString());
+        }
+        return ResultUtil.success(blog);
     }
 }

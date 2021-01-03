@@ -16,7 +16,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -122,7 +121,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [start, end]
      **/
     public ArrayList<Blog> getBlogListByPageForCommon(int start, int end) {
-        log.info("方法:getBlogListForCommon开始,start:"+start+",end:"+end);
+        log.info("方法:getBlogListForCommon开始,start:" + start + ",end:" + end);
         return (ArrayList<Blog>) (Object) redisUtil.lGet(blogsForCommon, start, end);
     }
 
@@ -146,7 +145,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [categoryId, start, end]
      **/
     public ArrayList<Blog> getCategoryBlogListByPageForCommon(int categoryId, int start, int end) {
-        log.info("方法:getCategoryBlogListForCommon开始,categoryId:"+categoryId+",start:"+start+",end:"+end);
+        log.info("方法:getCategoryBlogListForCommon开始,categoryId:" + categoryId + ",start:" + start + ",end:" + end);
         return (ArrayList<Blog>) (Object) redisUtil.lGet(categoryBlogsForCommon + categoryId, start, end);
     }
 
@@ -158,7 +157,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [categoryId]
      **/
     public Integer getCategoryTotalBlogsForCommon(int categoryId) {
-        log.info("方法:getCategoryTotalBlogsForCommon开始,categoryId:"+categoryId);
+        log.info("方法:getCategoryTotalBlogsForCommon开始,categoryId:" + categoryId);
         return (Integer) redisUtil.get(categoryTotalBlogsForCommon + categoryId);
     }
 
@@ -170,7 +169,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [blogId]
      **/
     public Blog getBlogForCommon(String blogId) {
-        log.info("方法:getBlogForCommon开始,blogId:"+blogId);
+        log.info("方法:getBlogForCommon开始,blogId:" + blogId);
         return (Blog) redisUtil.get(blogId);
     }
 
@@ -181,7 +180,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [blogId]
      **/
     public void setBlogForCommon(String blogId) throws Exception {
-        log.info("方法:setBlogForCommon开始,blogId:"+blogId);
+        log.info("方法:setBlogForCommon开始,blogId:" + blogId);
         try {
             redisUtil.set(blogId, blogMapper.selectBlogByIdForCommon(blogId));
         } catch (Exception e) {
@@ -198,7 +197,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [keyword, pageNow, pageSize]
      **/
     public ArrayList<Map<String, Object>> searchContentByPageForCommon(String keyword, int pageNow, int pageSize) throws IOException {
-        log.info("方法:searchContentByPageForCommon开始,keyword:"+keyword+",pageNow:"+pageNow+",pageSize:"+pageSize);
+        log.info("方法:searchContentByPageForCommon开始,keyword:" + keyword + ",pageNow:" + pageNow + ",pageSize:" + pageSize);
         ArrayList<Map<String, Object>> list = null;
         try {
             list = elasticsearchUtil.searchContentByPageForCommon(keyword, pageNow, pageSize);
@@ -230,7 +229,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params []
      **/
     public void initBlogListForAdmin(int userId) throws Exception {
-        log.info("方法:initBlogListForAdmin开始,userId:"+userId);
+        log.info("方法:initBlogListForAdmin开始,userId:" + userId);
         try {
             for (Blog blog : blogMapper.selectBlogListByPageForAdmin(userId, 0)) {
                 redisUtil.RSet(blogsForAdmin + userId, blog);
@@ -250,9 +249,9 @@ public class BlogUtil implements ApplicationRunner {
      * @params [userId]
      **/
     public void initCategoryBlogListForAdmin(int userId) throws Exception {
-        log.info("方法:initCategoryBlogListForAdmin开始,:userId"+userId);
+        log.info("方法:initCategoryBlogListForAdmin开始,:userId" + userId);
         try {
-            for (Category category : categoryMapper.selectCategoryForAdmin(userId)) {
+            for (Category category : categoryMapper.selectCategoryForAdmin(userId,0,Integer.MAX_VALUE)) {
                 ArrayList<Blog> categoryBlogListForAdmin = blogMapper.selectBlogListByPageForAdmin(userId, category.getCategoryId());
                 for (Blog blog : categoryBlogListForAdmin) {
                     redisUtil.RSet(categoryBlogsForAdmin + userId + category.getCategoryId(), blog);
@@ -285,7 +284,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [userId, start, end]
      **/
     public ArrayList<Blog> getBlogListByPageForAdmin(int userId, int start, int end) {
-        log.info("方法:getBlogListByPageForAdmin开始,userId:"+userId+",start:"+start+",end:"+end);
+        log.info("方法:getBlogListByPageForAdmin开始,userId:" + userId + ",start:" + start + ",end:" + end);
         return (ArrayList<Blog>) (Object) redisUtil.lGet(blogsForAdmin + userId, start, end);
     }
 
@@ -297,7 +296,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [userId, categoryId]
      **/
     public Integer getCategoryTotalBlogsForAdmin(int userId, int categoryId) {
-        log.info("方法:getCategoryTotalBlogsForAdmin开始,userId:"+userId+",categoryId:"+categoryId);
+        log.info("方法:getCategoryTotalBlogsForAdmin开始,userId:" + userId + ",categoryId:" + categoryId);
         return (Integer) redisUtil.get(categoryTotalBlogsForAdmin + userId + categoryId);
     }
 
@@ -309,7 +308,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [userId, categoryId, start, end]
      **/
     public ArrayList<Blog> getCategoryBlogListByPageForAdmin(int userId, int categoryId, int start, int end) {
-        log.info("方法:getCategoryBlogListByPageForAdmin开始,userId:"+userId+",categoryId:"+categoryId+",start:"+start+",end");
+        log.info("方法:getCategoryBlogListByPageForAdmin开始,userId:" + userId + ",categoryId:" + categoryId + ",start:" + start + ",end");
         return (ArrayList<Blog>) (Object) redisUtil.lGet(categoryBlogsForAdmin + userId + categoryId, start, end);
     }
 
@@ -369,24 +368,106 @@ public class BlogUtil implements ApplicationRunner {
         }
     }
 
+    /**
+     * @return void
+     * @author ZouCha
+     * @date 2021-01-02 15:13:55
+     * @method deleteBlogInRedisAndElasticSearchForAdmin
+     * @params [userId, blogId]
+     **/
     public void deleteBlogInRedisAndElasticSearchForAdmin(int userId, String blogId) throws Exception {
         log.info("方法:deleteBlogInRedisAndElasticSearchForAdmin开始,userId:" + userId);
         try {
             elasticsearchUtil.deleteElasticsearchBlogForAdmin(blogId);
             Blog blog = blogMapper.selectBlogForRedisForAdmin(userId, blogId);
             redisUtil.del(blogId);
-            redisUtil.lRemove(blogsForCommon,1,blog);
-            redisUtil.decr(totalBlogsForCommon,1);
-            redisUtil.lRemove(categoryBlogsForCommon + blog.getCategory().getCategoryId(),1,blog);
-            redisUtil.decr(categoryTotalBlogsForCommon + blog.getCategory().getCategoryId(),1);
-            redisUtil.lRemove(blogsForAdmin + userId,1,blog);
-            redisUtil.decr(totalBlogsForAdmin + userId,1);
-            redisUtil.lRemove(categoryBlogsForAdmin + userId + blog.getCategory().getCategoryId(),1,blog);
-            redisUtil.decr(categoryTotalBlogsForAdmin + userId + blog.getCategory().getCategoryId(),1);
+            redisUtil.lRemove(blogsForCommon, 1, blog);
+            redisUtil.decr(totalBlogsForCommon, 1);
+            redisUtil.lRemove(categoryBlogsForCommon + blog.getCategory().getCategoryId(), 1, blog);
+            redisUtil.decr(categoryTotalBlogsForCommon + blog.getCategory().getCategoryId(), 1);
+            redisUtil.lRemove(blogsForAdmin + userId, 1, blog);
+            redisUtil.decr(totalBlogsForAdmin + userId, 1);
+            redisUtil.lRemove(categoryBlogsForAdmin + userId + blog.getCategory().getCategoryId(), 1, blog);
+            redisUtil.decr(categoryTotalBlogsForAdmin + userId + blog.getCategory().getCategoryId(), 1);
+            if (getTotalBlogsForCommon() < 0) {
+                redisUtil.set(totalBlogsForCommon, 0);
+            }
+            if (getCategoryTotalBlogsForCommon(blog.getCategory().getCategoryId()) < 0) {
+                redisUtil.set(totalBlogsForCommon, 0);
+            }
+            if (getTotalBlogsForAdmin(userId) < 0) {
+                redisUtil.set(totalBlogsForAdmin + userId, 0);
+            }
+            if (getCategoryTotalBlogsForAdmin(userId, blog.getCategory().getCategoryId()) < 0) {
+                redisUtil.set(categoryTotalBlogsForAdmin + userId + blog.getCategory().getCategoryId(), 0);
+            }
         } catch (Exception e) {
             log.error("deleteBlogInRedisAndElasticSearchForAdmin错误" + e.toString());
             throw new Exception("deleteBlogInRedisAndElasticSearchForAdmin错误" + e.toString());
         }
+    }
+
+    /**
+     * @return void
+     * @author ZouCha
+     * @date 2021-01-02 16:50:46
+     * @method updateBlogInRedisAndElasticSearchForAdmin
+     * @params [userId, blog]
+     **/
+    public void updateBlogInRedisAndElasticSearchForAdmin(int userId, Blog blog) throws Exception {
+        log.info("方法:updateBlogInRedisAndElasticSearchForAdmin开始,userId:" + userId);
+        ArrayList<Blog> blogList = null;
+        try {
+            ElasticSearchBlog elasticSearchBlog = blogMapper.selectElasticSearchBlogByIdForAdmin(userId, blog.getBlogId());
+            elasticsearchUtil.updateElasticsearchBlogForAdmin(elasticSearchBlog);
+
+            redisUtil.del(blog.getBlogId());
+
+            int index = 0;
+            blogList = getBlogListByPageForCommon(0, -1);
+            for (Blog blogInList : blogList) {
+                if (blogInList.getBlogId().equals(blog.getBlogId())) {
+                    redisUtil.lUpdateIndex(blogsForCommon, index, blog);
+                    break;
+                }
+                index++;
+            }
+
+            index = 0;
+            blogList = getCategoryBlogListByPageForCommon(blog.getCategory().getCategoryId(), 0, -1);
+            for (Blog blogInList : blogList) {
+                if (blogInList.getBlogId().equals(blog.getBlogId())) {
+                    redisUtil.lUpdateIndex(categoryBlogsForCommon + blogInList.getCategory().getCategoryId(), index, blog);
+                    break;
+                }
+                index++;
+            }
+
+            index = 0;
+            blogList = getBlogListByPageForAdmin(userId, 0, -1);
+            for (Blog blogInList : blogList) {
+                if (blogInList.getBlogId().equals(blog.getBlogId())) {
+                    redisUtil.lUpdateIndex(blogsForAdmin + userId, index, blog);
+                    break;
+                }
+                index++;
+            }
+
+            index = 0;
+            blogList = getCategoryBlogListByPageForAdmin(userId, blog.getCategory().getCategoryId(), 0, -1);
+            for (Blog blogInList : blogList) {
+                if (blogInList.getBlogId().equals(blog.getBlogId())) {
+                    redisUtil.lUpdateIndex(categoryBlogsForAdmin + userId + blog.getCategory().getCategoryId(), index, blog);
+                    break;
+                }
+                index++;
+            }
+
+        } catch (Exception e) {
+            log.error("updateBlogInRedisAndElasticSearchForAdmin错误" + e);
+            throw new Exception("updateBlogInRedisAndElasticSearchForAdmin错误" + e);
+        }
+
     }
 
     /**
@@ -405,7 +486,7 @@ public class BlogUtil implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("方法:flushDb开始");
-//        redisUtil.flushDb();
+        redisUtil.flushDb();
     }
 }
 

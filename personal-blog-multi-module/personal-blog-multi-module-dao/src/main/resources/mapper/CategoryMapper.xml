@@ -17,30 +17,45 @@
         from mycategory
         where category_user_id = #{userId}
           and is_deleted = 0
-        order by category_rank desc
+        order by category_rank desc limit #{pageNow}, #{pageSize};
     </select>
 
     <select id="getCategoryRankForAdmin" resultType="_int">
         select category_rank
         from mycategory
-        where category_id =#{categoryId}
-          and category_user_id =#{userId}
-          and is_deleted =0
+        where category_id = #{categoryId}
+          and category_user_id = #{userId}
+          and is_deleted = 0
     </select>
 
-    <update id="addCategoryRankForAdmin" >
+    <update id="addCategoryRankForAdmin">
         update mycategory
-        set category_rank=category_rank+1
-        where category_id =#{categoryId}
-          and category_user_id= #{userId}
-          and is_deleted =0
+        set category_rank=category_rank + 1
+        where category_id = #{categoryId}
+          and category_user_id = #{userId}
+          and is_deleted = 0
     </update>
 
-    <update id="deleteCategoryRankForAdmin" >
+    <update id="deleteCategoryRankForAdmin">
         update mycategory
-        set category_rank=category_rank-1
-        where category_id =#{categoryId}
-          and category_user_id= #{userId}
-          and is_deleted =0
+        set category_rank=category_rank - 1
+        where category_id = #{categoryId}
+          and category_user_id = #{userId}
+          and is_deleted = 0
     </update>
+
+    <select id="getCategoryIdForAdmin" resultType="_int">
+        select blog_category_id
+        from myblog
+        where blog_id = #{blogId}
+          and blog_user_id = #{userId}
+          and is_deleted = 0
+    </select>
+
+    <select id="getTotalCategoriesForAdmin" resultType="_int">
+        select count(category_id)
+        from mycategory
+        where category_user_id = #{userId}
+          and is_deleted = 0
+    </select>
 </mapper>
