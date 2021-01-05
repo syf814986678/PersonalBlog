@@ -80,4 +80,32 @@ public interface CategoryMapper {
      **/
     Integer getTotalCategoriesForAdmin(@Param("userId") int userId);
 
+    /**
+     * @return void
+     * @author user
+     * @date 2021-01-05 13:33:48
+     * @method addCategoryForAdmin
+     * @params [userid, categoryName]
+     **/
+    void addCategoryForAdmin(@Param("userId") int userId, @Param("categoryName") String categoryName);
+
+    /**
+     * @return void
+     * @author user
+     * @date 2021-01-05 14:13:53
+     * @method deleteCategoryForAdmin
+     * @params [userId, categoryId]
+     **/
+    void deleteCategoryForAdmin(@Param("userId") int userId, @Param("categoryId") int categoryId);
+
+    /**
+     * @return void
+     * @author user
+     * @date 2021-01-05 14:31:17
+     * @method updateCategoryForAdmin
+     * @params [userId, categoryName, categoryId]
+     **/
+    void updateCategoryForAdmin(@Param("userId") int userId, @Param("categoryName") String categoryName, @Param("categoryId") int categoryId);
+
+
 }

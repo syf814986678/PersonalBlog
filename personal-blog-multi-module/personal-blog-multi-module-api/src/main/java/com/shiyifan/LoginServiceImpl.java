@@ -19,9 +19,16 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private LoginMapper loginMapper;
 
+    /**
+     * @return com.shiyifan.pojo.User
+     * @author user
+     * @date 2021-01-05 16:02:14
+     * @method login
+     * @params [username, password]
+     **/
     @Override
     public User login(String username, String password) throws Exception {
-        log.info("方法:login开始");
+        log.info("方法:login开始,username:" + username + ",password:" + password);
         User user = null;
         try {
             user = loginMapper.login(username);

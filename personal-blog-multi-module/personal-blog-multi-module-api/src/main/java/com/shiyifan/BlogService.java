@@ -2,6 +2,7 @@ package com.shiyifan;
 
 
 import com.shiyifan.pojo.Blog;
+import org.apache.ibatis.annotations.Param;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -121,5 +122,22 @@ public interface BlogService {
      **/
     Blog selectBlogByIdForAdmin(int userId, String blogId) throws Exception;
 
+    /**
+     * @return java.lang.Boolean
+     * @author user
+     * @date 2021-01-05 15:06:17
+     * @method updateBlogForAdmin
+     * @params [userId, blogId]
+     **/
+    Boolean updateBlogForAdmin(int userId, String blogId) throws Exception;
+
+    /**
+     * @return java.util.ArrayList<java.lang.String>
+     * @author user
+     * @date 2021-01-05 15:14:29
+     * @method selectBlogIdByCategoryIdForAdmin
+     * @params [userId, categoryId]
+     **/
+    ArrayList<String> selectBlogIdByCategoryIdForAdmin(int userId, int categoryId) throws Exception;
 
 }

@@ -201,12 +201,17 @@ public class AdminBlogController {
         try {
             claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
             int userId = (int) claims.get("userId");
-            blogService.updateBlogForAdmin(userId, blog);
+            if(blogService.updateBlogForAdmin(userId, blog)){
+                return ResultUtil.success(null);
+            }
+            else {
+                return ResultUtil.operationError("类别ID不存在！",null);
+            }
         } catch (Exception e) {
             log.error("updateBlogForAdmin错误" + e.toString());
             throw new Exception("updateBlogForAdmin错误" + e.toString());
         }
-        return ResultUtil.success(null);
+
     }
 
     @PostMapping("/selectBlogByIdForAdmin/{blogId}")

@@ -17,6 +17,9 @@ public class ElasticsearchConfig {
     @Value("${elasticsearch.host}")
     private String host;
 
+    @Value("${elasticsearch.port}")
+    private int port;
+
     /**
      * @return org.elasticsearch.client.RestHighLevelClient
      * @author ZouCha
@@ -29,7 +32,7 @@ public class ElasticsearchConfig {
         // 构建客户端对象
         RestHighLevelClient client = new RestHighLevelClient(
                 RestClient.builder(
-                        new HttpHost(host, 9200, "http")));
+                        new HttpHost(host, port, "http")));
         return client;
     }
 

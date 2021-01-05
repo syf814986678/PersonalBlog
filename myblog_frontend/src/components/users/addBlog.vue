@@ -320,6 +320,7 @@ export default {
     this.$http.post("/blog/admin/getTempBlogForAdmin").then(response=>{
       if (response!=null){
         if (response.data.data!==null){
+          console.log(response)
           this.$notify({
             title: '加载博客',
             message: "加载暂存博客成功",
@@ -335,7 +336,7 @@ export default {
           if (response.data.data.blogContent!==""){
             this.form.blogContent=response.data.data.blogContent
           }
-          if (response.data.data.category.categoryId!==""){
+          if (response.data.data.category.categoryId!==0){
             this.form.category.categoryId=response.data.data.category.categoryId
           }
           if (response.data.data.category.categoryName!==""){

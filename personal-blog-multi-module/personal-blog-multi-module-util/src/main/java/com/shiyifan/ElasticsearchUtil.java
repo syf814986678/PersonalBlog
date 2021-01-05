@@ -86,7 +86,7 @@ public class ElasticsearchUtil {
      **/
     @Retryable(value = IOException.class)
     public void addElasticsearchBlogForAdmin(ElasticSearchBlog elasticSearchBlog) throws IOException {
-        log.info("方法:addElasticsearchBlogForAdmin开始,userId:" + elasticSearchBlog.getBlogUser());
+        log.info("方法:addElasticsearchBlogForAdmin开始,user:" + elasticSearchBlog.getBlogUser()+",blogId:" + elasticSearchBlog.getBlogId());
         try {
             IndexRequest indexRequest = new IndexRequest("blogindex");
             indexRequest.timeout("2s");
@@ -111,7 +111,6 @@ public class ElasticsearchUtil {
     public void deleteElasticsearchBlogForAdmin(String blogId) throws IOException {
         log.info("方法:deleteElasticsearchBlogForAdmin开始,blogId:" + blogId);
         try {
-            int i=1/0;
             DeleteRequest deleteRequest = new DeleteRequest("blogindex", blogId);
             deleteRequest.timeout("2s");
             restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
@@ -130,7 +129,7 @@ public class ElasticsearchUtil {
      **/
     @Retryable(value = Exception.class)
     public void updateElasticsearchBlogForAdmin(ElasticSearchBlog elasticSearchBlog) throws IOException {
-        log.info("方法:updateElasticsearchBlogForAdmin开始,blogId:" + elasticSearchBlog.getBlogId());
+        log.info("方法:updateElasticsearchBlogForAdmin开始,user:" + elasticSearchBlog.getBlogUser()+",blogId:" + elasticSearchBlog.getBlogId());
         try {
             deleteElasticsearchBlogForAdmin(elasticSearchBlog.getBlogId());
             addElasticsearchBlogForAdmin(elasticSearchBlog);

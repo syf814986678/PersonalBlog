@@ -73,4 +73,31 @@ public interface CategoryService {
      * @params [userId]
      **/
     Integer getTotalCategoriesForAdmin(int userId) throws Exception;
+
+    /**
+     * @return java.lang.Boolean
+     * @author user
+     * @date 2021-01-05 13:30:36
+     * @method addCategoryForAdmin
+     * @params [userId, categoryName]
+     **/
+    Boolean addCategoryForAdmin(int userId, String categoryName) throws Exception;
+
+    /**
+     * @return java.lang.Boolean
+     * @author user
+     * @date 2021-01-05 14:15:18
+     * @method deleteCategoryForAdmin
+     * @params [userId, categoryId]
+     **/
+    Boolean deleteCategoryForAdmin(int userId, int categoryId) throws Exception;
+
+    /**
+     * @return java.lang.Boolean
+     * @author user
+     * @date 2021-01-05 14:33:07
+     * @method updateCategoryForAdmin
+     * @params [userId, categoryName, categoryId]
+     **/
+    Boolean updateCategoryForAdmin(int userId, String categoryName, int categoryId) throws Exception;
 }

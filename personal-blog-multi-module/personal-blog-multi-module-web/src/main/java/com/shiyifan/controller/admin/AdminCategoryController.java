@@ -1,5 +1,6 @@
 package com.shiyifan.controller.admin;
 
+import com.shiyifan.BlogService;
 import com.shiyifan.CategoryService;
 import com.shiyifan.ResultUtil;
 import com.shiyifan.pojo.Category;
@@ -65,5 +66,51 @@ public class AdminCategoryController {
             throw new Exception("getTotalCategoriesForAdmin错误" + e.toString());
         }
         return ResultUtil.success(totalCategoriesForAdmin);
+    }
+
+    @PostMapping("/addCategoryForAdmin/{categoryName}")
+    public Result addCategoryForAdmin(HttpServletRequest request, @PathVariable("categoryName") String categoryName) throws Exception {
+        Claims claims = null;
+        try {
+            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
+            int userId = (int) claims.get("userId");
+            categoryService.addCategoryForAdmin(userId, categoryName);
+        } catch (Exception e) {
+            log.error("addCategoryForAdmin错误" + e.toString());
+            throw new Exception("addCategoryForAdmin错误" + e.toString());
+        }
+        return ResultUtil.success(null);
+    }
+
+    @PostMapping("/deleteCategoryForAdmin/{categoryId}")
+    public Result deleteCategoryForAdmin(HttpServletRequest request, @PathVariable("categoryId") int categoryId) throws Exception {
+        Claims claims = null;
+        try {
+            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
+            int userId = (int) claims.get("userId");
+            if (categoryService.deleteCategoryForAdmin(userId, categoryId)) {
+                return ResultUtil.success(null);
+            } else {
+                return ResultUtil.operationError("请先修改/删除与此类别相关联的博客!", null);
+            }
+        } catch (Exception e) {
+            log.error("deleteCategoryForAdmin错误" + e.toString());
+            throw new Exception("deleteCategoryForAdmin错误" + e.toString());
+        }
+
+    }
+
+    @PostMapping("/updateCategoryForAdmin/{categoryId}/{categoryName}")
+    public Result updateCategoryForAdmin(HttpServletRequest request, @PathVariable("categoryId") int categoryId, @PathVariable("categoryName") String categoryName) throws Exception {
+        Claims claims = null;
+        try {
+            claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
+            int userId = (int) claims.get("userId");
+            categoryService.updateCategoryForAdmin(userId, categoryName, categoryId);
+        } catch (Exception e) {
+            log.error("updateCategoryForAdmin错误" + e.toString());
+            throw new Exception("updateCategoryForAdmin错误" + e.toString());
+        }
+        return ResultUtil.success(null);
     }
 }

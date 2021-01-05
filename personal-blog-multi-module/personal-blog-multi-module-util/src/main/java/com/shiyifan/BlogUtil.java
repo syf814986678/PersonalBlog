@@ -320,7 +320,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [blog]
      **/
     public void setTempBlogForAdmin(int userId, Blog blog) throws Exception {
-        log.info("方法:setTempBlogForAdmin开始,userId:" + userId);
+        log.info("方法:setTempBlogForAdmin开始,userId:" + userId+",blogId:" + blog.getBlogId());
         try {
             redisUtil.set(userTempBlog + userId, blog);
         } catch (Exception e) {
@@ -415,7 +415,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [userId, blog]
      **/
     public void updateBlogInRedisAndElasticSearchForAdmin(int userId, Blog blog) throws Exception {
-        log.info("方法:updateBlogInRedisAndElasticSearchForAdmin开始,userId:" + userId);
+        log.info("方法:updateBlogInRedisAndElasticSearchForAdmin开始,userId:" + userId+",blogId:" + blog.getBlogId());
         ArrayList<Blog> blogList = null;
         try {
             ElasticSearchBlog elasticSearchBlog = blogMapper.selectElasticSearchBlogByIdForAdmin(userId, blog.getBlogId());

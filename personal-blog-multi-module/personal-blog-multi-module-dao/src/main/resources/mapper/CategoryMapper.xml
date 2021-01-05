@@ -58,4 +58,26 @@
         where category_user_id = #{userId}
           and is_deleted = 0
     </select>
+
+    <insert id="addCategoryForAdmin">
+        insert into mycategory
+        values (null, #{categoryName}, 0, #{userId}, 0, null, null)
+    </insert>
+
+    <update id="deleteCategoryForAdmin">
+        update mycategory
+        set is_deleted =1,
+            update_gmt = CURRENT_TIMESTAMP
+        where category_id = #{categoryId}
+          and category_user_id = #{userId}
+    </update>
+
+    <update id="updateCategoryForAdmin">
+        update mycategory
+        set category_name =#{categoryName},
+            update_gmt = CURRENT_TIMESTAMP
+        where category_id = #{categoryId}
+          and category_user_id = #{userId}
+          and is_deleted = 0
+    </update>
 </mapper>

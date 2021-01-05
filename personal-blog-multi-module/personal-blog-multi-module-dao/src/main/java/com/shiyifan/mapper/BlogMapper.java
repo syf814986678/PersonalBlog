@@ -108,4 +108,13 @@ public interface BlogMapper {
      * @params [userId, blogId]
      **/
     Blog selectBlogByIdForAdmin(@Param("userId") int userId, @Param("blogId") String blogId);
+
+    /**
+     * @return java.util.ArrayList<java.lang.String>
+     * @author user
+     * @date 2021-01-05 15:12:45
+     * @method selectBlogIdByCategoryIdForAdmin
+     * @params [userId, categoryId]
+     **/
+    ArrayList<String> selectBlogIdByCategoryIdForAdmin(@Param("userId") int userId, @Param("categoryId") int categoryId);
 }

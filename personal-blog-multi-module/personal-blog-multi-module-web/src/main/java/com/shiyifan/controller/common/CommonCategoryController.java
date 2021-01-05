@@ -23,6 +23,13 @@ public class CommonCategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    /**
+     * @return com.shiyifan.pojo.Result
+     * @author user
+     * @date 2021-01-05 16:04:06
+     * @method selectCategoryForCommon
+     * @params []
+     **/
     @PostMapping("/selectCategoryForCommon")
     public Result selectCategoryForCommon() throws Exception {
         ArrayList<Category> categoryListForCommon = null;

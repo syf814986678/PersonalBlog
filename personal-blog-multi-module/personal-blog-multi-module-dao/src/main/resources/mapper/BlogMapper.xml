@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.shiyifan.mapper.BlogMapper">
+
     <resultMap id="category_name_and_username" type="com.shiyifan.pojo.Blog">
         <association property="category" column="blog_category_id" select="selectCategoryById"/>
         <association property="user" column="blog_user_id" select="selectUserById"/>
@@ -19,6 +20,23 @@
         from myuser
         where user_id = #{blog_user_id}
           and is_deleted = 0
+    </select>
+
+    <resultMap id="elasticsearchBlog" type="ElasticSearchBlog">
+        <association property="blogCategory" column="blog_category_id"  select="selectCategory"/>
+        <association property="blogUser" column="blog_user_id"  select="selectUser"/>
+    </resultMap>
+    <select id="selectCategory" resultType="string">
+        select category_name
+        from mycategory
+        where category_id =#{blog_category_id}
+          and is_deleted =0
+    </select>
+    <select id="selectUser" resultType="string">
+        select user_name
+        from myuser
+        where user_id =#{blog_user_id}
+          and is_deleted =0
     </select>
 
     <select id="selectBlogListByPageForCommon" resultMap="category_name_and_username">
@@ -80,8 +98,15 @@
           and is_deleted = 0;
     </select>
 
-    <select id="selectElasticSearchBlogByIdForAdmin" resultType="com.shiyifan.pojo.ElasticSearchBlog">
-        select *
+    <select id="selectElasticSearchBlogByIdForAdmin" resultMap="elasticsearchBlog">
+        select blog_id,
+               blog_title,
+               blog_cover_image,
+               blog_content,
+               blog_category_id,
+               blog_user_id,
+               create_gmt,
+               update_gmt
         from myblog
         where blog_id = #{blogId}
           and blog_user_id = #{userId}
@@ -114,6 +139,14 @@
         select *
         from myblog
         where blog_id = #{blogId}
+          and blog_user_id = #{userId}
+          and is_deleted = 0;
+    </select>
+
+    <select id="selectBlogIdByCategoryIdForAdmin" resultType="java.lang.String">
+        select blog_id
+        from myblog
+        where blog_category_id = #{categoryId}
           and blog_user_id = #{userId}
           and is_deleted = 0;
     </select>

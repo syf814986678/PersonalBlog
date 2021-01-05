@@ -229,7 +229,7 @@ public class BlogServiceImpl implements BlogService {
      **/
     @Override
     public void setTempBlogForAdmin(int userId, Blog blog) throws Exception {
-        log.info("方法:setTempBlogForAdmin开始,userId:" + userId);
+        log.info("方法:setTempBlogForAdmin开始,userId:" + userId + ",blogId:" + blog.getBlogId());
         try {
             blogUtil.setTempBlogForAdmin(userId, blog);
         } catch (Exception e) {
@@ -262,7 +262,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean addBlogForAdmin(int userId, Blog blog) throws Exception {
-        log.info("方法:addBlogForAdmin开始,userId:" + userId);
+        log.info("方法:addBlogForAdmin开始,userId:" + userId + ",blogId:" + blog.getBlogId());
         try {
             blog.setBlogId(UUID.randomUUID().toString().replaceAll("-", ""));
             Integer categoryRankForAdmin = categoryService.getCategoryRankForAdmin(userId, blog.getCategory().getCategoryId());
@@ -311,7 +311,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean updateBlogForAdmin(int userId, Blog blog) throws Exception {
-        log.info("方法:updateBlogForAdmin开始,userId:" + userId);
+        log.info("方法:updateBlogForAdmin开始,userId:" + userId + ",blogId:" + blog.getBlogId());
         try {
             Integer categoryIdForAdminInDb = categoryService.getCategoryIdForAdmin(userId, blog.getBlogId());
             if (categoryIdForAdminInDb == null) {
@@ -336,6 +336,28 @@ public class BlogServiceImpl implements BlogService {
     }
 
     /**
+     * @return java.lang.Boolean
+     * @author user
+     * @date 2021-01-05 15:06:50
+     * @method updateBlogForAdmin
+     * @params [userId, blogId]
+     **/
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateBlogForAdmin(int userId, String blogId) throws Exception {
+        log.info("方法:updateBlogForAdmin开始,userId:" + userId + ",blogId:" + blogId);
+        try {
+            Blog newBlog = blogMapper.selectBlogForRedisForAdmin(userId, blogId);
+            blogUtil.updateBlogInRedisAndElasticSearchForAdmin(userId, newBlog);
+        } catch (Exception e) {
+            log.error("updateBlogForAdmin错误" + e);
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new Exception("updateBlogForAdmin错误" + e);
+        }
+        return true;
+    }
+
+    /**
      * @return com.shiyifan.pojo.Blog
      * @author ZouCha
      * @date 2021-01-02 18:16:36
@@ -344,7 +366,7 @@ public class BlogServiceImpl implements BlogService {
      **/
     @Override
     public Blog selectBlogByIdForAdmin(int userId, String blogId) throws Exception {
-        log.info("方法:selectBlogByIdForAdmin开始,blogId:" + blogId);
+        log.info("方法:selectBlogByIdForAdmin开始,userId:" + userId + ",blogId:" + blogId);
         Blog blog = null;
         try {
             blog = blogMapper.selectBlogByIdForAdmin(userId, blogId);
@@ -354,4 +376,25 @@ public class BlogServiceImpl implements BlogService {
         }
         return blog;
     }
+
+    /**
+     * @return java.util.ArrayList<java.lang.String>
+     * @author user
+     * @date 2021-01-05 15:15:19
+     * @method selectBlogIdByCategoryIdForAdmin
+     * @params [userId, categoryId]
+     **/
+    @Override
+    public ArrayList<String> selectBlogIdByCategoryIdForAdmin(int userId, int categoryId) throws Exception {
+        log.info("方法:selectBlogIdByCategoryIdForAdmin开始,userId:" + userId + ",categoryId:" + categoryId);
+        ArrayList<String> blogId = null;
+        try {
+            blogId = blogMapper.selectBlogIdByCategoryIdForAdmin(userId, categoryId);
+        } catch (Exception e) {
+            log.error("selectBlogIdByCategoryIdForAdmin错误" + e.toString());
+            throw new Exception("selectBlogIdByCategoryIdForAdmin错误" + e.toString());
+        }
+        return blogId;
+    }
+
 }

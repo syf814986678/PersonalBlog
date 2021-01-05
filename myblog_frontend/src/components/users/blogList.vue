@@ -258,7 +258,7 @@ export default {
     querySearchAsync(queryString,cb){
       this.$http.post("/blog/common/hotkeys").then(response=>{
         if (response!=null){
-          this.hotkeys=response.data.msg["hotkeys"]
+          this.hotkeys=response.data.data
           cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
         }
       }).catch(error=> {

@@ -6,6 +6,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.ArrayList;
 
@@ -18,8 +20,12 @@ import java.util.ArrayList;
 @Order
 @Log4j2
 public class CategoryServiceImpl implements CategoryService {
+
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private BlogService blogService;
 
     /**
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>
@@ -50,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
      **/
     @Override
     public ArrayList<Category> selectCategoryForAdmin(int userId, int pageNow, int pageSize) throws Exception {
-        log.info("方法:selectCategoryForAdmin开始,userId:" + userId);
+        log.info("方法:selectCategoryForAdmin开始,userId:" + userId + ",pageNow:" + pageNow + ",pageSize:" + pageSize);
         ArrayList<Category> categories = null;
         int start = 0;
         int end = 0;
@@ -97,12 +103,14 @@ public class CategoryServiceImpl implements CategoryService {
      * @params [userId, categoryId]
      **/
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addCategoryRankForAdmin(int userId, int categoryId) throws Exception {
         log.info("方法:addCategoryRankForAdmin开始,userId:" + userId + ",categoryId:" + categoryId);
         try {
             categoryMapper.addCategoryRankForAdmin(userId, categoryId);
         } catch (Exception e) {
             log.error("addCategoryRankForAdmin错误" + e.toString());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw new Exception("addCategoryRankForAdmin错误" + e.toString());
         }
     }
@@ -115,12 +123,14 @@ public class CategoryServiceImpl implements CategoryService {
      * @params [userId, categoryId]
      **/
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteCategoryRankForAdmin(int userId, int categoryId) throws Exception {
         log.info("方法:deleteCategoryRankForAdmin开始,userId:" + userId + ",categoryId:" + categoryId);
         try {
             categoryMapper.deleteCategoryRankForAdmin(userId, categoryId);
         } catch (Exception e) {
             log.error("deleteCategoryRankForAdmin错误" + e.toString());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw new Exception("deleteCategoryRankForAdmin错误" + e.toString());
         }
     }
@@ -164,4 +174,77 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return totalCategoriesForAdmin;
     }
+
+    /**
+     * @return java.lang.Boolean
+     * @author user
+     * @date 2021-01-05 14:14:48
+     * @method addCategoryForAdmin
+     * @params [userId, categoryName]
+     **/
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean addCategoryForAdmin(int userId, String categoryName) throws Exception {
+        log.info("方法:addCategoryForAdmin开始,userId:" + userId + ",categoryName:" + categoryName);
+        try {
+            categoryMapper.addCategoryForAdmin(userId, categoryName);
+        } catch (Exception e) {
+            log.error("addCategoryForAdmin错误" + e.toString());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new Exception("addCategoryForAdmin错误" + e.toString());
+        }
+        return true;
+    }
+
+    /**
+     * @return java.lang.Boolean
+     * @author user
+     * @date 2021-01-05 14:34:59
+     * @method deleteCategoryForAdmin
+     * @params [userId, categoryId]
+     **/
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteCategoryForAdmin(int userId, int categoryId) throws Exception {
+        log.info("方法:deleteCategoryForAdmin开始,userId:" + userId + ",categoryId:" + categoryId);
+        try {
+            Integer categoryRankForAdmin = getCategoryRankForAdmin(userId, categoryId);
+            if (categoryRankForAdmin != null && categoryRankForAdmin > 0) {
+                return false;
+            }
+            categoryMapper.deleteCategoryForAdmin(userId, categoryId);
+        } catch (Exception e) {
+            log.error("deleteCategoryForAdmin错误" + e.toString());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new Exception("deleteCategoryForAdmin错误" + e.toString());
+        }
+        return true;
+    }
+
+    /**
+     * @return java.lang.Boolean
+     * @author user
+     * @date 2021-01-05 14:35:06
+     * @method updateCategoryForAdmin
+     * @params [userId, categoryName, categoryId]
+     **/
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean updateCategoryForAdmin(int userId, String categoryName, int categoryId) throws Exception {
+        log.info("方法:updateCategoryForAdmin开始,userId:" + userId + ",categoryId:" + categoryId + ",categoryName:" + categoryName);
+        try {
+            categoryMapper.updateCategoryForAdmin(userId, categoryName, categoryId);
+            ArrayList<String> blogIds = blogService.selectBlogIdByCategoryIdForAdmin(userId, categoryId);
+            for (String blogId : blogIds) {
+                blogService.updateBlogForAdmin(userId, blogId);
+            }
+        } catch (Exception e) {
+            log.error("updateCategoryForAdmin错误" + e.toString());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new Exception("updateCategoryForAdmin错误" + e.toString());
+        }
+        return true;
+    }
+
+
 }

@@ -22,8 +22,9 @@ public class GlobalExceptionHandler {
     public Result handleException() {
         return ResultUtil.exception("系统出现异常!", null);
     }
+
     @ExceptionHandler(OSSException.class)
-    public Result handleOssException(){
+    public Result handleOssException() {
         return ResultUtil.ossException("Oss回调异常！", null);
     }
 }

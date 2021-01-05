@@ -16,14 +16,14 @@
             size="mini"
             type="success"
             plain
-            @click="selectcategory(scope.$index, scope.row)"
+            @click="selectCategory(scope.$index, scope.row)"
           >编辑</el-button>
           <el-button
             style="margin-top: 10px;margin-left: 0"
             size="mini"
             type="danger"
             plain
-            @click="showdeletedialog(scope.$index, scope.row)"
+            @click="showDeleteDialog(scope.$index, scope.row)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -55,7 +55,7 @@
       <el-button :disabled="loading" @click="showDialog" type="success" style="float: right;margin-top: 10px;margin-bottom: 0">添加类别</el-button>
     </el-row>
 
-    <el-dialog width="80%" :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+    <el-dialog v-loading="dialogLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" width="80%" :title="this.addOrUpdate?'添加类别':'更新类别'" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <div class="pc">
         <el-row style="box-shadow: 0 0 12px 0 rgb(245,155,106);padding:30px 0">
           <el-col :span="4">
@@ -65,7 +65,7 @@
             <el-input v-model="categoryName" placeholder="输入类别名称" style="border-radius: 4px;box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width: 80%"></el-input>
           </el-col>
           <el-col :span="4">
-            <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);float: left" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
+            <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);float: left" type="success" @click="addOrUpdate?addCategory():updateCategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
           </el-col>
         </el-row>
       </div>
@@ -77,9 +77,9 @@
           <el-input v-model="categoryName
          " placeholder="输入类别名称" style="border-radius: 4px;box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);"></el-input>
         </el-row>
-        <el-row style="text-align: center">
-          <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width: 200px" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
-        </el-row>
+<!--        <el-row style="text-align: center">-->
+<!--          <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width: 200px" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>-->
+<!--        </el-row>-->
       </div>
     </el-dialog>
   </div>
@@ -100,6 +100,7 @@ export default {
       currentPage: 1,
       pageSize: 11,
       total: null,
+      dialogLoading: true
     }
   },
   methods: {
@@ -136,101 +137,95 @@ export default {
     handleCurrentChange(page){
       this.refreshDate(this.$store.state.user.userId,page,this.pageSize);
     },
-    // addCategory(){
-    //   if (this.categoryName ===''){
-    //     return this.$store.commit('errorMsg',"请输入类别名称")
-    //   }
-    //   this.$http.post("/category/addCategory/"+this.categoryName).then(response=>{
-    //     if (response!=null){
-    //       this.$notify({
-    //         title: '添加成功',
-    //         message: response.data.msg["add"],
-    //         type: 'success',
-    //         duration: 2500
-    //       });
-    //       this.dialogFormVisible=false
-    //       this.refreshDate(this.$store.state.user.userId,this.currentPage,this.pageSize);
-    //       this.categoryName =''
-    //     }
-    //   }).catch(error=> {
-    //     console.log(error)
-    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //   })
-    // },
-    // updateCategory(){
-    //   if (this.categoryName ===''){
-    //     return this.$store.commit('errorMsg',"请输入类别名称")
-    //   }
-    //   this.$http.post("/category/updateCategory/"+this.categoryId+"/"+this.categoryName).then(response=>{
-    //     if (response!=null){
-    //       this.$notify({
-    //         title: '修改成功',
-    //         message: response.data.msg["update"],
-    //         type: 'success',
-    //         duration: 2500
-    //       });
-    //       this.dialogFormVisible=false
-    //       this.refreshDate(this.$store.state.user.userId,this.currentPage,this.pageSize);
-    //       this.categoryName =''
-    //       this.categoryId=''
-    //     }
-    //   }).catch(error=> {
-    //     console.log(error)
-    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //   })
-    // },
-    // selectCategory(index, row) {
-    //   this.categoryName =''
-    //   this.categoryId=''
-    //   this.addOrUpdate=false
-    //   this.$http.post("/category/selectCategoryById/"+row.categoryId).then(response=>{
-    //     if (response!=null){
-    //       this.categoryName =response.data.msg["mycategory"].categoryName;
-    //       this.categoryId=response.data.msg["mycategory"].categoryId;
-    //       this.dialogFormVisible=true;
-    //     }
-    //   }).catch(error=> {
-    //     console.log(error)
-    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //   })
-    // },
+    addCategory(){
+      if (this.categoryName ===''){
+        return this.$store.commit('errorMsg',"请输入类别名称")
+      }
+      this.dialogLoading=true
+      this.$http.post("/category/admin/addCategoryForAdmin/"+this.categoryName).then(response=>{
+        if (response!=null){
+          this.$notify({
+            title: '添加类别',
+            message: "添加成功",
+            type: 'success',
+            duration: 2500
+          });
+          this.dialogFormVisible=false
+          this.refreshDate(this.currentPage,this.pageSize);
+        }
+      }).catch(error=> {
+        console.log(error)
+        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      })
+    },
+    updateCategory(){
+      if (this.categoryName ===''){
+        return this.$store.commit('errorMsg',"请输入类别名称")
+      }
+      this.dialogLoading=true
+      this.$http.post("/category/admin/updateCategoryForAdmin/"+this.categoryId+"/"+this.categoryName).then(response=>{
+        if (response!=null){
+          this.$notify({
+            title: '修改类别',
+            message: "修改成功",
+            type: 'success',
+            duration: 2500
+          });
+          this.dialogFormVisible=false
+          this.refreshDate(this.currentPage,this.pageSize);
+          this.categoryName =''
+          this.categoryId=''
+        }
+      }).catch(error=> {
+        console.log(error)
+        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      })
+    },
+    selectCategory(index, row) {
+      this.categoryName=row.categoryName;
+      this.categoryId=row.categoryId;
+      this.addOrUpdate=false;
+      this.dialogLoading=false;
+      this.dialogFormVisible=true;
+    },
     showDialog(){
       this.categoryName =''
       this.dialogFormVisible=true
       this.addOrUpdate=true
     },
-    // showDeletedialog(index, row) {
-    //   this.$confirm('此操作将永久删除该类别, 是否继续?', '提示', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     type: 'warning'
-    //   }).then(() => {
-    //     this.deleteCategory(row.categoryId);
-    //   }).catch(() => {
-    //     this.$notify({
-    //       title: '取消',
-    //       message: '删除取消',
-    //       type: 'warning',
-    //       duration: 2500
-    //     });
-    //   });
-    // },
-    // deleteCategory(categoryid) {
-    //   this.$http.post("/category/deleteCategory/"+categoryid).then(response=>{
-    //     if (response!=null){
-    //       this.$notify({
-    //         title: '删除成功',
-    //         message: response.data.msg["delete"],
-    //         type: 'success',
-    //         duration: 2500
-    //       });
-    //       this.refreshDate(this.$store.state.user.userId,this.currentPage,this.pageSize);
-    //     }
-    //   }).catch(error=> {
-    //     console.log(error)
-    //     this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-    //   })
-    // },
+    showDeleteDialog(index, row) {
+      this.$confirm('此操作将永久删除该类别, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.deleteCategory(row.categoryId);
+      }).catch(() => {
+        this.$notify({
+          title: '取消',
+          message: '删除取消',
+          type: 'warning',
+          duration: 2500
+        });
+      });
+    },
+    deleteCategory(categoryId) {
+      this.loading=true;
+      this.$http.post("/category/admin/deleteCategoryForAdmin/"+categoryId).then(response=>{
+        if (response!=null){
+          this.$notify({
+            title: '删除类别',
+            message: "删除成功",
+            type: 'success',
+            duration: 2500
+          });
+          this.refreshDate(this.currentPage,this.pageSize);
+        }
+      }).catch(error=> {
+        console.log(error)
+        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      })
+    },
   },
   created() {
     this.refreshDate(this.currentPage,this.pageSize);
