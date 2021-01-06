@@ -108,7 +108,6 @@
         }
         else if (this.$route.params.bloglist==="category"){
           this.$http.post("/blog/common/selectBlogListByPageForCommon/"+this.$route.params.bloglist2+"/"+page+"/"+this.pageSize).then(response=>{
-            console.log(response)
             if (response!=null){
               this.blogs=response.data.data
               this.$http.post("/blog/common/selectTotalBlogsForCommon/"+this.$route.params.bloglist2).then(response=>{

@@ -15,10 +15,19 @@ public interface CategoryService {
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>
      * @author ZouCha
      * @date 2020-12-05 18:28:11
-     * @method selectCategoryForCommon
+     * @method selectTopTenCategoryForCommon
      * @params []
      **/
-    ArrayList<Category> selectCategoryForCommon() throws Exception;
+    ArrayList<Category> selectTopTenCategoryForCommon() throws Exception;
+
+    /**
+     * @return java.util.ArrayList<com.shiyifan.pojo.Category>
+     * @author user
+     * @date 2021-01-06 14:26:29
+     * @method selectAllCategoryForCommon
+     * @params []
+     **/
+    ArrayList<Category> selectAllCategoryForCommon() throws Exception;
 
     /**
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>

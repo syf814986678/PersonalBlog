@@ -21,10 +21,19 @@ public interface CategoryMapper {
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>
      * @author ZouCha
      * @date 2020-12-05 16:12:00
-     * @method selectCategoryForCommon
+     * @method selectTopTenCategoryForCommon
      * @params []
      **/
-    ArrayList<Category> selectCategoryForCommon();
+    ArrayList<Category> selectTopTenCategoryForCommon();
+
+    /**
+     * @return java.util.ArrayList<com.shiyifan.pojo.Category>
+     * @author user
+     * @date 2021-01-06 14:26:12
+     * @method selectAllCategoryForCommon
+     * @params []
+     **/
+    ArrayList<Category> selectAllCategoryForCommon();
 
     /**
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>

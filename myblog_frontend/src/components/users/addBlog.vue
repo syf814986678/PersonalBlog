@@ -174,6 +174,33 @@ export default {
       loading: true,
       filename: '',
       type: -1,
+      testData: {
+        blogId: "",
+        blogTitle: "武林外传(二)",
+        blogCoverImage: "https://picture.chardance.cloud/myblog/Random/20.jpg",
+        blogContent: null,
+        category: {
+          categoryId: 15,
+          categoryName: "武林外传2",
+          categoryRank: 0,
+          categoryUserId: 0,
+          isDeleted: 0,
+          createGmt: null,
+          updateGmt: null
+        },
+        user: {
+          userId: 3,
+          userName: "test",
+          userPassword: null,
+          userRole: null,
+          isDeleted: 0,
+          createGmt: null,
+          updateGmt: null
+        },
+        isDeleted: 0,
+        createGmt: "2021-11-11 13:54:34",
+        updateGmt: "2021-11-11 13:54:34"
+      }
     }
   },
   methods: {
@@ -218,21 +245,21 @@ export default {
             type: 'warning',
             duration: 1000
           });
-          this.$http.post("/blog/admin/addBlogForAdmin",this.form).then(response=>{
-            if (response!=null){
-              this.$notify({
-                title: '发布博客',
-                message: "发布成功",
-                type: 'success',
-                duration: 2500
-              });
-              this.cancel();
-              this.$router.push("/admin/showBlogList");
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
+          this.$router.push({name:'showBlogList',params:{test:this.testData}});
+          // this.$http.post("/blog/admin/addBlogForAdmin",this.form).then(response=>{
+          //   if (response!=null){
+          //     this.$notify({
+          //       title: '发布博客',
+          //       message: "发布成功",
+          //       type: 'success',
+          //       duration: 2500
+          //     });
+          //     this.cancel();
+          //   }
+          // }).catch(error=> {
+          //   console.log(error)
+          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          // })
         }
         else {
           this.$store.commit('errorMsg',"有非空数据未填写!")
@@ -320,7 +347,6 @@ export default {
     this.$http.post("/blog/admin/getTempBlogForAdmin").then(response=>{
       if (response!=null){
         if (response.data.data!==null){
-          console.log(response)
           this.$notify({
             title: '加载博客',
             message: "加载暂存博客成功",

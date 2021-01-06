@@ -31,18 +31,40 @@ public class CategoryServiceImpl implements CategoryService {
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>
      * @author ZouCha
      * @date 2020-12-05 18:29:31
-     * @method selectCategoryForCommon
+     * @method selectTopTenCategoryForCommon
      * @params []
      **/
     @Override
-    public ArrayList<Category> selectCategoryForCommon() throws Exception {
+    public ArrayList<Category> selectTopTenCategoryForCommon() throws Exception {
         log.info("方法:selectCategoryForCommon开始");
         ArrayList<Category> categories = null;
         try {
-            categories = categoryMapper.selectCategoryForCommon();
+            categories = categoryMapper.selectTopTenCategoryForCommon();
         } catch (Exception e) {
             log.error("查找公共类别错误" + e.toString());
             throw new Exception("查找公共类别错误" + e.toString());
+        }
+        return categories;
+    }
+
+    /**
+     *
+     * @author user
+     * @date 2021-01-06 14:26:49
+     * @method selectAllCategoryForCommon
+     * @params []
+     * @return java.util.ArrayList<com.shiyifan.pojo.Category>
+     *
+     **/
+    @Override
+    public ArrayList<Category> selectAllCategoryForCommon() throws Exception {
+        log.info("方法:selectAllCategoryForCommon开始");
+        ArrayList<Category> categories = null;
+        try {
+            categories = categoryMapper.selectAllCategoryForCommon();
+        } catch (Exception e) {
+            log.error("selectAllCategoryForCommon错误" + e.toString());
+            throw new Exception("selectAllCategoryForCommon错误" + e.toString());
         }
         return categories;
     }

@@ -77,9 +77,9 @@
           <el-input v-model="categoryName
          " placeholder="输入类别名称" style="border-radius: 4px;box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);"></el-input>
         </el-row>
-<!--        <el-row style="text-align: center">-->
-<!--          <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width: 200px" type="success" @click="addOrUpdate?addcategory():updatecategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>-->
-<!--        </el-row>-->
+        <el-row style="text-align: center">
+          <el-button style="box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.8);width: 200px" type="success" @click="addOrUpdate?addCategory():updateCategory()">{{this.addOrUpdate?'添加':'修改'}}</el-button>
+        </el-row>
       </div>
     </el-dialog>
   </div>

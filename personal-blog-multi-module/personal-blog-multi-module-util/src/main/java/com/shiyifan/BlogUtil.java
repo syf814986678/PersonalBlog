@@ -100,7 +100,7 @@ public class BlogUtil implements ApplicationRunner {
     public void initCategoryBlogListForCommon() throws Exception {
         log.info("方法:initCategoryBlogListForCommon开始");
         try {
-            for (Category category : categoryMapper.selectCategoryForCommon()) {
+            for (Category category : categoryMapper.selectAllCategoryForCommon()) {
                 ArrayList<Blog> categoryBlogListForCommon = blogMapper.selectBlogListByPageForCommon(category.getCategoryId());
                 for (Blog blog : categoryBlogListForCommon) {
                     redisUtil.RSet(categoryBlogsForCommon + category.getCategoryId(), blog);
@@ -249,7 +249,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [userId]
      **/
     public void initCategoryBlogListForAdmin(int userId) throws Exception {
-        log.info("方法:initCategoryBlogListForAdmin开始,:userId" + userId);
+        log.info("方法:initCategoryBlogListForAdmin开始,:userId:" + userId);
         try {
             for (Category category : categoryMapper.selectCategoryForAdmin(userId,0,Integer.MAX_VALUE)) {
                 ArrayList<Blog> categoryBlogListForAdmin = blogMapper.selectBlogListByPageForAdmin(userId, category.getCategoryId());
@@ -308,7 +308,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [userId, categoryId, start, end]
      **/
     public ArrayList<Blog> getCategoryBlogListByPageForAdmin(int userId, int categoryId, int start, int end) {
-        log.info("方法:getCategoryBlogListByPageForAdmin开始,userId:" + userId + ",categoryId:" + categoryId + ",start:" + start + ",end");
+        log.info("方法:getCategoryBlogListByPageForAdmin开始,userId:" + userId + ",categoryId:" + categoryId + ",start:" + start + ",end"+ end);
         return (ArrayList<Blog>) (Object) redisUtil.lGet(categoryBlogsForAdmin + userId + categoryId, start, end);
     }
 

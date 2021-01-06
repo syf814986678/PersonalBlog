@@ -1,12 +1,31 @@
 <template>
   <div style="margin: 0 auto">
-    <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" border :row-class-name="tableRowClassName" :data="myData">
-      <el-table-column :resizable="false" type="index" :index="indexMethod" align="center" label="编号" width="50"></el-table-column>
-      <el-table-column show-overflow-tooltip align="center" label="博客标题" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px"  type="danger">{{scope.row.blogTitle}}</el-tag></el-table-column>
-      <el-table-column align="center" label="封面图片" width="275" v-slot="scope"><el-image style="width: 250px;height: 100px" :src="scope.row.blogCoverImage" fit="fill"></el-image></el-table-column>
-      <el-table-column sortable align="center" prop="category.categoryName" label="博客类别" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="warning">{{scope.row.category.categoryName}}</el-tag></el-table-column>
-      <el-table-column sortable align="center" prop="createGmt" label="创建时间" width="164" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{scope.row.createGmt}}</el-tag></el-table-column>
-      <el-table-column sortable align="center" prop="updateGmt" label="更新时间" width="164" v-slot="scope"><el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{scope.row.updateGmt}}</el-tag></el-table-column>
+    <div  v-loading="categoriesLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
+          element-loading-background="rgba(0, 0, 0, 0.8)"
+          style="margin-bottom: 10px">
+      <el-button size="medium" v-for="item in categories" :key="item.categoryId" type="primary" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId)">{{item.categoryName}}({{item.categoryRank}})</el-button>
+    </div>
+    <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
+              element-loading-background="rgba(0, 0, 0, 0.8)" border :row-class-name="tableRowClassName" :data="myData">
+      <el-table-column :resizable="false" type="index" :index="indexMethod" align="center" label="编号"
+                       width="50"></el-table-column>
+      <el-table-column show-overflow-tooltip align="center" label="博客标题" v-slot="scope">
+        <el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="danger">{{ scope.row.blogTitle }}</el-tag>
+      </el-table-column>
+      <el-table-column align="center" label="封面图片" width="275" v-slot="scope">
+        <el-image style="width: 250px;height: 100px" :src="scope.row.blogCoverImage" fit="fill"></el-image>
+      </el-table-column>
+      <el-table-column sortable align="center" prop="category.categoryName" label="博客类别" v-slot="scope">
+        <el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="warning">
+          {{ scope.row.category.categoryName }}
+        </el-tag>
+      </el-table-column>
+      <el-table-column sortable align="center" prop="createGmt" label="创建时间" width="164" v-slot="scope">
+        <el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{ scope.row.createGmt }}</el-tag>
+      </el-table-column>
+      <el-table-column sortable align="center" prop="updateGmt" label="更新时间" width="164" v-slot="scope">
+        <el-tag effect="dark" style="padding: 0 5px;margin:0 -5px" type="success">{{ scope.row.updateGmt }}</el-tag>
+      </el-table-column>
       <el-table-column align="center">
         <template slot="header" slot-scope="scope">
           <el-autocomplete
@@ -25,27 +44,39 @@
             </template>
           </el-autocomplete>
         </template>
-        <template slot-scope="scope" >
+        <template slot-scope="scope">
           <el-button
             size="mini"
-            type="primary"
+            :type="scope.row.blogId === ''?'info':'primary'"
             plain
+            :disabled="scope.row.blogId === ''"
             @click="showBlog(scope.row)"
-          >查看</el-button>
+          >查看
+          </el-button>
           <el-button
             style="margin-top: 10px;margin-left: 0"
             size="mini"
-            type="success"
+            :type="scope.row.blogId === ''?'info':'success'"
             plain
+            :disabled="scope.row.blogId === ''"
             @click="selectBlog(scope.$index, scope.row)"
-          >编辑</el-button>
+          >编辑
+          </el-button>
           <el-button
             style="margin-top: 10px;margin-left: 0"
             size="mini"
-            type="danger"
+            :type="scope.row.blogId === ''?'info':'danger'"
             plain
+            :disabled="scope.row.blogId === ''"
             @click="showDeleteDialog(scope.$index, scope.row)"
-          >删除</el-button>
+          >删除
+          </el-button>
+          <el-tag
+            v-if="scope.row.blogId === ''"
+            type="warning"
+            effect="dark">
+            添加中.....
+          </el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -72,7 +103,8 @@
       layout="prev, pager, next, jumper, total"
     >
     </el-pagination>
-    <el-dialog v-loading="dialogLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" id="eldialog" width="90%" title="修改博客" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+    <el-dialog id="eldialog" width="90%" title="修改博客"
+               :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-form inline-message :model="formData" :rules="rules" ref="form" @submit.native.prevent>
         <el-row :gutter="20">
           <el-col :span="12">
@@ -82,8 +114,11 @@
           </el-col>
           <el-col :span="12">
             <el-form-item prop="category.categoryId" class="myitem">
-              <el-select :loading="selectLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" v-model="formData.category.categoryId"  placeholder="博客类别" style="width: 100%">
-                <el-option v-for="option in options" :label="option.categoryName" :value="option.categoryId" :key="option.categoryId"></el-option>
+              <el-select :loading="selectLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
+                         element-loading-background="rgba(0, 0, 0, 0.8)" v-model="formData.category.categoryId"
+                         placeholder="博客类别" style="width: 100%">
+                <el-option v-for="option in options" :label="option.categoryName" :value="option.categoryId"
+                           :key="option.categoryId"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -96,7 +131,8 @@
           <el-col :span="12">
             <el-row>
               <el-form-item prop="blogCoverImage" class="myitem">
-                <el-input :disabled="true" v-model="formData.blogCoverImage" placeholder="博客封面地址" style="margin-top: 15px"></el-input>
+                <el-input :disabled="true" v-model="formData.blogCoverImage" placeholder="博客封面地址"
+                          style="margin-top: 15px"></el-input>
               </el-form-item>
             </el-row>
             <el-row style="margin-top: 15px;text-align: center">
@@ -106,9 +142,11 @@
           <el-col :span="12">
             <el-form-item class="myitem">
               <div class="avatar-uploader" @click="chooseFile">
-                <el-image style="width: 100%; height: 120px" v-if="formData.blogCoverImage" :src="formData.blogCoverImage" fit="fill"></el-image>
+                <el-image style="width: 100%; height: 120px" v-if="formData.blogCoverImage"
+                          :src="formData.blogCoverImage" fit="fill"></el-image>
                 <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                <input type="file" accept="image/png,image/jpeg" id="file" style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" @change="getFile"/>
+                <input type="file" accept="image/png,image/jpeg" id="file"
+                       style="filter:alpha(opacity=0);opacity:0;width: 0;height: 0;" @change="getFile"/>
               </div>
             </el-form-item>
           </el-col>
@@ -118,7 +156,8 @@
         <el-divider></el-divider>
 
         <el-form-item prop="blogContent" class="myitem">
-          <v-md-editor v-model="formData.blogContent" height="740px" :disabled-menus="[]" @upload-image="handleUploadImage"
+          <v-md-editor v-model="formData.blogContent" height="740px" :disabled-menus="[]"
+                       @upload-image="handleUploadImage"
                        :include-level="[1, 6]"
                        left-toolbar="undo redo clear | tip customToolbar h bold italic strikethrough image| ul ol table hr | link code"
                        right-toolbar="preview toc sync-scroll fullscreen"
@@ -138,7 +177,6 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-
   </div>
 </template>
 <script>
@@ -215,7 +253,8 @@ export default {
       options: [],
       search: '',
       loading: true,
-      dialogLoading: true,
+      categoriesLoading: true,
+      // dialogLoading: true,
       selectLoading: false,
       dialogFormVisible: false,
       currentPage: this.$store.state.currentPage,
@@ -223,28 +262,42 @@ export default {
       total: null,
       rules: {
         blogTitle: [
-          {required: true, message: '请输入博客标题', trigger: 'blur' },
+          {required: true, message: '请输入博客标题', trigger: 'blur'},
         ],
         category: {
           categoryId: [
-            { required: true, message: '请选择博客类型', trigger: 'change' }
+            {required: true, message: '请选择博客类型', trigger: 'change'}
           ],
         },
         blogCoverImage: [
-          {required: true, message: '请上传博客封面图片', trigger: 'change' },
+          {required: true, message: '请上传博客封面图片', trigger: 'change'},
         ],
         blogContent: [
-          { required: true, message: '请输入博客内容', trigger: 'change' }
+          {required: true, message: '请输入博客内容', trigger: 'change'}
         ],
       },
-      filename:'',
+      filename: '',
+      categories:[],
+      categoryId:0,
     }
   },
-  methods:{
-    chooseFile(){
+  methods: {
+    testadd(testData) {
+      this.myData.unshift(testData)
+      if (this.myData.length > 5) {
+        this.myData.length = 5
+      }
+    },
+    select(id){
+      this.categoryId=id
+      this.currentPage=1
+      this.$store.commit('setCurrentPage', 1)
+      this.refreshDate(this.categoryId,this.currentPage, this.pageSize);
+    },
+    chooseFile() {
       document.getElementById("file").click()
     },
-    getFile(){
+    getFile() {
       // console.log(document.getElementById("file").files[0])
       const message = this.$message({
         message: '封面图片上传中',
@@ -252,18 +305,18 @@ export default {
         center: true,
         duration: 0,
       });
-      this.getUpLoad(document.getElementById("file").files[0],0)
+      this.getUpLoad(document.getElementById("file").files[0], 0)
       message.close()
     },
-    querySearchAsync(queryString,cb){
-      this.$http.post("/blog/common/hotkeys").then(response=>{
-        if (response!=null){
-          this.hotkeys=response.data.data
+    querySearchAsync(queryString, cb) {
+      this.$http.post("/blog/common/hotkeys").then(response => {
+        if (response != null) {
+          this.hotkeys = response.data.data
           cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
         }
-      }).catch(error=> {
+      }).catch(error => {
         console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
       })
       cb(queryString ? this.hotkeys.filter(this.createStateFilter(queryString)) : this.hotkeys);
     },
@@ -272,12 +325,12 @@ export default {
         return (input.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
       };
     },
-    searchBlog(){
-      if (this.search.length>=1){
-        window.open("/#/bloglist/search/"+this.search)
+    searchBlog() {
+      if (this.search.length >= 1) {
+        window.open("/#/bloglist/search/" + this.search)
       }
     },
-    handleCopyCodeSuccess(){
+    handleCopyCodeSuccess() {
       this.$message({
         message: '代码复制成功',
         type: 'success',
@@ -294,34 +347,45 @@ export default {
         this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
       })
     },
-    refreshDate(pageNow,pageSize){
-      this.$http.post("/blog/admin/selectBlogListByPageForAdmin/"+0+"/"+pageSize+"/"+pageNow).then(response=>{
-        if (response!=null){
-          this.myData=response.data.data;
-          this.$http.post("/blog/admin/selectTotalBlogsForAdmin/"+0).then(response=>{
-            if (response!=null){
-              this.total=response.data.data;
-              this.loading=false;
+    refreshDate(categoryId,pageNow, pageSize) {
+      if (this.$route.params.test!==undefined){
+        this.testadd(this.$route.params.test)
+      }
+      this.$http.post("/blog/admin/selectBlogListByPageForAdmin/" + categoryId + "/" + pageSize + "/" + pageNow).then(response => {
+        if (response != null) {
+          this.myData = response.data.data;
+          this.$http.post("/blog/admin/selectTotalBlogsForAdmin/" + categoryId).then(response => {
+            if (response != null) {
+              this.total = response.data.data;
+              this.loading = false;
             }
-          }).catch(error=> {
+          }).catch(error => {
             console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+            this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
           })
         }
-      }).catch(error=> {
+      }).catch(error => {
         console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+      })
+      this.$http.post("/category/admin/selectCategoryForAdmin/0/0").then(response => {
+        if (response != null) {
+          this.categories = response.data.data;
+          this.categoriesLoading = false;
+        }
+      }).catch(error => {
+        console.log(error)
+        this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
       })
     },
-    handleCurrentChange(page){
-      this.$store.commit('setCurrentPage',page)
-      this.refreshDate(page,this.pageSize);
+    handleCurrentChange(page) {
+      this.$store.commit('setCurrentPage', page)
+      this.refreshDate(this.categoryId,page, this.pageSize);
     },
     tableRowClassName({row, rowIndex}) {
-      if (rowIndex % 2 ) {
+      if (rowIndex % 2) {
         return 'warning-row';
-      }
-      else {
+      } else {
         return 'success-row';
       }
     },
@@ -334,7 +398,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.deleteBlog(row.blogId,row.category.categoryId);
+        this.deleteBlog(row.blogId, row.category.categoryId);
       }).catch(() => {
         this.$notify({
           title: '取消',
@@ -344,83 +408,90 @@ export default {
         });
       });
     },
-    deleteBlog(blogId,categoryId) {
-      this.$http.post("/blog/admin/deleteBlogForAdmin/"+blogId+"/"+categoryId).then(response=>{
-        if (response!=null){
+    deleteBlog(blogId, categoryId) {
+      this.$http.post("/blog/admin/deleteBlogForAdmin/" + blogId + "/" + categoryId).then(response => {
+        if (response != null) {
           this.$notify({
             title: '删除博客',
             message: "删除成功",
             type: 'success',
             duration: 2500
           });
-          this.refreshDate(this.currentPage,this.pageSize);
+          this.refreshDate(this.categoryId,this.currentPage, this.pageSize);
         }
-      }).catch(error=> {
+      }).catch(error => {
         console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
       })
     },
-    cancel(){
-      this.dialogFormVisible=false;
+    cancel() {
+      this.dialogFormVisible = false;
     },
     selectBlog(index, row) {
-      this.$http.post("/blog/admin/selectBlogByIdForAdmin/"+row.blogId).then(response=>{
-        if (response!=null){
-          this.formData=response.data.data;
-          this.$http.post("/category/admin/selectCategoryForAdmin/0/0").then(response=>{
-            if (response!=null){
+      this.$http.post("/blog/admin/selectBlogByIdForAdmin/" + row.blogId).then(response => {
+        if (response != null) {
+          this.formData = response.data.data;
+          this.$http.post("/category/admin/selectCategoryForAdmin/0/0").then(response => {
+            if (response != null) {
               this.options = response.data.data;
-              this.dialogFormVisible=true;
-              this.dialogLoading=false;
+              this.dialogFormVisible = true;
+              // this.dialogLoading = false;
               setTimeout(() => {
-                document.getElementById("eldialog").scrollTop=143
+                document.getElementById("eldialog").scrollTop = 143
               }, 100)
             }
-          }).catch(error=> {
+          }).catch(error => {
             console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+            this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
           })
         }
-      }).catch(error=> {
+      }).catch(error => {
         console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
       })
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.dialogLoading=true;
+          const loading = this.$loading({
+            lock: true,
+            text: 'Loading',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)',
+            body: '.el-dialog'
+          });
           this.$notify({
             title: '更新博客',
             message: "更新中，请稍等！",
             type: 'warning',
             duration: 1000
           });
-          this.$http.post("/blog/admin/updateBlogForAdmin",this.formData).then(response=>{
-            if (response!=null){
+          this.$http.post("/blog/admin/updateBlogForAdmin", this.formData).then(response => {
+            if (response != null) {
               this.$notify({
                 title: '更新博客',
                 message: "更新成功",
                 type: 'success',
                 duration: 2500
               });
-              this.refreshDate(this.currentPage,this.pageSize)
-              this.dialogFormVisible=false
+              loading.close()
+              this.dialogFormVisible = false
+              this.refreshDate(this.categoryId,this.currentPage, this.pageSize)
+
             }
-          }).catch(error=> {
+          }).catch(error => {
             console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+            this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
           })
-        }
-        else {
+        } else {
           return false;
         }
       });
     },
-    showBlog(row){
-      window.open("/#/bloglist/blog/"+row.blogId)
+    showBlog(row) {
+      window.open("/#/bloglist/blog/" + row.blogId)
     },
-    randomName(filename,len) {
+    randomName(filename, len) {
       len = len || 32;
       const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
       const maxPos = chars.length;
@@ -428,12 +499,12 @@ export default {
       for (let i = 0; i < len; i++) {
         pwd += chars.charAt(Math.floor(Math.random() * maxPos));
       }
-      return pwd+filename.substring(filename.lastIndexOf("."))
+      return pwd + filename.substring(filename.lastIndexOf("."))
     },
     handleUploadImage(event, insertImage, files) {
-      this.getUpLoad(files[0],1)
+      this.getUpLoad(files[0], 1)
       insertImage({
-        url:this.filename,
+        url: this.filename,
         desc: '博客图片',
       });
     },
@@ -485,19 +556,19 @@ export default {
   },
   created() {
     const that = this;
-    this.refreshDate(this.currentPage,this.pageSize);
+    this.refreshDate(this.categoryId,this.currentPage, this.pageSize);
     document.onkeydown = function (e) {
       // 回车提交表单
       // 兼容FF和IE和Opera
       var theEvent = window.event || e;
       var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
-      if (document.activeElement.id==="myinput1"&& code === 13) {
+      if (document.activeElement.id === "myinput1" && code === 13) {
         that.searchBlog()
         document.getElementById('myinput1').blur();
       }
     }
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     document.onkeydown = undefined
     next()
   },
@@ -507,59 +578,71 @@ export default {
 .el-table .warning-row {
   background: #d1fcf8;
 }
+
 .el-table .success-row {
   background: #e4daff;
 }
 </style>
 <style scoped>
 @media only screen and (max-width: 767px) {
-  .mobile{
-    margin-top:5px;
+  .mobile {
+    margin-top: 5px;
     padding: 2px 0;
     text-align: center
   }
-  .mypagination{
+
+  .mypagination {
     display: none;
   }
 }
+
 @media only screen and (min-width: 768px) {
-  .mobile{
+  .mobile {
     display: none;
   }
-  .mypagination{
+
+  .mypagination {
     margin-top: 5px;
     margin-bottom: -5px;
     text-align: center
   }
 }
-.v-md-editor__menu-item-红色字体{
+
+.v-md-editor__menu-item-红色字体 {
   color: #dd0000;
 }
-.v-md-editor__menu-item-蓝色字体{
+
+.v-md-editor__menu-item-蓝色字体 {
   color: #0000dd;
 }
-.v-md-editor__menu-item-绿色字体{
+
+.v-md-editor__menu-item-绿色字体 {
   color: #00FF7F;
 }
-.el-divider--horizontal{
+
+.el-divider--horizontal {
   margin: 10px 0;
   background: #ef15e4;
 }
+
 .myitem {
   margin-bottom: 0;
 }
-.avatar-uploader{
+
+.avatar-uploader {
   border: 2px solid #fd1e01;
   border-radius: 6px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  width: 100%;
+  width: 99%;
   height: 120px;
 }
+
 .avatar-uploader:hover {
   border-color: #45ef27;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #45ef27;

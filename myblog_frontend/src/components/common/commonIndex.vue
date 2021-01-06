@@ -1,22 +1,68 @@
 <template>
-  <el-container class="topcontainer">
-    <el-header class="myheader"><div class="mytitle"><span class="mytitletext">字符跳动</span></div></el-header>
-    <el-container class="mycontainer">
-      <el-main :style="{height:this.height+'px'}" class="mymain" id="myelmain" v-loading="this.$store.state.mainLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-        <transition mode="out-in"
-                    enter-active-class="animate__animated animate__bounceInDown animate__faster"
-                    leave-active-class="animate__animated animate__bounceOutDown animate__faster">
-          <router-view/>
-        </transition>
-      </el-main>
-      <el-aside
-        class="myaside"
-        :style="{height:this.height+'px'}"
-        style="max-width: 235px"
-        v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-        <div class="myautocomplete">
+  <div style="margin: 0 auto">
+    <el-container class="topcontainer">
+      <el-header class="myheader"><div class="mytitle"><span class="mytitletext">字符跳动</span></div></el-header>
+      <el-container class="mycontainer">
+        <el-main :style="{height:this.height+'px'}" class="mymain" id="myelmain" v-loading="this.$store.state.mainLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+          <transition mode="out-in"
+                      enter-active-class="animate__animated animate__bounceInDown animate__faster"
+                      leave-active-class="animate__animated animate__bounceOutDown animate__faster">
+            <router-view/>
+          </transition>
+        </el-main>
+        <el-aside
+          class="myaside"
+          :style="{height:this.height+'px'}"
+          style="max-width: 235px"
+          v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+          <div class="myautocomplete">
+            <el-autocomplete
+              id="myinput1"
+              :minlength="1"
+              :maxlength="30"
+              v-model="input"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="请输入搜索内容"
+              @select="handleSelect"
+              suffix-icon=" el-icon-s-opportunity"
+              prefix-icon="el-icon-search">
+              <template slot-scope="{ item }">
+                <span>{{ item.value }}</span>
+                <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
+              </template>
+            </el-autocomplete>
+          </div>
+          <el-divider></el-divider>
+          <div class="mycategory">
+            <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px;margin-top: 10px">TOP10类型</el-tag></el-row>
+            <el-row style="margin-top: 10px">
+              <el-button class="mybutton" round v-for="item in categories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId)">{{item.categoryName}}({{item.categoryRank}})</el-button>
+            </el-row>
+          </div>
+          <el-divider></el-divider>
+          <div class="mycategory infodiv" >
+            <span style="font-size: 18px;font-weight: bold;color: #032c88;float: left">
+              查看全部类别
+            </span>
+            <el-switch
+              @change="openDraw"
+              v-model="drawerVisible"
+              active-color="#13ce66"
+              inactive-color="#ff4949">
+            </el-switch>
+          </div>
+
+          <el-divider></el-divider>
+          <div class="mycategory infodiv">
+            <span style="display: block" class="info motto-shake"></span>
+          </div>
+        </el-aside>
+      </el-container>
+      <div class="mobile" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
+        <div class="mycategory">
           <el-autocomplete
-            id="myinput1"
+            id="myinput2"
+            style="margin-top: 15px;width: 90%"
             :minlength="1"
             :maxlength="30"
             v-model="input"
@@ -30,59 +76,32 @@
               <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
             </template>
           </el-autocomplete>
-        </div>
-        <el-divider></el-divider>
-        <div class="mycategory">
           <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px;margin-top: 10px">TOP10类型</el-tag></el-row>
-          <el-row style="margin-top: 10px">
+          <el-row style="margin-top: 5px;padding-bottom: 10px">
             <el-button class="mybutton" round v-for="item in categories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
           </el-row>
         </div>
-        <el-divider></el-divider>
-        <div class="mycategory infodiv">
-          <span style="display: block" class="info motto-shake"></span>
+      </div>
+      <el-footer class="myfooter">
+        <div class="myfooterinfo">
+          <el-link style="margin-top: -16px;margin-bottom: 0" href="https://www.chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
+          <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
+          <el-link style="margin-top: -16px;margin-bottom: 0" href="http://www.beian.miit.gov.cn" target="_blank" type="danger">沪ICP备20013409号</el-link>
+          <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
+          <el-link class="showTime" style="margin-top: -16px;margin-bottom: 0" href="http://time.tianqi.com/" target="_blank" type="success"></el-link>
         </div>
-          <!--              <el-carousel height="200px" direction="vertical" :autoplay="false">-->
-<!--                <el-carousel-item v-for="item in 3" :key="item">-->
-<!--                  <h3 >{{ item }}</h3>-->
-<!--                </el-carousel-item>-->
-<!--              </el-carousel>-->
-      </el-aside>
+      </el-footer>
     </el-container>
-    <div class="mobile" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)">
-      <div class="mycategory">
-        <el-autocomplete
-          id="myinput2"
-          style="margin-top: 15px;width: 90%"
-          :minlength="1"
-          :maxlength="30"
-          v-model="input"
-          :fetch-suggestions="querySearchAsync"
-          placeholder="请输入搜索内容"
-          @select="handleSelect"
-          suffix-icon=" el-icon-s-opportunity"
-          prefix-icon="el-icon-search">
-          <template slot-scope="{ item }">
-            <span>{{ item.value }}</span>
-            <i style="float: right;margin-top:10px" class="el-icon-trophy"></i>
-          </template>
-        </el-autocomplete>
-        <el-row><el-tag effect="dark" type="danger" style="letter-spacing: 1px;font-size: 14px;margin-top: 10px">TOP10类型</el-tag></el-row>
-        <el-row style="margin-top: 5px;padding-bottom: 10px">
-          <el-button class="mybutton" round v-for="item in categories" :key="item.categoryId" type="success" plain size="mini" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId,item.categoryName)">{{item.categoryName}}({{item.categoryRank}})</el-button>
-        </el-row>
+    <el-drawer
+      size='14%'
+      title="全部类别："
+      :visible.sync="drawerVisible"
+      direction="rtl">
+      <div style="margin-top: 15px;margin-bottom: 15px;margin-left: 20px" v-for="category in allCategories" :key="category.categoryId">
+        <el-button type="primary" style="font-size: 12px;font-weight: bold" @click="select(category.categoryId)">{{category.categoryName}}({{category.categoryRank}})</el-button>
       </div>
-    </div>
-    <el-footer class="myfooter">
-      <div class="myfooterinfo">
-        <el-link style="margin-top: -16px;margin-bottom: 0" href="https://www.chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
-        <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
-        <el-link style="margin-top: -16px;margin-bottom: 0" href="http://www.beian.miit.gov.cn" target="_blank" type="danger">沪ICP备20013409号</el-link>
-        <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
-        <el-link class="showTime" style="margin-top: -16px;margin-bottom: 0" href="http://time.tianqi.com/" target="_blank" type="success"></el-link>
-      </div>
-    </el-footer>
-  </el-container>
+    </el-drawer>
+  </div>
 </template>
 <script>
     import {time} from "../../assets/js/showTime";
@@ -92,7 +111,9 @@
         name: "commonIndex",
       data(){
         return{
+          drawerVisible:false,
           categories:[],
+          allCategories:[],
           loading: true,
           input:'',
           hotkeys: [],
@@ -101,6 +122,22 @@
         }
       },
       methods:{
+        openDraw(){
+          if (this.drawerVisible){
+            this.$http.post("/category/common/selectAllCategoryForCommon").then(response=>{
+              if (response!=null){
+                this.allCategories=response.data.data
+                for (let i = 0; i < this.categories.length; i++) {
+                  this.$store.commit('setCategory',[this.categories[i].categoryId,this.categories[i].categoryName])
+                }
+                this.drawerVisible=true
+              }
+            }).catch(error=> {
+              console.log(error)
+              this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+            })
+          }
+        },
         querySearchAsync(queryString,cb){
           this.$http.post("/blog/common/hotkeys").then(response=>{
             if (response!=null){
@@ -131,6 +168,7 @@
           }
         },
         select(id){
+          this.drawerVisible=false
           this.$store.commit('setHeight',0)
           this.$store.commit('setCommonCurrentPage',1)
           this.$router.push("/bloglist/category/"+id)
@@ -143,7 +181,7 @@
         if (this.$route.params.whatsearch!=null){
           this.input=this.$route.params.whatsearch
         }
-        this.$http.post("/category/common/selectCategoryForCommon").then(response=>{
+        this.$http.post("/category/common/selectTopTenCategoryForCommon").then(response=>{
           if (response!=null){
             this.categories=response.data.data
             this.loading=false
@@ -181,7 +219,7 @@
           }
         })
         time()
-        window.onload=function(){
+        setTimeout(function (){
           var i=0;
           new Motto('.info', {
             lyric: that.info[i],
@@ -192,7 +230,21 @@
               },5000)
             }
           })
-        };
+        },1000)
+
+
+        // window.onload=function(){
+        //   var i=0;
+        //   new Motto('.info', {
+        //     lyric: that.info[i],
+        //     showUpSpeed: 150,
+        //     callback: function () {
+        //       setTimeout(function (){
+        //         document.getElementsByClassName("info")[0].classList.remove('motto-shake')
+        //       },5000)
+        //     }
+        //   })
+        // };
       },
       beforeRouteLeave (to, from, next) {
         document.onkeydown = undefined
@@ -201,6 +253,7 @@
     }
 </script>
 <style scoped>
+
   .myheader {
     background-color: #ffffff;
     margin-top: -6px;
@@ -309,4 +362,16 @@
     background: cyan;
   }
 
+</style>
+<style>
+.el-drawer{
+  background-image: url("https://picture.chardance.cloud/myblog/bg/bg4.png");
+  background-size: cover;
+  overflow: auto;
+}
+.el-drawer__header{
+  color: #6fffa2;
+  font-weight: bold;
+  font-size: 25px;
+}
 </style>

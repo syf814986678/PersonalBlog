@@ -106,7 +106,6 @@
             }
             this.$http.post("/blog/common/search/"+this.$route.params.whatsearch).then(response=>{
               if (response!=null){
-                console.log(response)
                 this.allResults=response.data.data;
                 this.total=this.allResults.length
                 this.results=this.allResults.slice((this.pageNow-1)*this.pageSize,this.pageNow*this.pageSize);

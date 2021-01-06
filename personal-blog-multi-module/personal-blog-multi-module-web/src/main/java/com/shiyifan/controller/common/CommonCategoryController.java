@@ -27,14 +27,33 @@ public class CommonCategoryController {
      * @return com.shiyifan.pojo.Result
      * @author user
      * @date 2021-01-05 16:04:06
-     * @method selectCategoryForCommon
+     * @method selectTopTenCategoryForCommon
      * @params []
      **/
-    @PostMapping("/selectCategoryForCommon")
-    public Result selectCategoryForCommon() throws Exception {
+    @PostMapping("/selectTopTenCategoryForCommon")
+    public Result selectTopTenCategoryForCommon() throws Exception {
         ArrayList<Category> categoryListForCommon = null;
         try {
-            categoryListForCommon = categoryService.selectCategoryForCommon();
+            categoryListForCommon = categoryService.selectTopTenCategoryForCommon();
+        } catch (Exception e) {
+            log.error(e);
+            throw new Exception();
+        }
+        return ResultUtil.success(categoryListForCommon);
+    }
+
+    /**
+     * @return com.shiyifan.pojo.Result
+     * @author user
+     * @date 2021-01-06 14:27:43
+     * @method selectAllCategoryForCommon
+     * @params []
+     **/
+    @PostMapping("/selectAllCategoryForCommon")
+    public Result selectAllCategoryForCommon() throws Exception {
+        ArrayList<Category> categoryListForCommon = null;
+        try {
+            categoryListForCommon = categoryService.selectAllCategoryForCommon();
         } catch (Exception e) {
             log.error(e);
             throw new Exception();

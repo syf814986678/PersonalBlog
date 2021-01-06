@@ -49,6 +49,7 @@ public class ElasticsearchUtil {
         int start = (pageNow - 1) * pageSize;
         ArrayList<Map<String, Object>> list = new ArrayList<>();
         try {
+            log.error("搜索开始");
             SearchRequest searchRequest = new SearchRequest("blogindex");
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.query(QueryBuilders.multiMatchQuery(keyword, "blogTitle", "blogContent").analyzer("ik_max_word"))

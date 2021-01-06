@@ -100,6 +100,7 @@ const router=new Router({
           },
         },
         {
+          name: 'showBlogList',
           path: 'showBlogList',
           component: blogList,
           meta: {
