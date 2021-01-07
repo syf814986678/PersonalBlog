@@ -297,7 +297,7 @@ export default {
     chooseFile() {
       document.getElementById("file").click()
     },
-    getFile() {
+    async getFile() {
       // console.log(document.getElementById("file").files[0])
       const message = this.$message({
         message: '封面图片上传中',
@@ -305,7 +305,7 @@ export default {
         center: true,
         duration: 0,
       });
-      this.getUpLoad(document.getElementById("file").files[0], 0)
+      await this.getUpLoad(document.getElementById("file").files[0], 0)
       message.close()
     },
     querySearchAsync(queryString, cb) {
@@ -501,18 +501,18 @@ export default {
       }
       return pwd + filename.substring(filename.lastIndexOf("."))
     },
-    handleUploadImage(event, insertImage, files) {
-      this.getUpLoad(files[0], 1)
+    async handleUploadImage(event, insertImage, files) {
+      await this.getUpLoad(files[0], 1)
       insertImage({
         url: this.filename,
         desc: '博客图片',
       });
     },
-    getToken(type) {
+    async getToken(type) {
       let now = Date.parse(new Date()) / 1000;
       if (this.$store.state.OSS.expire < now + 3 || this.$store.state.OSS.expire === 0 || this.type !== type) {
         this.type = type;
-        this.$http.post("/upload/admin/getToken/" + type).then((response) => {
+        await this.$http.post("/upload/admin/getToken/" + type).then((response) => {
           if (response != null) {
             this.$store.commit('setOSS', response.data.data)
           }
@@ -523,8 +523,8 @@ export default {
       }
 
     },
-    getUpLoad(file, type) {
-      this.getToken(type)
+    async getUpLoad(file, type) {
+      await this.getToken(type)
       const formData = new FormData();
       formData.append('key', this.$store.state.OSS.dir + this.randomName(file.name, 10));
       formData.append('policy', this.$store.state.OSS.policy);
@@ -533,7 +533,7 @@ export default {
       formData.append('callback', this.$store.state.OSS.callback);
       formData.append('signature', this.$store.state.OSS.signature);
       formData.append('file', file);
-      this.$http({
+      await this.$http({
         url: this.$store.state.OSS.host,
         method: 'post',
         data: formData,

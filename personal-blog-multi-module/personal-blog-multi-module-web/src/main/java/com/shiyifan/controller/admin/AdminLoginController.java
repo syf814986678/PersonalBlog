@@ -3,16 +3,11 @@ package com.shiyifan.controller.admin;
 import com.shiyifan.JwtUtil;
 import com.shiyifan.LoginService;
 import com.shiyifan.ResultUtil;
-import com.shiyifan.pojo.Category;
-import com.shiyifan.pojo.CodeState;
 import com.shiyifan.pojo.Result;
 import com.shiyifan.pojo.User;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author ZouCha

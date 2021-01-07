@@ -4,17 +4,12 @@ import com.shiyifan.mapper.BlogMapper;
 import com.shiyifan.mapper.CategoryMapper;
 import com.shiyifan.mapper.LoginMapper;
 import com.shiyifan.pojo.Blog;
-import com.shiyifan.pojo.Category;
-import com.shiyifan.pojo.User;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * @author ZouCha

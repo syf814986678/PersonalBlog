@@ -2,7 +2,6 @@ package com.shiyifan;
 
 
 import com.shiyifan.pojo.Blog;
-import org.apache.ibatis.annotations.Param;
 
 import java.io.IOException;
 import java.util.ArrayList;

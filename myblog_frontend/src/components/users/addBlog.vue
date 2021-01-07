@@ -174,40 +174,40 @@ export default {
       loading: true,
       filename: '',
       type: -1,
-      testData: {
-        blogId: "",
-        blogTitle: "武林外传(二)",
-        blogCoverImage: "https://picture.chardance.cloud/myblog/Random/20.jpg",
-        blogContent: null,
-        category: {
-          categoryId: 15,
-          categoryName: "武林外传2",
-          categoryRank: 0,
-          categoryUserId: 0,
-          isDeleted: 0,
-          createGmt: null,
-          updateGmt: null
-        },
-        user: {
-          userId: 3,
-          userName: "test",
-          userPassword: null,
-          userRole: null,
-          isDeleted: 0,
-          createGmt: null,
-          updateGmt: null
-        },
-        isDeleted: 0,
-        createGmt: "2021-11-11 13:54:34",
-        updateGmt: "2021-11-11 13:54:34"
-      }
+      // testData: {
+      //   blogId: "",
+      //   blogTitle: "武林外传(二)",
+      //   blogCoverImage: "https://picture.chardance.cloud/myblog/Random/20.jpg",
+      //   blogContent: null,
+      //   category: {
+      //     categoryId: 15,
+      //     categoryName: "武林外传2",
+      //     categoryRank: 0,
+      //     categoryUserId: 0,
+      //     isDeleted: 0,
+      //     createGmt: null,
+      //     updateGmt: null
+      //   },
+      //   user: {
+      //     userId: 3,
+      //     userName: "test",
+      //     userPassword: null,
+      //     userRole: null,
+      //     isDeleted: 0,
+      //     createGmt: null,
+      //     updateGmt: null
+      //   },
+      //   isDeleted: 0,
+      //   createGmt: "2021-11-11 13:54:34",
+      //   updateGmt: "2021-11-11 13:54:34"
+      // }
     }
   },
   methods: {
     chooseFile() {
       document.getElementById("file").click()
     },
-    getFile() {
+    async getFile() {
       // console.log(document.getElementById("file").files[0])
       const message = this.$message({
         message: '封面图片上传中',
@@ -215,7 +215,7 @@ export default {
         center: true,
         duration: 0,
       });
-      this.getUpLoad(document.getElementById("file").files[0], 0)
+      await this.getUpLoad(document.getElementById("file").files[0], 0)
       message.close()
     },
     handleCopyCodeSuccess() {
@@ -245,21 +245,22 @@ export default {
             type: 'warning',
             duration: 1000
           });
-          this.$router.push({name:'showBlogList',params:{test:this.testData}});
-          // this.$http.post("/blog/admin/addBlogForAdmin",this.form).then(response=>{
-          //   if (response!=null){
-          //     this.$notify({
-          //       title: '发布博客',
-          //       message: "发布成功",
-          //       type: 'success',
-          //       duration: 2500
-          //     });
-          //     this.cancel();
-          //   }
-          // }).catch(error=> {
-          //   console.log(error)
-          //   this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          // })
+          // this.$router.push({name:'showBlogList',params:{test:this.testData}});
+          this.$http.post("/blog/admin/addBlogForAdmin",this.form).then(response=>{
+            if (response!=null){
+              this.$notify({
+                title: '发布博客',
+                message: "发布成功",
+                type: 'success',
+                duration: 2500
+              });
+              this.cancel();
+              this.$router.push("/showBlogList");
+            }
+          }).catch(error=> {
+            console.log(error)
+            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+          })
         }
         else {
           this.$store.commit('errorMsg',"有非空数据未填写!")
@@ -281,18 +282,18 @@ export default {
       }
       return pwd + filename.substring(filename.lastIndexOf("."))
     },
-    handleUploadImage(event, insertImage, files) {
-      this.getUpLoad(files[0],1)
+    async handleUploadImage(event, insertImage, files) {
+      await this.getUpLoad(files[0], 1)
       insertImage({
-        url:this.filename,
+        url: this.filename,
         desc: '博客图片',
       });
     },
-    getToken(type) {
+    async getToken(type) {
       let now = Date.parse(new Date()) / 1000;
       if (this.$store.state.OSS.expire < now + 3 || this.$store.state.OSS.expire === 0 || this.type !== type) {
         this.type = type;
-        this.$http.post("/upload/admin/getToken/" + type).then((response) => {
+        await this.$http.post("/upload/admin/getToken/" + type).then((response) => {
           if (response != null) {
             this.$store.commit('setOSS', response.data.data)
           }
@@ -303,8 +304,8 @@ export default {
       }
 
     },
-    getUpLoad(file, type) {
-      this.getToken(type)
+    async getUpLoad(file, type) {
+      await this.getToken(type)
       const formData = new FormData();
       formData.append('key', this.$store.state.OSS.dir + this.randomName(file.name, 10));
       formData.append('policy', this.$store.state.OSS.policy);
@@ -313,7 +314,7 @@ export default {
       formData.append('callback', this.$store.state.OSS.callback);
       formData.append('signature', this.$store.state.OSS.signature);
       formData.append('file', file);
-      this.$http({
+      await this.$http({
         url: this.$store.state.OSS.host,
         method: 'post',
         data: formData,

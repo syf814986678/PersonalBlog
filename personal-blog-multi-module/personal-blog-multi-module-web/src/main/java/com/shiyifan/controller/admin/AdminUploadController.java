@@ -45,6 +45,9 @@ public class AdminUploadController {
     @Value("${aliyun.accessKeySecret}")
     private String accessKeySecret;
 
+    @Value("${aliyun.callbackHost}")
+    private String callbackHost;
+
     /**
      * 随机封面图片
      * 已修改(controller名称,restful风格)
@@ -103,7 +106,7 @@ public class AdminUploadController {
                 dir.append("myblog/BlogContentImage/").append(userId).append("-").append(userName).append("/");
             }
             // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。
-            String callbackUrl = "http://api.noahsark1.vip/upload/admin/callback";
+            String callbackUrl = callbackHost+"/upload/admin/callback";
             long expireTime = 30;
             long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
             Date expiration = new Date(expireEndTime);
@@ -151,12 +154,12 @@ public class AdminUploadController {
      * @method callback
      * @params [request]
      **/
-    @PostMapping ("/callback")
+    @PostMapping("/callback")
     public Result callback(HttpServletRequest request) throws OSSException {
         HashMap<String, Object> map = null;
         try {
             map = new HashMap<>(5);
-            map.put("filename","https://picture.chardance.cloud/".concat(String.valueOf(request.getAttribute("filename"))));
+            map.put("filename", "https://picture.chardance.cloud/".concat(String.valueOf(request.getAttribute("filename"))));
             map.put("size", request.getAttribute("size"));
             map.put("mimeType", request.getAttribute("mimeType"));
             map.put("width", request.getAttribute("width"));

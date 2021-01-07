@@ -1,6 +1,5 @@
 package com.shiyifan.controller.admin;
 
-import com.shiyifan.BlogService;
 import com.shiyifan.CategoryService;
 import com.shiyifan.ResultUtil;
 import com.shiyifan.pojo.Category;

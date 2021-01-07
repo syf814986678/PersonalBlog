@@ -13,8 +13,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.4.1</version>
+        <relativePath/>
     </parent>
     <groupId>com.shiyifan</groupId>
     <artifactId>personal-blog-multi-module</artifactId>
@@ -82,23 +82,5 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>true</executable>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
