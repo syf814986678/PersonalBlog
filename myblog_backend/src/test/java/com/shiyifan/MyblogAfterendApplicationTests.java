@@ -1,56 +1,56 @@
 package com.shiyifan;
 
-import com.google.gson.Gson;
-import com.shiyifan.dao.BlogMapper;
-import com.shiyifan.pojo.ElasticSearchBlog;
-import com.shiyifan.service.BlogService;
+import com.shiyifan.dao.TestMapper;
 import lombok.extern.log4j.Log4j2;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map;
 
 @SpringBootTest
 @Log4j2
 class MyblogAfterendApplicationTests {
 
-    @Autowired
-    private RestHighLevelClient restHighLevelClient;
-    @Autowired
-    private BlogMapper blogMapper;
-
-    @Test
-    public void test() throws IOException {
-        ArrayList<ElasticSearchBlog> elasticSearchBlogs = blogMapper.selectElasticSearchAllBlogForCommon();
-        BulkRequest bulkRequest = new BulkRequest();
-        Gson gson = new Gson();
-        bulkRequest.timeout("2m");
-        for (ElasticSearchBlog elasticSearchBlog : elasticSearchBlogs) {
-            bulkRequest.add(new IndexRequest("blogindex").id(elasticSearchBlog.getBlogId()).source(gson.toJson(elasticSearchBlog), XContentType.JSON));
-        }
-        BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
-        System.out.println(bulk.hasFailures());
-    }
-
-    @Autowired
-    private BlogService blogService;
-    @Test
-    public void test2() throws IOException {
-        ArrayList<Map<String, Object>> test = blogService.searchContentPage("测试", 1, 30);
-    }
-
 //    @Autowired
-//    private TestMapper testMapper;
+//    private RestHighLevelClient restHighLevelClient;
+//    @Autowired
+//    private BlogMapper blogMapper;
+
+//    @Test
+//    public void test() throws IOException {
+//        ArrayList<ElasticSearchBlog> elasticSearchBlogs = blogMapper.selectElasticSearchAllBlogForCommon();
+//        BulkRequest bulkRequest = new BulkRequest();
+//        Gson gson = new Gson();
+//        bulkRequest.timeout("2m");
+//        for (ElasticSearchBlog elasticSearchBlog : elasticSearchBlogs) {
+//            bulkRequest.add(new IndexRequest("blogindex").id(elasticSearchBlog.getBlogId()).source(gson.toJson(elasticSearchBlog), XContentType.JSON));
+//        }
+//        BulkResponse bulk = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+//        System.out.println(bulk.hasFailures());
+//    }
+//
+//    @Autowired
+//    private BlogService blogService;
+//    @Test
+//    public void test2() throws IOException {
+//        ArrayList<Map<String, Object>> test = blogService.searchContentPage("测试", 1, 30);
+//    }
+
+    @Autowired
+    private TestMapper testMapper;
+
+    @Test
+    public void test(){
+        Map<String, String> map = testMapper.myTest();
+        System.out.println(map.get("blog_title")+":"+map.get("blog_id"));
+//        List<Map<String, String>> mapList = testMapper.myTest();
+//        for (Map<String, String> stringStringMap : mapList) {
+//            System.out.println(stringStringMap.get("blog_title")+":"+stringStringMap.get("blog_id"));
+//        }
+//        HashMap<String, Object> map = new HashMap<>();
+//        testMapper.insertTest(map);
+    }
 //    @Autowired
 //    private ArabicNumToChineseNumUtil numUtil;
 //
@@ -437,16 +437,16 @@ class MyblogAfterendApplicationTests {
 ////        }
 //    }
 //
-    @Autowired
-    private StringEncryptor stringEncryptor;
-    @Test
-    public void testencoding(){
-        String yuanwen1="AmIjL2U0o5xP9pCVQ/ppflxgyIuhuYKLBwDwxvFHY7JO9VSaqmFp8ybaXq8fw2CUPRr19ujwQMBRs9oABghAWVXcW5IFbbQPkUOA2azsc2n6W/nCGCLKUj+peOJMEI+4rsxwZQXNF+nC+VtZ+OB/mN5IsjWhFCHzOpx2Awc37XOTHsYwbeNT8o2MJQMMNH1p";
-//        String miwen1 = stringEncryptor.encrypt(yuanwen1) ;
-//        System.out.println(miwen1);
-        System.out.println(stringEncryptor.decrypt(yuanwen1));
-
-    }
+//    @Autowired
+//    private StringEncryptor stringEncryptor;
+//    @Test
+//    public void testencoding(){
+//        String yuanwen1="AmIjL2U0o5xP9pCVQ/ppflxgyIuhuYKLBwDwxvFHY7JO9VSaqmFp8ybaXq8fw2CUPRr19ujwQMBRs9oABghAWVXcW5IFbbQPkUOA2azsc2n6W/nCGCLKUj+peOJMEI+4rsxwZQXNF+nC+VtZ+OB/mN5IsjWhFCHzOpx2Awc37XOTHsYwbeNT8o2MJQMMNH1p";
+////        String miwen1 = stringEncryptor.encrypt(yuanwen1) ;
+////        System.out.println(miwen1);
+//        System.out.println(stringEncryptor.decrypt(yuanwen1));
+//
+//    }
 
 
 //    @Test

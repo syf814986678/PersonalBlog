@@ -701,24 +701,24 @@ public class BlogServiceImpl implements BlogService,ApplicationRunner {
      **/
     @Override
     public void run(ApplicationArguments args){
-        log.info("<--------------------初始化redis-------------------->");
-        try {
-            redisUtil.flushDb();
-            ArrayList<Mycategory> mycategories = categoryMapper.selectAllCategoryForCommon();
-            Iterator<Mycategory> iterator = mycategories.iterator();
-            while (iterator.hasNext()){
-                Mycategory mycategory = iterator.next();
-                Iterator<Myblog> iteratorMyblog = blogMapper.selectBlogAllForCommon(mycategory.getCategoryId()).iterator();
-                while (iteratorMyblog.hasNext()){
-                    redisUtil.RSet(myConstant.getCategoryBlogsForCommon()+mycategory.getCategoryId(), iteratorMyblog.next());
-                }
-                redisUtil.set(myConstant.getCategoryTotalBlogsForCommon()+mycategory.getCategoryId(), blogMapper.selectTotalBlogNumsForCommon(mycategory.getCategoryId()));            }
-            refreshDcdn();
-            preLoadDcdn();
-        }
-        catch (Exception e){
-            log.error(e);
-        }
+//        log.info("<--------------------初始化redis-------------------->");
+//        try {
+//            redisUtil.flushDb();
+//            ArrayList<Mycategory> mycategories = categoryMapper.selectAllCategoryForCommon();
+//            Iterator<Mycategory> iterator = mycategories.iterator();
+//            while (iterator.hasNext()){
+//                Mycategory mycategory = iterator.next();
+//                Iterator<Myblog> iteratorMyblog = blogMapper.selectBlogAllForCommon(mycategory.getCategoryId()).iterator();
+//                while (iteratorMyblog.hasNext()){
+//                    redisUtil.RSet(myConstant.getCategoryBlogsForCommon()+mycategory.getCategoryId(), iteratorMyblog.next());
+//                }
+//                redisUtil.set(myConstant.getCategoryTotalBlogsForCommon()+mycategory.getCategoryId(), blogMapper.selectTotalBlogNumsForCommon(mycategory.getCategoryId()));            }
+//            refreshDcdn();
+//            preLoadDcdn();
+//        }
+//        catch (Exception e){
+//            log.error(e);
+//        }
     }
 }
 

@@ -16,4 +16,24 @@
         where blog_id=#{blogId} ;
     </update>
 
+    <select id="myTest" resultType="map">
+        select blog_title,blog_id
+        from myblog
+        where blog_id ='02039b6a22164e898e2f235b9e5f9cb3'
+    </select>
+
+    <insert id="insertTest" parameterType="hashmap">
+        <selectKey keyProperty="category_name,is_deleted" resultType="map" order="BEFORE">
+            select category_name,is_deleted from mycategory where category_id=12
+        </selectKey>
+        <if test="category_name == 测试2 and is_deleted == 1 ">
+            insert into mycategory
+            values (null,'我要测试',0,3,0,null,null)
+        </if>
+        <if test="category_name == 测试2 and is_deleted == 0 ">
+            update mycategory
+            set category_name='测试1234444'
+            where category_id=11 ;
+        </if>
+    </insert>
 </mapper>

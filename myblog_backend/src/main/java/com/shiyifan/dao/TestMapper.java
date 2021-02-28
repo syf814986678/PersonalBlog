@@ -6,6 +6,9 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author ZouCha
@@ -18,8 +21,11 @@ import java.util.ArrayList;
 public interface TestMapper {
 
     ArrayList<Myblog> selectAllBlogTitle(@Param("categoryId")int categoryId);
+
     void update(@Param("blogTitle")String blogTitle,@Param("blogId")String blogId);
 
+    Map<String,String> myTest();
 
+    void insertTest(HashMap<String,Object>map);
 
 }
