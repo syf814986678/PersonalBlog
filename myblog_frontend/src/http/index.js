@@ -2,7 +2,7 @@ import axios from "axios";
 import store from "../store";
 
 const http = axios.create({
-  // baseURL: 'http://localhost:8989'
+  baseURL: 'https://blog.noahsark1.vip:8081'
 })
 //请求拦截
 http.interceptors.request.use(function (config) {

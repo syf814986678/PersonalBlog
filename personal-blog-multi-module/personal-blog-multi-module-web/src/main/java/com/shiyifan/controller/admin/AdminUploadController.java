@@ -106,7 +106,7 @@ public class AdminUploadController {
                 dir.append("myblog/BlogContentImage/").append(userId).append("-").append(userName).append("/");
             }
             // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。
-            String callbackUrl = callbackHost+"/upload/admin/callback";
+            String callbackUrl = "https://" + callbackHost + "/upload/admin/callback";
             long expireTime = 30;
             long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
             Date expiration = new Date(expireEndTime);
@@ -130,6 +130,7 @@ public class AdminUploadController {
 
             JSONObject jasonCallback = new JSONObject();
             jasonCallback.put("callbackUrl", callbackUrl);
+            jasonCallback.put("callbackHost", callbackHost);
             jasonCallback.put("callbackBody",
                     "filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}");
             jasonCallback.put("callbackBodyType", "application/x-www-form-urlencoded");
