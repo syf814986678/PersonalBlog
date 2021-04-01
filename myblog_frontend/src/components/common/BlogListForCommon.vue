@@ -95,6 +95,8 @@
                     }
                   }, 200)
                   this.$store.commit('setMainLoading',false)
+                  document.getElementById("myelmain").scrollTop=5
+                  document.getElementById("myelmain").scrollTop=this.$store.state.height
                 }
               }).catch(error=> {
                 console.log(error)
@@ -123,6 +125,8 @@
                     }
                   }, 200)
                   this.$store.commit('setMainLoading',false)
+                  document.getElementById("myelmain").scrollTop=5
+                  document.getElementById("myelmain").scrollTop=this.$store.state.height
                 }
               }).catch(error=> {
                 console.log(error)
@@ -141,11 +145,6 @@
     },
     created() {
       this.refresh(this.$store.state.commonCurrentPage)
-      setTimeout(() => {
-        document.getElementById("myelmain").scrollTop=5
-        document.getElementById("myelmain").scrollTop=this.$store.state.height
-      }, 200)
-
     },
     beforeRouteLeave (to, from, next) {
       this.disabled=true
