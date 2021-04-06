@@ -83,14 +83,27 @@
         </div>
       </div>
       <el-footer class="myfooter">
-        <div class="myfooterinfo">
+        <div class="myfooterinfo1">
           <el-link style="margin-top: -16px;margin-bottom: 0" href="https://www.chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
           <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-size: 20px; " disabled>||</el-link>
           <el-link style="margin-top: -16px;margin-bottom: 0" href="https://beian.miit.gov.cn/" target="_blank" type="danger">沪ICP备20013409号-1</el-link>
           <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-size: 20px; " disabled>||</el-link>
           <el-link style="margin-top: -16px;margin-bottom: 0;position: relative;margin-left: 20px;" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011202013505" target="_blank" type="danger"><img src="https://picture.chardance.cloud/myblog/frontResource/images/beian.png" style="top: 33%;position: absolute;left: -25px;">沪公网安备 31011202013505号</el-link>
           <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-size: 20px; " disabled>||</el-link>
-          <el-link class="showTime" style="margin-top: -16px;margin-bottom: 0" href="http://time.tianqi.com/" target="_blank" type="success"></el-link>
+          <el-link class="showTime1" style="margin-top: -16px;margin-bottom: 0" href="http://time.tianqi.com/" target="_blank" type="success"></el-link>
+        </div>
+        <div class="myfooterinfo2">
+          <div>
+            <el-link style="margin-top: -16px;margin-bottom: 0" href="https://www.chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
+            <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-size: 20px; " disabled>||</el-link>
+            <el-link style="margin-top: -16px;margin-bottom: 0" href="https://beian.miit.gov.cn/" target="_blank" type="danger">沪ICP备20013409号-1</el-link>
+          </div>
+          <div style="margin-top: -25px">
+            <el-link style="margin-top: -16px;margin-bottom: 0;position: relative;margin-left: 20px;" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011202013505" target="_blank" type="danger"><img src="https://picture.chardance.cloud/myblog/frontResource/images/beian.png" style="top: 33%;position: absolute;left: -25px;">沪公网安备 31011202013505号</el-link>
+          </div>
+          <div style="margin-top: -30px">
+            <el-link class="showTime2" style="margin-top: -16px;margin-bottom: 0" href="http://time.tianqi.com/" target="_blank" type="success"></el-link>
+          </div>
         </div>
       </el-footer>
     </el-container>
@@ -278,12 +291,9 @@
   .myfooter{
     background-color: #fff;
     text-align: center;
-    line-height: 60px;
     margin-top: 3px;
-    /*margin-bottom: -10px;*/
-    height: 48px !important;
   }
-  .myfooterinfo{
+  .myfooterinfo1{
     background-color: #333;
     border-radius: 20px;
     display: block;
@@ -292,6 +302,18 @@
     font-size: 15px;
     letter-spacing: 1px;
     height: 48px;
+    text-align: center;
+    margin: 3px -20px;
+  }
+  .myfooterinfo2{
+    background-color: #333;
+    border-radius: 20px;
+    display: block;
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    font-size: 15px;
+    letter-spacing: 1px;
+    height: 110px;
     text-align: center;
     margin: 3px -20px;
   }
@@ -330,7 +352,14 @@
       padding-top: 15px;
       border-top: cyan solid 1px;
     }
-    .showTime {
+    .myfooter{
+      height: 110px !important;
+      line-height: 60px;
+    }
+    .myfooterinfo1{
+      display: none;
+    }
+    .showTime1{
       display: none;
     }
   }
@@ -354,6 +383,16 @@
     }
     .infodiv{
       padding: 15px;
+    }
+    .myfooter{
+      line-height: 60px;
+      height: 48px !important;
+    }
+    .myfooterinfo2{
+      display: none;
+    }
+    .showTime2{
+      display: none;
     }
   }
   .mybutton{
