@@ -270,6 +270,7 @@ public class BlogServiceImpl implements BlogService {
             blogMapper.addBlogForAdmin(userId, blog);
             categoryService.addCategoryRankForAdmin(userId, blog.getCategory().getCategoryId());
             blogUtil.setBlogToRedisAndElasticSearchForAdmin(userId, blog.getBlogId());
+            blogUtil.cleanTempBlogForAdmin(userId);
         } catch (Exception e) {
             log.error("addBlogForAdmin错误" + e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

@@ -123,7 +123,7 @@
     import {getHeight} from "../../assets/js/calc";
     import {getWidth} from "../../assets/js/calc";
     export default {
-        name: "commonIndex",
+      name: "commonIndex",
       data(){
         return{
           drawerVisible:false,

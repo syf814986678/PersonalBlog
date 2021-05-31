@@ -251,7 +251,7 @@ public class BlogUtil implements ApplicationRunner {
     public void initCategoryBlogListForAdmin(int userId) throws Exception {
         log.info("方法:initCategoryBlogListForAdmin开始,:userId:" + userId);
         try {
-            for (Category category : categoryMapper.selectCategoryForAdmin(userId,0,Integer.MAX_VALUE)) {
+            for (Category category : categoryMapper.selectCategoryForAdmin(userId, 0, Integer.MAX_VALUE)) {
                 ArrayList<Blog> categoryBlogListForAdmin = blogMapper.selectBlogListByPageForAdmin(userId, category.getCategoryId());
                 for (Blog blog : categoryBlogListForAdmin) {
                     redisUtil.RSet(categoryBlogsForAdmin + userId + category.getCategoryId(), blog);
@@ -308,7 +308,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [userId, categoryId, start, end]
      **/
     public ArrayList<Blog> getCategoryBlogListByPageForAdmin(int userId, int categoryId, int start, int end) {
-        log.info("方法:getCategoryBlogListByPageForAdmin开始,userId:" + userId + ",categoryId:" + categoryId + ",start:" + start + ",end"+ end);
+        log.info("方法:getCategoryBlogListByPageForAdmin开始,userId:" + userId + ",categoryId:" + categoryId + ",start:" + start + ",end" + end);
         return (ArrayList<Blog>) (Object) redisUtil.lGet(categoryBlogsForAdmin + userId + categoryId, start, end);
     }
 
@@ -320,12 +320,29 @@ public class BlogUtil implements ApplicationRunner {
      * @params [blog]
      **/
     public void setTempBlogForAdmin(int userId, Blog blog) throws Exception {
-        log.info("方法:setTempBlogForAdmin开始,userId:" + userId+",blogId:" + blog.getBlogId());
+        log.info("方法:setTempBlogForAdmin开始,userId:" + userId + ",blogId:" + blog.getBlogId());
         try {
             redisUtil.set(userTempBlog + userId, blog);
         } catch (Exception e) {
             log.error("setTempBlogForAdmin错误" + e.toString());
             throw new Exception("setTempBlogForAdmin错误" + e.toString());
+        }
+    }
+
+    /**
+     * @return void
+     * @author ZouCha
+     * @date 2021-04-19 09:54:12
+     * @method cleanTempBlogForAdmin
+     * @params [userId]
+     **/
+    public void cleanTempBlogForAdmin(int userId) throws Exception {
+        log.info("方法:cleanTempBlogForAdmin开始,userId:" + userId);
+        try {
+            redisUtil.del(userTempBlog + userId);
+        } catch (Exception e) {
+            log.error("cleanTempBlogForAdmin错误" + e.toString());
+            throw new Exception("cleanTempBlogForAdmin错误" + e.toString());
         }
     }
 
@@ -415,7 +432,7 @@ public class BlogUtil implements ApplicationRunner {
      * @params [userId, blog]
      **/
     public void updateBlogInRedisAndElasticSearchForAdmin(int userId, Blog blog) throws Exception {
-        log.info("方法:updateBlogInRedisAndElasticSearchForAdmin开始,userId:" + userId+",blogId:" + blog.getBlogId());
+        log.info("方法:updateBlogInRedisAndElasticSearchForAdmin开始,userId:" + userId + ",blogId:" + blog.getBlogId());
         ArrayList<Blog> blogList = null;
         try {
             ElasticSearchBlog elasticSearchBlog = blogMapper.selectElasticSearchBlogByIdForAdmin(userId, blog.getBlogId());

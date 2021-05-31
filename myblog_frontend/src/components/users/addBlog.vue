@@ -255,7 +255,7 @@ export default {
                 duration: 2500
               });
               this.cancel();
-              this.$router.push("/showBlogList");
+              this.$router.push("/admin/showBlogList");
             }
           }).catch(error=> {
             console.log(error)
