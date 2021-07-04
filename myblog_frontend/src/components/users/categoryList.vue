@@ -98,7 +98,7 @@ export default {
       loading: true,
       dialogFormVisible: false,
       currentPage: 1,
-      pageSize: 11,
+      pageSize: 10,
       total: null,
       dialogLoading: true
     }
@@ -135,7 +135,7 @@ export default {
       }
     },
     handleCurrentChange(page){
-      this.refreshDate(this.$store.state.user.userId,page,this.pageSize);
+      this.refreshDate(page,this.pageSize);
     },
     addCategory(){
       if (this.categoryName ===''){

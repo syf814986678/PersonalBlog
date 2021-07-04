@@ -86,7 +86,7 @@ public class CategoryServiceImpl implements CategoryService {
             end = Integer.MAX_VALUE;
         } else {
             start = (pageNow - 1) * pageSize;
-            end = (pageNow * pageSize) - 1;
+            end = pageSize;
         }
         try {
             categories = categoryMapper.selectCategoryForAdmin(userId, start, end);

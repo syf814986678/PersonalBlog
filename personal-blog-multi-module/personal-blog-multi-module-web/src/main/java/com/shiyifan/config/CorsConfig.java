@@ -31,6 +31,7 @@ public class CorsConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
+        System.out.println("跨域开启");
         return new CorsFilter(source);
     }
 }
