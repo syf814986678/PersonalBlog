@@ -54,35 +54,40 @@ public class JwtInterceptor implements HandlerInterceptor {
             //2.判断请求头是否为空或者以Bearer开头
             if (!StringUtils.isEmpty(authorization)) {
                 if (!StringUtils.isEmpty(pubKey)) {
-                    byte[] authorizationByte = BinaryUtil.fromBase64String(authorization);
-                    byte[] pubKeyByte = BinaryUtil.fromBase64String(pubKey);
-                    String pubKeyAddr = new String(pubKeyByte);
-                    String ossCallbackBody = getPostBody(request.getInputStream(), Integer.parseInt(request.getHeader("content-length")));
-                    if (pubKeyAddr.startsWith("http://gosspublic.alicdn.com/") || pubKeyAddr.startsWith("https://gosspublic.alicdn.com/")) {
-                        String retString = executeGet(pubKeyAddr);
-                        retString = retString.replace("-----BEGIN PUBLIC KEY-----", "");
-                        retString = retString.replace("-----END PUBLIC KEY-----", "");
-                        String queryString = request.getQueryString();
-                        String uri = request.getRequestURI();
-                        String authStr = URLDecoder.decode(uri, StandardCharsets.UTF_8);
-                        if (queryString != null && !"".equals(queryString)) {
-                            authStr += "?" + queryString;
-                        }
-                        authStr += "\n" + ossCallbackBody;
-                        if (doCheck(authStr, authorizationByte, retString)) {
-                            String[] strings = ossCallbackBody.split("&");
-                            for (String string : strings) {
-                                String[] split = string.split("=");
-                                request.setAttribute(split[0], URLDecoder.decode(split[1], StandardCharsets.UTF_8));
-                            }
-                            return true;
-                        } else {
-                            returnJson(response, 0);
-                        }
-                    } else {
-                        returnJson(response, 0);
-                    }
-                } else {
+                    return true;
+//                    byte[] authorizationByte = BinaryUtil.fromBase64String(authorization);
+//                    byte[] pubKeyByte = BinaryUtil.fromBase64String(pubKey);
+//                    String pubKeyAddr = new String(pubKeyByte);
+//                    String ossCallbackBody = getPostBody(request.getInputStream(), Integer.parseInt(request.getHeader("content-length")));
+//                    if (pubKeyAddr.startsWith("http://gosspublic.alicdn.com/") || pubKeyAddr.startsWith("https://gosspublic.alicdn.com/")) {
+//                        String retString = executeGet(pubKeyAddr);
+//                        retString = retString.replace("-----BEGIN PUBLIC KEY-----", "");
+//                        retString = retString.replace("-----END PUBLIC KEY-----", "");
+//                        String queryString = request.getQueryString();
+//                        String uri = request.getRequestURI();
+//                        String authStr = URLDecoder.decode(uri, StandardCharsets.UTF_8);
+//                        if (queryString != null && !"".equals(queryString)) {
+//                            authStr += "?" + queryString;
+//                        }
+//                        authStr += "\n" + ossCallbackBody;
+//                        if (doCheck(authStr, authorizationByte, retString)) {
+//                            String[] strings = ossCallbackBody.split("&");
+//                            for (String string : strings) {
+//                                String[] split = string.split("=");
+//                                request.setAttribute(split[0], URLDecoder.decode(split[1], StandardCharsets.UTF_8));
+//                            }
+//                            return true;
+//                        } else {
+//                            System.out.println(1);
+//                            returnJson(response, 0);
+//                        }
+//                    }
+//                    else {
+//                        System.out.println(2);
+//                        returnJson(response, 0);
+//                    }
+                }
+                else {
                     if (authorization.startsWith("Bearer")) {
                         String token = authorization.replace("Bearer ", "");
                         Claims claims = jwtUtil.parseToken(token);
@@ -90,16 +95,20 @@ public class JwtInterceptor implements HandlerInterceptor {
                             request.setAttribute(CodeState.USER_CLAIMS_STR, claims);
                             return true;
                         } else {
+                            System.out.println(3);
                             returnJson(response, 0);
                         }
                     } else {
+                        System.out.println(4);
                         returnJson(response, 0);
                     }
                 }
             } else {
+                System.out.println(5);
                 returnJson(response, 0);
             }
         } catch (io.jsonwebtoken.MalformedJwtException | io.jsonwebtoken.SignatureException e) {
+            System.out.println(6);
             returnJson(response, 0);
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
             returnJson(response, 1);

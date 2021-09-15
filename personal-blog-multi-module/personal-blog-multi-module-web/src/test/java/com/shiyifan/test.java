@@ -5,6 +5,7 @@ import com.shiyifan.mapper.CategoryMapper;
 import com.shiyifan.mapper.LoginMapper;
 import com.shiyifan.pojo.Blog;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.jasypt.encryption.StringEncryptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,6 +55,18 @@ public class test {
             System.out.println(blogs);
             System.out.println("======================================================");
         }
+
+    }
+
+    @Autowired
+    private StringEncryptor stringEncryptor;
+
+    @Test
+    public void testencoding() {
+        String yuanwen1 = "oiLT2d85Er0NfdlZOZaPlktj6EffErcGmDm1js8gFMg6OQh27e0eE99EBoijtHBuN1M+4DVr6eS94RQehbpreQ==";
+//        String miwen1 = stringEncryptor.encrypt(yuanwen1) ;
+//        System.out.println(miwen1);
+        System.out.println(stringEncryptor.decrypt(yuanwen1));
 
     }
 }

@@ -15,8 +15,6 @@ import org.springframework.retry.annotation.EnableRetry;
 public class PersonalBlogMultiModuleWeb {
     public static void main(String[] args) {
         SpringApplication.run(PersonalBlogMultiModuleWeb.class, args);
-
     }
-
 }
 

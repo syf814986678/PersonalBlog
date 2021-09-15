@@ -1,9 +1,8 @@
 import axios from "axios";
 import store from "../store";
-
+import getBaseUrl from "../assets/js/getBaseUrl";
 const http = axios.create({
-  // baseURL: 'https://blog.noahsark1.vip:8081'
-  baseURL: 'http://localhost:8989'
+  baseURL: getBaseUrl.baseUrl
 })
 //请求拦截
 http.interceptors.request.use(function (config) {

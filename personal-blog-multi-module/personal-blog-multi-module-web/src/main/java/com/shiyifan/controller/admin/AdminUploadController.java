@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author ZouCha
@@ -45,8 +45,14 @@ public class AdminUploadController {
     @Value("${aliyun.accessKeySecret}")
     private String accessKeySecret;
 
+    @Value("${aliyun.callbackProtocol}")
+    private String callbackProtocol;
+
     @Value("${aliyun.callbackHost}")
     private String callbackHost;
+
+    @Value("${aliyun.callbackPath}")
+    private String callbackPath;
 
     /**
      * 随机封面图片
@@ -106,7 +112,7 @@ public class AdminUploadController {
                 dir.append("myblog/BlogContentImage/").append(userId).append("-").append(userName).append("/");
             }
             // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。
-            String callbackUrl = "https://" + callbackHost + "/upload/admin/callback";
+            String callbackUrl = callbackProtocol + callbackHost + callbackPath;
             long expireTime = 30;
             long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
             Date expiration = new Date(expireEndTime);
@@ -159,8 +165,21 @@ public class AdminUploadController {
     public Result callback(HttpServletRequest request) throws OSSException {
         HashMap<String, Object> map = null;
         try {
+            Enumeration<String> parameterNames = request.getParameterNames();
+            Iterator<String> stringIterator = parameterNames.asIterator();
+            while (stringIterator.hasNext()) {
+                String next = stringIterator.next();
+                System.out.println(next);
+                System.out.println(request.getParameter(next));
+            }
+            System.out.println("-------------------");
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            for (Map.Entry<String, String[]> stringEntry : parameterMap.entrySet()) {
+                System.out.println(stringEntry.getKey());
+                System.out.println(stringEntry.getValue()[0]);
+            }
             map = new HashMap<>(5);
-            map.put("filename", "https://picture.chardance.cloud/".concat(String.valueOf(request.getAttribute("filename"))));
+            map.put("filename", "https://picture.chardance.cloud/".concat(String.valueOf(request.getParameter("filename"))));
             map.put("size", request.getAttribute("size"));
             map.put("mimeType", request.getAttribute("mimeType"));
             map.put("width", request.getAttribute("width"));

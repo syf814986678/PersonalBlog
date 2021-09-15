@@ -26,6 +26,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>facebody20191230</artifactId>
+            <version>1.0.12</version>
+        </dependency>
         <!--重试机制-->
         <dependency>
             <groupId>org.springframework.retry</groupId>
