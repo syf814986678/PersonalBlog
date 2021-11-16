@@ -1,6 +1,8 @@
 <template>
-  <div style="margin-top: 220px">
-
+  <div>
+    <div>
+      <video style="visibility: hidden" id="video" width="320" height="220" preload autoplay loop muted></video>
+    </div>
     <div style="text-align: center">
       <h3>Login</h3>
     </div>
@@ -44,9 +46,9 @@
     </el-form>
 
     <div id="faceLogin" style="text-align: center;margin: 20px auto">
-      <video id="video" width="320" height="240" preload autoplay loop muted></video>
       <canvas id="canvas" width="320" height="240"></canvas>
     </div>
+
 
   </div>
 </template>
