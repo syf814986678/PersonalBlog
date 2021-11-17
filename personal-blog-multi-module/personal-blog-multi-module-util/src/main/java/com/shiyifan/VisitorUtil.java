@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -139,6 +140,38 @@ public class VisitorUtil {
         } catch (Exception e) {
             log.error("deleteVisitor错误" + e.toString());
             throw new Exception("deleteVisitor错误" + e.toString());
+        }
+    }
+
+    public Boolean isLimited(HttpServletRequest request) throws Exception {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip != null && !"unknown".equalsIgnoreCase(ip)) {
+            // 多次反向代理后会有多个IP值，第一个为真实IP。
+            int index = ip.indexOf(',');
+            if (index != -1) {
+                ip = ip.substring(0, index);
+            }
+        } else {
+            ip = request.getRemoteAddr();
+        }
+        try {
+            long times = redisUtil.getHyperloglogSize(ip + "-times");
+            if (times == 0) {
+                redisUtil.set(ip, ip, 20);
+            } else if (times > 4) {
+                if(redisUtil.get(ip) == null){
+                    redisUtil.set(ip, ip, 20);
+                    redisUtil.deleteHyperloglog(ip + "-times");
+                }
+                else {
+                    return true;
+                }
+            }
+            redisUtil.addHyperloglog(ip + "-times", LocalDateTime.now());
+            return false;
+        } catch (Exception e) {
+            log.error("isLimited错误" + e);
+            throw new Exception("isLimited错误" + e);
         }
     }
 }
