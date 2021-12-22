@@ -2,12 +2,13 @@ package com.shiyifan.controller.common;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.OSSException;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
-import com.shiyifan.ResultUtil;
-import com.shiyifan.VisitorUtil;
+import com.shiyifan.*;
 import com.shiyifan.pojo.Result;
+import com.shiyifan.pojo.User;
 import lombok.extern.log4j.Log4j2;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author ZouCha
@@ -34,6 +38,15 @@ public class CommonUploadController {
     @Autowired
     private VisitorUtil visitorUtil;
 
+    @Autowired
+    private AliYunUtil aliYunUtil;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private LoginService loginService;
+
     @Value("${aliyun.endpoint}")
     private String endpoint;
 
@@ -46,14 +59,14 @@ public class CommonUploadController {
     @Value("${aliyun.accessKeySecret}")
     private String accessKeySecret;
 
-    @Value("${aliyun.callbackProtocol}")
-    private String callbackProtocol;
+    @Value("${aliyun.commonCallbackProtocol}")
+    private String commonCallbackProtocol;
 
-    @Value("${aliyun.callbackHost}")
-    private String callbackHost;
+    @Value("${aliyun.commonCallbackHost}")
+    private String commonCallbackHost;
 
-    @Value("${aliyun.callbackPath}")
-    private String callbackPath;
+    @Value("${aliyun.commonCallbackPath}")
+    private String commonCallbackPath;
 
     /**
      * 获取Token
@@ -67,13 +80,13 @@ public class CommonUploadController {
      **/
     @PostMapping("/getToken")
     public Result getToken(HttpServletRequest request) throws Exception {
-        if(!visitorUtil.isLimited(request)){
+        if (!visitorUtil.isLimited(request)) {
             HashMap<String, Object> result = null;
             OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
             String dir = "myblog/loginFace/";
             try {
                 // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。
-                String callbackUrl = callbackProtocol + callbackHost + callbackPath;
+                String callbackUrl = commonCallbackProtocol + commonCallbackHost + commonCallbackPath;
                 long expireTime = 30;
                 long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
                 Date expiration = new Date(expireEndTime);
@@ -97,7 +110,7 @@ public class CommonUploadController {
 
                 JSONObject jasonCallback = new JSONObject();
                 jasonCallback.put("callbackUrl", callbackUrl);
-                jasonCallback.put("callbackHost", callbackHost);
+                jasonCallback.put("callbackHost", commonCallbackHost);
                 jasonCallback.put("callbackBody",
                         "filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}");
                 jasonCallback.put("callbackBodyType", "application/x-www-form-urlencoded");
@@ -116,42 +129,32 @@ public class CommonUploadController {
 
     }
 
-//    /**
-//     * 上传Oss回调
-//     *
-//     * @return java.lang.String
-//     * @author ZouCha
-//     * @date 2020-11-20 15:12:59
-//     * @method callback
-//     * @params [request]
-//     **/
-//    @PostMapping("/callback")
-//    public Result callback(HttpServletRequest request) throws OSSException {
-//        HashMap<String, Object> map = null;
-//        try {
-//            Enumeration<String> parameterNames = request.getParameterNames();
-//            Iterator<String> stringIterator = parameterNames.asIterator();
-//            while (stringIterator.hasNext()) {
-//                String next = stringIterator.next();
-//                System.out.println(next);
-//                System.out.println(request.getParameter(next));
-//            }
-//            System.out.println("-------------------");
-//            Map<String, String[]> parameterMap = request.getParameterMap();
-//            for (Map.Entry<String, String[]> stringEntry : parameterMap.entrySet()) {
-//                System.out.println(stringEntry.getKey());
-//                System.out.println(stringEntry.getValue()[0]);
-//            }
-//            map = new HashMap<>(5);
-//            map.put("filename", "https://picture.chardance.cloud/".concat(String.valueOf(request.getParameter("filename"))));
-//            map.put("size", request.getAttribute("size"));
-//            map.put("mimeType", request.getAttribute("mimeType"));
-//            map.put("width", request.getAttribute("width"));
-//            map.put("height", request.getAttribute("height"));
-//        } catch (Exception e) {
-//            log.error("callback错误" + e.toString());
-//            throw new OSSException("callback错误" + e.toString());
-//        }
-//        return ResultUtil.success(map);
-//    }
+    /**
+     * 上传Oss回调
+     *
+     * @return java.lang.String
+     * @author ZouCha
+     * @date 2020-11-20 15:12:59
+     * @method callback
+     * @params [request]
+     **/
+    @PostMapping("/callback")
+    public Result callback(HttpServletRequest request) throws OSSException {
+        try {
+            String name = aliYunUtil.faceSearch("https://chardance-picture.oss-cn-shanghai.aliyuncs.com/".concat(String.valueOf(request.getParameter("filename"))));
+            if (name == null) {
+                return ResultUtil.loginError("用户不存在或置信度低!", null);
+            }
+            User user = loginService.login(name);
+            if (user != null) {
+                return ResultUtil.success("登录成功", new String[]{String.valueOf(user.getUserId()), jwtUtil.createToken(user.getUserId(), user.getUserName())});
+            }
+            else {
+                return ResultUtil.loginError("账号不存在或密码错误", null);
+            }
+        } catch (Exception e) {
+            log.error("callback错误" + e.toString());
+            throw new OSSException("callback错误" + e.toString());
+        }
+    }
 }

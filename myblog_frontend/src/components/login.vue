@@ -58,6 +58,7 @@ import {getHeight, getWidth} from "../assets/js/calc";
 import 'tracking/build/tracking-min'
 import 'tracking/build/tracking'
 import 'tracking/build/data/face-min'
+import Vue from "vue";
 
 export default {
   name: "login",
@@ -72,7 +73,8 @@ export default {
       mediaStreamTrack: null,
       intervalId: null,
       trackerTask: null,
-      flag:true
+      flag: true,
+      faceTimes: 0
     }
   },
   methods: {
@@ -86,9 +88,9 @@ export default {
           this.$store.commit('setUser', user);
           this.$store.commit('setToken', response.data.data[1]);
           this.$router.push("/admin");
-          var d = new Date();
+          const d = new Date();
           d.setTime(d.getTime() + (60 * 60 * 2 * 1000));
-          var expires = "expires=" + d.toUTCString();
+          const expires = "expires=" + d.toUTCString();
           document.cookie = "userId=" + user.userId + ";" + expires;
           document.cookie = "userName=" + user.userName + ";" + expires;
           document.cookie = "token=" + response.data.data[1] + ";" + expires;
@@ -162,38 +164,123 @@ export default {
       const context = canvas.getContext('2d');
       context.drawImage(this.video, 0, 0, 320, 240, 0, 0, 320, 240);
       //获取图片，数据格式为base64
-      const imageData = canvas.toDataURL("image/png");
-      // console.log(imageData)
+      let arr = canvas.toDataURL("image/png").split(',')
+      let mime = arr[0].match(/:(.*?);/)[1]
+      let str = atob(arr[1])
+      let n = str.length
+      let u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = str.charCodeAt(n);
+      }
+      return new File([new Blob([u8arr], {type: mime})], 'a.png');
     },
-    destroyed () {
+    destroyed() {
       // 停止侦测
       this.trackerTask.stop()
       // 关闭摄像头
       this.mediaStreamTrack.stop();
     },
+    randomName(len) {
+      len = len || 32;
+      const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+      const maxPos = chars.length;
+      let pwd = '';
+      for (let i = 0; i < len; i++) {
+        pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+      }
+      return pwd + ".png"
+    },
     faceTracker() {
-      var that =this
+      const that = this;
       const canvas = document.getElementById('canvas');
       const context = canvas.getContext('2d');
       const tracker = new tracking.ObjectTracker('face');
       tracker.setInitialScale(4);
       tracker.setStepSize(2);
       tracker.setEdgesDensity(0.1);
-      this.trackerTask = tracking.track('#video', tracker, { camera: true });
+      this.trackerTask = tracking.track('#video', tracker, {camera: true});
 
-      tracker.on('track', function(event) {
+      tracker.on('track', function (event) {
         context.clearRect(0, 0, 320, 240);
         context.drawImage(that.video, 0, 0, 320, 240, 0, 0, 320, 240);
         if (event.data.length) {
-          event.data.forEach(function(rect) {
-            console.log("检测到人脸");
-            context.font = '11px Helvetica';
-            context.fillText("已识别到人脸",100,40);
-            context.strokeStyle = '#a64ceb';
-            context.strokeRect(rect.x, rect.y, rect.width, rect.height);
-          });
+          if (that.flag) {
+            that.faceTimes++
+            event.data.forEach(function (rect) {
+              context.font = '11px Helvetica';
+              context.fillText("已识别到人脸", 100, 40);
+              context.strokeStyle = '#a64ceb';
+              context.strokeRect(rect.x, rect.y, rect.width, rect.height);
+            });
+            if (that.faceTimes === 20) {
+              that.$notify({
+                title: '人脸识别',
+                message: '人脸识别请求发出',
+                type: 'success',
+                duration: 1000
+              });
+              that.flag = false
+              that.$http.post("/upload/common/getToken").then(response => {
+                  if (response != null) {
+                    const formData = new FormData();
+                    formData.append('key', response.data.data.dir + that.randomName(10));
+                    formData.append('policy', response.data.data.policy);
+                    formData.append('OSSAccessKeyId', response.data.data.accessId);
+                    formData.append('success_action_status', '200');
+                    formData.append('callback', response.data.data.callback);
+                    formData.append('signature', response.data.data.signature);
+                    formData.append('file', that.drawCanvasImage());
+                    that.$http({
+                      url: response.data.data.host,
+                      method: 'post',
+                      data: formData,
+                      headers: {
+                        'Content-Type': 'multipart/form-data',
+                      },
+                    }).then((response) => {
+                      if (response != null) {
+                        that.destroyed()
+                        const user = {
+                          userId: response.data.data[0],
+                          userName: that.username,
+                        };
+                        that.$store.commit('setUser', user);
+                        that.$store.commit('setToken', response.data.data[1]);
+                        that.$router.push("/admin");
+                        const d = new Date();
+                        d.setTime(d.getTime() + (60 * 60 * 2 * 1000));
+                        const expires = "expires=" + d.toUTCString();
+                        document.cookie = "userId=" + user.userId + ";" + expires;
+                        document.cookie = "userName=" + user.userName + ";" + expires;
+                        document.cookie = "token=" + response.data.data[1] + ";" + expires;
+                      } else {
+                        that.flag = true
+                        that.faceTimes = 0
+                      }
+                    }).catch(error => {
+                      console.log(error)
+                      this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+                    })
+                  } else {
+                    that.flag = false
+                    that.destroyed()
+                    that.$notify({
+                      title: '请求频繁',
+                      message: '请稍后再试!',
+                      type: 'error',
+                      duration: 1000
+                    });
+                  }
+                }
+              ).catch(error => {
+                console.log(error)
+                that.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+              })
+            }
+          }
+        } else {
+          that.faceTimes = 0
         }
-
       });
     }
   },
@@ -201,9 +288,6 @@ export default {
     if (this.$store.state.user.userId !== '' && this.$store.state.user.userName !== '' && this.$store.state.token !== '') {
       this.$router.push("/admin")
     }
-    // if (getWidth() <= 1000) {
-    //   this.cameraWidth = getWidth() - 20;
-    // }
   }
 }
 </script>

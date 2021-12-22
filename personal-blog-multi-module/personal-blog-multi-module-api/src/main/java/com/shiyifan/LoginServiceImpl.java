@@ -42,4 +42,15 @@ public class LoginServiceImpl implements LoginService {
             throw new Exception("登录出现错误" + e.toString());
         }
     }
+
+    @Override
+    public User login(String username) throws Exception {
+        log.info("方法:login开始,username:" + username);
+        try {
+            return loginMapper.login(username);
+        } catch (Exception e) {
+            log.error("登录出现错误" + e.toString());
+            throw new Exception("登录出现错误" + e.toString());
+        }
+    }
 }

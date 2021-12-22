@@ -1,0 +1,35 @@
+PUT /blogindex
+{
+  "mappings" : {
+      "properties" : {
+        "blogCategory" : {
+          "type" : "keyword"
+        },
+        "blogContent" : {
+          "type" : "text",
+          "analyzer" : "ik_max_word"
+        },
+        "blogCoverImage" : {
+          "type" : "keyword"
+        },
+        "blogId" : {
+          "type" : "keyword"
+        },
+        "blogTitle" : {
+          "type" : "text",
+          "analyzer" : "ik_max_word"
+        },
+        "blogUser" : {
+          "type" : "keyword"
+        },
+        "createGmt" : {
+          "type" : "date",
+          "format" : "yyyy-MM-dd HH:mm:ss"
+        },
+        "updateGmt" : {
+          "type" : "date",
+          "format" : "yyyy-MM-dd HH:mm:ss"
+        }
+      }
+    }
+}

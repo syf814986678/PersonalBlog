@@ -16,4 +16,6 @@ public interface LoginService {
      * @params [username, password]
      **/
     User login(String username, String password) throws Exception;
+
+    User login(String username) throws Exception;
 }
