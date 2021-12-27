@@ -87,7 +87,7 @@ public class CommonUploadController {
             try {
                 // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。
                 String callbackUrl = commonCallbackProtocol + commonCallbackHost + commonCallbackPath;
-                long expireTime = 30;
+                long expireTime = 300;
                 long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
                 Date expiration = new Date(expireEndTime);
                 PolicyConditions policyConditions = new PolicyConditions();

@@ -112,7 +112,7 @@ export default {
   data() {
     return {
       visible: false,
-      url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593937482731&di=bece2a0fc9049db36a1cb5324a016222&imgtype=0&src=http%3A%2F%2Fdmimg.5054399.com%2Fallimg%2Fpkm%2Fpk%2F13.jpg',
+      url: 'https://picture.chardance.cloud/myblog/frontResource/images/touxiang.jpg',
       height: 0,
     }
   },
