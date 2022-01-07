@@ -3,7 +3,7 @@
     <div  v-loading="categoriesLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
           element-loading-background="rgba(0, 0, 0, 0.8)"
           style="margin-bottom: 10px">
-      <el-button size="medium" v-for="item in categories" :key="item.categoryId" type="primary" style="font-size: 12px;font-weight: bold" @click="select(item.categoryId)">{{item.categoryName}}({{item.categoryRank}})</el-button>
+      <el-button size="medium" v-for="item in categories" :key="item.categoryId" type="primary" style="font-size: 12px;font-weight: bold;margin-left: 0;margin-right: 10px;margin-bottom: 10px" @click="select(item.categoryId)">{{item.categoryName}} ({{item.categoryRank}})</el-button>
     </div>
     <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
               element-loading-background="rgba(0, 0, 0, 0.8)" border :row-class-name="tableRowClassName" :data="myData">

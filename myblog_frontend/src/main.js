@@ -16,6 +16,7 @@ import 'prismjs/components/prism-csharp';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-kotlin';
 import 'prismjs/components/prism-http';
+import 'prismjs/components/prism-sql';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import http from './http'
