@@ -1,5 +1,6 @@
 package com.shiyifan.controller.admin;
 
+import com.shiyifan.BlogService;
 import com.shiyifan.CategoryService;
 import com.shiyifan.ResultUtil;
 import com.shiyifan.pojo.Category;
@@ -28,6 +29,9 @@ public class AdminCategoryController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private BlogService blogService;
 
     /**
      * @return com.shiyifan.pojo.Result
@@ -106,6 +110,10 @@ public class AdminCategoryController {
             claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
             int userId = (int) claims.get("userId");
             categoryService.updateCategoryForAdmin(userId, categoryName, categoryId);
+            ArrayList<String> blogIds = blogService.selectBlogIdByCategoryIdForAdmin(userId, categoryId);
+            for (String blogId : blogIds) {
+                blogService.updateBlogForAdmin(userId, blogId);
+            }
         } catch (Exception e) {
             log.error("updateCategoryForAdmin错误" + e.toString());
             throw new Exception("updateCategoryForAdmin错误" + e.toString());

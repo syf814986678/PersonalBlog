@@ -24,9 +24,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryMapper categoryMapper;
 
-//    @Autowired
-//    private BlogService blogService;
-
     /**
      * @return java.util.ArrayList<com.shiyifan.pojo.Category>
      * @author ZouCha
@@ -253,18 +250,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean updateCategoryForAdmin(int userId, String categoryName, int categoryId) throws Exception {
-//        log.info("方法:updateCategoryForAdmin开始,userId:" + userId + ",categoryId:" + categoryId + ",categoryName:" + categoryName);
-//        try {
-//            categoryMapper.updateCategoryForAdmin(userId, categoryName, categoryId);
-//            ArrayList<String> blogIds = blogService.selectBlogIdByCategoryIdForAdmin(userId, categoryId);
-//            for (String blogId : blogIds) {
-//                blogService.updateBlogForAdmin(userId, blogId);
-//            }
-//        } catch (Exception e) {
-//            log.error("updateCategoryForAdmin错误" + e.toString());
-//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//            throw new Exception("updateCategoryForAdmin错误" + e.toString());
-//        }
+        log.info("方法:updateCategoryForAdmin开始,userId:" + userId + ",categoryId:" + categoryId + ",categoryName:" + categoryName);
+        try {
+            categoryMapper.updateCategoryForAdmin(userId, categoryName, categoryId);
+        } catch (Exception e) {
+            log.error("updateCategoryForAdmin错误" + e.toString());
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            throw new Exception("updateCategoryForAdmin错误" + e.toString());
+        }
         return true;
     }
 
