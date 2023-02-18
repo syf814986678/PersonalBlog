@@ -1,6 +1,7 @@
 package com.shiyifan;
 
 import com.rabbitmq.client.Channel;
+import com.shiyifan.pojo.Blog;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -25,39 +26,40 @@ public class RabbitmqServiceImpl implements RabbitmqService {
     private RabbitTemplate rabbitTemplate;
 
     @Value("${spring.rabbitmq.blogQueue}")
-    private String bookQueue;
+    private String blogQueue;
+
+    @Autowired
+    private BlogService blogService;
 
     @Override
-    public boolean insertBlogProvider(String bookUrl, int regId, int userId) throws Exception {
-//        try {
-//            HashMap<String, Object> map = new HashMap<>(6);
-//            map.put("bookUrl", bookUrl);
-//            map.put("regId", regId);
-//            map.put("userId", userId);
-//            rabbitTemplate.convertAndSend(bookQueue, map);
-//        } catch (Exception e) {
-//            log.error(e);
-//            e.printStackTrace();
-//            throw new Exception(e.getMessage());
-//        }
-//        return true;
+    public boolean insertBlogProvider(Blog blog, int userId) throws Exception {
+        try {
+            HashMap<String, Object> map = new HashMap<>(6);
+            map.put("blog", blog);
+            map.put("userId", userId);
+            rabbitTemplate.convertAndSend(blogQueue, map);
+        } catch (Exception e) {
+            log.error(e);
+            e.printStackTrace();
+            throw new Exception(e.getMessage());
+        }
+        return true;
     }
 
     @Override
     @RabbitListener(queuesToDeclare = @Queue("${spring.rabbitmq.blogQueue}"))
     public void insertBlogConsumer(HashMap<String, Object> map, Message message, Channel channel) throws Exception {
-//        String bookUrl = (String) map.get("bookUrl");
-//        int regId = (int) map.get("regId");
-//        int userId = (int) map.get("userId");
-//        try {
-//            bookService.insertBook(bookUrl, regId, userId);
-//        } catch (Exception e) {
+        try {
+            Blog blog = (Blog) map.get("blog");
+            int userId = (int) map.get("userId");
+            blogService.addBlogForAdmin(userId, blog);
+        } catch (Exception e) {
 //            DingTalkUtil.sendMsg(e.getMessage());
-//            //添加队列重试
-//            // channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
-//        } finally {
-//            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-//        }
+            //添加队列重试
+            // channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
+        } finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        }
 
     }
 

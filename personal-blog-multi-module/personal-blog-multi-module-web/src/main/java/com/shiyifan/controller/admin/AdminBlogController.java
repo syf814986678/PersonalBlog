@@ -1,6 +1,7 @@
 package com.shiyifan.controller.admin;
 
 import com.shiyifan.BlogService;
+import com.shiyifan.RabbitmqService;
 import com.shiyifan.ResultUtil;
 import com.shiyifan.VisitorUtil;
 import com.shiyifan.pojo.Blog;
@@ -31,6 +32,9 @@ public class AdminBlogController {
 
     @Autowired
     private BlogService blogService;
+
+    @Autowired
+    private RabbitmqService rabbitmqService;
 
     /**
      * 获取访问人数
@@ -159,7 +163,8 @@ public class AdminBlogController {
         try {
             claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
             int userId = (int) claims.get("userId");
-            blogService.addBlogForAdmin(userId, blog);
+            rabbitmqService.insertBlogProvider(blog, userId);
+//            blogService.addBlogForAdmin(userId, blog);
         } catch (Exception e) {
             log.error("addBlogForAdmin错误" + e.toString());
             throw new Exception("addBlogForAdmin错误" + e.toString());

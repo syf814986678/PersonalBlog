@@ -1,6 +1,7 @@
 package com.shiyifan;
 
 import com.rabbitmq.client.Channel;
+import com.shiyifan.pojo.Blog;
 import org.springframework.amqp.core.Message;
 
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.HashMap;
  **/
 public interface RabbitmqService {
 
-    boolean insertBlogProvider(String bookUrl, int regId, int userId) throws Exception;
+    boolean insertBlogProvider(Blog blog, int userId) throws Exception;
 
     void insertBlogConsumer(HashMap<String, Object> map, Message message, Channel channel) throws Exception;
 
