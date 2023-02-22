@@ -398,4 +398,24 @@ public class BlogServiceImpl implements BlogService {
         return blogId;
     }
 
+    /**
+     * @param userId:
+     * @param blogId:
+     * @return java.lang.String
+     * @author 走叉
+     * @date 2023-02-22 14:01:10
+     * @method downloadBlog2Markdown
+     **/
+    @Override
+    public String downloadBlog2MarkdownForCommon(int userId, String blogId) throws Exception {
+        try{
+            Blog blog = this.selectBlogByIdForCommon(blogId);
+        }
+        catch (Exception e){
+            log.error(e);
+            e.printStackTrace();
+            throw new Exception(e.getMessage());
+        }
+    }
+
 }

@@ -139,4 +139,14 @@ public interface BlogService {
      **/
     ArrayList<String> selectBlogIdByCategoryIdForAdmin(int userId, int categoryId) throws Exception;
 
+    /**
+     * @param userId:
+     * @param blogId:
+     * @return java.lang.String
+     * @author 走叉
+     * @date 2023-02-22 13:58:06
+     * @method downloadBlog2Markdown
+     **/
+    String downloadBlog2MarkdownForCommon(int userId, String blogId) throws Exception;
+
 }
