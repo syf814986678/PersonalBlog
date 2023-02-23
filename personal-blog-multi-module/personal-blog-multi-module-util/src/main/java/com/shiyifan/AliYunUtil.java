@@ -2,7 +2,6 @@ package com.shiyifan;
 
 import com.aliyun.facebody20191230.Client;
 import com.aliyun.facebody20191230.models.SearchFaceRequest;
-import com.aliyun.facebody20191230.models.SearchFaceResponse;
 import com.aliyun.facebody20191230.models.SearchFaceResponseBody;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyuncs.DefaultAcsClient;
@@ -17,8 +16,6 @@ import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * @author ZouCha
@@ -97,6 +94,7 @@ public class AliYunUtil {
                     .setQualityScoreThreshold(80F)
                     .setMaxFaceNum(1L);
             SearchFaceResponseBody.SearchFaceResponseBodyDataMatchListFaceItems item = client.searchFace(searchFaceRequest).getBody().getData().getMatchList().get(0).getFaceItems().get(0);
+            System.out.println(item.toString());
             if (item.getConfidence() < 80 || item.getScore() < 0.8) {
                 return null;
             }

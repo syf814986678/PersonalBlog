@@ -56,4 +56,10 @@ public class test {
         }
 
     }
+
+    @Test
+    public void testdownload() throws Exception {
+        blogService.downloadBlog2MarkdownForCommon(1,"02039b6a22164e898e2f235b9e5f9cb3");
+
+    }
 }

@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * @author ZouCha
@@ -65,8 +62,8 @@ public class CommonUploadController {
     @Value("${aliyun.commonCallbackHost}")
     private String commonCallbackHost;
 
-    @Value("${aliyun.commonCallbackPath}")
-    private String commonCallbackPath;
+    @Value("${aliyun.commonFaceCallbackPath}")
+    private String commonFaceCallbackPath;
 
     /**
      * 获取Token
@@ -86,7 +83,7 @@ public class CommonUploadController {
             String dir = "myblog/loginFace/";
             try {
                 // callbackUrl为 上传回调服务器的URL，请将下面的IP和Port配置为您自己的真实信息。
-                String callbackUrl = commonCallbackProtocol + commonCallbackHost + commonCallbackPath;
+                String callbackUrl = commonCallbackProtocol + commonCallbackHost + commonFaceCallbackPath;
                 long expireTime = 300;
                 long expireEndTime = System.currentTimeMillis() + expireTime * 1000;
                 Date expiration = new Date(expireEndTime);
@@ -138,8 +135,8 @@ public class CommonUploadController {
      * @method callback
      * @params [request]
      **/
-    @PostMapping("/callback")
-    public Result callback(HttpServletRequest request) throws OSSException {
+    @PostMapping("/faceCallback")
+    public Result faceCallback(HttpServletRequest request) throws OSSException {
         try {
             String name = aliYunUtil.faceSearch("https://chardance-picture.oss-cn-shanghai.aliyuncs.com/".concat(String.valueOf(request.getParameter("filename"))));
             if (name == null) {

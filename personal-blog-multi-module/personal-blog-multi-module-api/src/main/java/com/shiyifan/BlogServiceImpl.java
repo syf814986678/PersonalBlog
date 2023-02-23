@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -408,14 +409,23 @@ public class BlogServiceImpl implements BlogService {
      **/
     @Override
     public String downloadBlog2MarkdownForCommon(int userId, String blogId) throws Exception {
-        try{
+        try {
+            String filePath = "C:\\Users\\走叉\\Documents\\Code\\JAVA\\PersonalBlog\\personal-blog-multi-module\\" + blogId + ".md";
             Blog blog = this.selectBlogByIdForCommon(blogId);
-        }
-        catch (Exception e){
+            File file = new File(filePath);
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), StandardCharsets.UTF_8));
+            out.write(blog.toString());
+            out.close();
+        } catch (Exception e) {
             log.error(e);
             e.printStackTrace();
             throw new Exception(e.getMessage());
         }
+        return "1";
     }
 
 }
