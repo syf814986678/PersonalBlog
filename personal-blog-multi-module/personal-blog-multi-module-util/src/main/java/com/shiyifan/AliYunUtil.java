@@ -3,6 +3,10 @@ package com.shiyifan;
 import com.aliyun.facebody20191230.Client;
 import com.aliyun.facebody20191230.models.SearchFaceRequest;
 import com.aliyun.facebody20191230.models.SearchFaceResponseBody;
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.model.PutObjectRequest;
+import com.aliyun.oss.model.PutObjectResult;
 import com.aliyun.teaopenapi.models.Config;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
@@ -16,6 +20,9 @@ import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author ZouCha
@@ -34,6 +41,12 @@ public class AliYunUtil {
 
     @Value("${aliyun.path}")
     private String path;
+
+    @Value("${aliyun.endpoint}")
+    private String endpoint;
+
+    @Value("${aliyun.bucket}")
+    private String bucket;
 
     /**
      * @return void
@@ -105,4 +118,20 @@ public class AliYunUtil {
             return null;
         }
     }
+
+    public String uploadBookPic2Oss(String key, String content) throws Exception {
+        OSS ossClient = null;
+        try {
+            ossClient = new OSSClientBuilder().build("https://"+endpoint, accessKeyId, accessKeySecret);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, key, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
+            PutObjectResult result = ossClient.putObject(putObjectRequest);
+            return "https://picture.chardance.cloud/" + key;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        } finally {
+            assert ossClient != null;
+            ossClient.shutdown();
+        }
+    }
+
 }

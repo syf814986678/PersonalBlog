@@ -13,6 +13,7 @@ import categoryList from "../components/users/categoryList";
 // 引入vuex
 import store from '@/store';
 import BlogSearchForCommon from "../components/common/BlogSearchForCommon";
+
 Vue.use(Router)
 /*
   防止重复点击使得路由重复，报错。
@@ -21,7 +22,7 @@ const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
-const router=new Router({
+const router = new Router({
   // mode: 'history',  //去掉url中的#
   routes: [
     {
@@ -88,9 +89,9 @@ const router=new Router({
     {
       path: '/admin',
       component: myLayout,
-      meta: { requiresAuth: true,title: '个人博客' },
+      meta: {requiresAuth: true, title: '个人博客'},
       redirect: '/admin/index',
-      children:[
+      children: [
         {
           path: 'index',
           component: Index,
@@ -132,21 +133,21 @@ const router=new Router({
       meta: {
         title: '页面不存在',
       }
-     }
+    }
   ]
 })
 router.beforeEach((to, from, next) => {
   window.document.title = to.meta.title
-  if (to.meta.requiresAuth && (store.state.token==='' || store.state.user.userId==='' || store.state.user.userName==='')){
+  if (to.meta.requiresAuth && (store.state.token === '' || store.state.user.userId === '' || store.state.user.userName === '')) {
     let allCookie = document.cookie.split(';')
-    if (allCookie.length>1){
-      allCookie=allCookie.sort()
+    if (allCookie.length > 1) {
+      allCookie = allCookie.sort()
       const user = {
-        userId:allCookie[2].trim().substring(7,allCookie[2].trim().length),
-        userName:allCookie[1].trim().substring(9,allCookie[1].trim().length),
+        userId: allCookie[2].trim().substring(7, allCookie[2].trim().length),
+        userName: allCookie[1].trim().substring(9, allCookie[1].trim().length),
       };
-      store.commit('setUser',user)
-      store.commit('setToken',allCookie[0].trim().substring(6,allCookie[0].trim().length))
+      store.commit('setUser', user)
+      store.commit('setToken', allCookie[0].trim().substring(6, allCookie[0].trim().length))
       return next()
     }
     store.commit('logout')

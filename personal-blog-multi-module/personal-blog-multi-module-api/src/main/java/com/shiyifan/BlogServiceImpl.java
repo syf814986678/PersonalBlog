@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -37,6 +36,9 @@ public class BlogServiceImpl implements BlogService {
 
     @Autowired
     private ArabicNumToChineseNumUtil arabicNumToChineseNumUtil;
+
+    @Autowired
+    private AliYunUtil aliYunUtil;
 
     /**
      * 根据种类ID和分页数据查找博客
@@ -410,22 +412,15 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public String downloadBlog2MarkdownForCommon(int userId, String blogId) throws Exception {
         try {
-            String filePath = "C:\\Users\\走叉\\Documents\\Code\\JAVA\\PersonalBlog\\personal-blog-multi-module\\" + blogId + ".md";
+            String dir = "myblog/markdown/";
+            String filePath = dir + blogId + ".md";
             Blog blog = this.selectBlogByIdForCommon(blogId);
-            File file = new File(filePath);
-            if (file.exists()) {
-                file.delete();
-            }
-            file.createNewFile();
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), StandardCharsets.UTF_8));
-            out.write(blog.toString());
-            out.close();
+            return aliYunUtil.uploadBookPic2Oss(filePath, blog.getBlogContent());
         } catch (Exception e) {
             log.error(e);
             e.printStackTrace();
             throw new Exception(e.getMessage());
         }
-        return "1";
     }
 
 }

@@ -24,7 +24,8 @@ import animated from 'animate.css'
 import store from './store'
 import router from './router'
 import App from './App'
-Vue.prototype.$http= http;
+
+Vue.prototype.$http = http;
 Vue.config.productionTip = false
 
 VueMarkdownEditor.use(vuepressTheme);
@@ -39,6 +40,6 @@ new Vue({
   el: '#app',
   router,
   store,
-  components: { App },
+  components: {App},
   template: '<App/>'
 })

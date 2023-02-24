@@ -23,11 +23,19 @@
                 v-model="visible">
                 <el-row>
                   <el-col :span="12"><span style="font-size: medium">id：</span></el-col>
-                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">{{ this.$store.state.user.userId}}</el-tag></el-col>
+                  <el-col :span="12">
+                    <el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center"
+                            effect="dark" type="success">{{ this.$store.state.user.userId }}
+                    </el-tag>
+                  </el-col>
                 </el-row>
                 <el-row style="margin-top: 0.5rem">
                   <el-col :span="12"><span style="font-size: medium">用户名：</span></el-col>
-                  <el-col :span="12"><el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center" effect="dark" type="success">{{this.$store.state.user.userName}}</el-tag></el-col>
+                  <el-col :span="12">
+                    <el-tag style="font-size: medium;height: 1.5rem;line-height: 23px;width: 100%;text-align: center"
+                            effect="dark" type="success">{{ this.$store.state.user.userName }}
+                    </el-tag>
+                  </el-col>
                 </el-row>
                 <el-row>
                   <el-col :span="24">
@@ -50,38 +58,56 @@
         :style="{height:this.height+'px'}"
         @mouseenter.native="collapseOpen"
         @mouseleave.native="collapseClose">
-        <el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router :default-active="$route.path" :collapse="this.$store.state.isCollapse" :collapse-transition="false">
-          <el-menu-item @click="reverse" style="text-align: center"><i class="el-icon-s-grid" style="font-size: 30px;margin-left: -5px"></i></el-menu-item>
+        <el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" router
+                 :default-active="$route.path" :collapse="this.$store.state.isCollapse" :collapse-transition="false">
+          <el-menu-item @click="reverse" style="text-align: center"><i class="el-icon-s-grid"
+                                                                       style="font-size: 30px;margin-left: -5px"></i>
+          </el-menu-item>
           <el-menu-item index="/admin/index"><i class="el-icon-s-platform"></i><span>主页</span></el-menu-item>
           <el-submenu index="1">
             <template slot="title"><i class="el-icon-data-board"></i><span>博客管理</span></template>
             <el-menu-item-group>
-              <el-menu-item index="/admin/showBlogList"><template slot="title"><i class="el-icon-s-operation"></i><span>博客列表</span></template></el-menu-item>
-              <el-menu-item index="/admin/showAddBlog"><template slot="title"><i class="el-icon-plus"></i><span>添加博客</span></template></el-menu-item>
+              <el-menu-item index="/admin/showBlogList">
+                <template slot="title"><i class="el-icon-s-operation"></i><span>博客列表</span></template>
+              </el-menu-item>
+              <el-menu-item index="/admin/showAddBlog">
+                <template slot="title"><i class="el-icon-plus"></i><span>添加博客</span></template>
+              </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title"><i class="el-icon-collection-tag"></i><span>类别管理</span></template>
             <el-menu-item-group>
-              <el-menu-item index="/admin/showCategoryList"><template slot="title"><i class="el-icon-s-operation"></i><span>类别列表</span></template></el-menu-item></el-menu-item-group>
+              <el-menu-item index="/admin/showCategoryList">
+                <template slot="title"><i class="el-icon-s-operation"></i><span>类别列表</span></template>
+              </el-menu-item>
+            </el-menu-item-group>
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main class="mymain" :style="{height:this.height+'px'}" >
+      <el-main class="mymain" :style="{height:this.height+'px'}">
         <div class="mobile">
-          <el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" mode="horizontal" router :default-active="$route.path">
+          <el-menu background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" mode="horizontal" router
+                   :default-active="$route.path">
             <el-menu-item index="/admin/index"><i class="el-icon-s-platform"></i><span>主页</span></el-menu-item>
             <el-submenu index="1">
               <template slot="title"><i class="el-icon-data-board"></i><span>博客</span></template>
               <el-menu-item-group>
-                <el-menu-item index="/admin/showBlogList"><template slot="title"><i class="el-icon-s-operation"></i><span>博客列表</span></template></el-menu-item>
-                <el-menu-item index="/admin/showAddBlog"><template slot="title"><i class="el-icon-plus"></i><span>添加博客</span></template></el-menu-item>
+                <el-menu-item index="/admin/showBlogList">
+                  <template slot="title"><i class="el-icon-s-operation"></i><span>博客列表</span></template>
+                </el-menu-item>
+                <el-menu-item index="/admin/showAddBlog">
+                  <template slot="title"><i class="el-icon-plus"></i><span>添加博客</span></template>
+                </el-menu-item>
               </el-menu-item-group>
             </el-submenu>
             <el-submenu index="2">
               <template slot="title"><i class="el-icon-collection-tag"></i><span>类别</span></template>
               <el-menu-item-group>
-                <el-menu-item index="/admin/showCategoryList"><template slot="title"><i class="el-icon-s-operation"></i><span>类别列表</span></template></el-menu-item></el-menu-item-group>
+                <el-menu-item index="/admin/showCategoryList">
+                  <template slot="title"><i class="el-icon-s-operation"></i><span>类别列表</span></template>
+                </el-menu-item>
+              </el-menu-item-group>
             </el-submenu>
           </el-menu>
         </div>
@@ -94,11 +120,21 @@
     </el-container>
     <el-footer class="myfooter">
       <div class="myfooterinfo">
-        <el-link style="margin-top: -16px;margin-bottom: 0" href="https://www.chardance.cloud" target="_blank" type="danger"><el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag></el-link>
-        <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
-        <el-link style="margin-top: -16px;margin-bottom: 0" href="https://beian.miit.gov.cn/" target="_blank" type="danger">沪ICP备20013409号-1</el-link>
-        <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; " disabled>||</el-link>
-        <el-link class="showTime" style="margin-top: -16px;margin-bottom: 0" href="http://time.tianqi.com/" target="_blank" type="success"></el-link>
+        <el-link style="margin-top: -16px;margin-bottom: 0" href="https://www.chardance.cloud" target="_blank"
+                 type="danger">
+          <el-tag type="success" effect="dark" style="padding: 0 2px">字符跳动</el-tag>
+        </el-link>
+        <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; "
+                 disabled>||
+        </el-link>
+        <el-link style="margin-top: -16px;margin-bottom: 0" href="https://beian.miit.gov.cn/" target="_blank"
+                 type="danger">沪ICP备20013409号-1
+        </el-link>
+        <el-link style="margin-top: -18px;margin-bottom: 0;cursor:default;font-family: Arial;font-size: 20px; "
+                 disabled>||
+        </el-link>
+        <el-link class="showTime" style="margin-top: -16px;margin-bottom: 0" href="http://time.tianqi.com/"
+                 target="_blank" type="success"></el-link>
       </div>
     </el-footer>
   </el-container>
@@ -107,6 +143,7 @@
 <script>
 import {time} from "../../assets/js/showTime"
 import {getHeight, getWidth} from "../../assets/js/calc";
+
 export default {
   name: "myLayout",
   data() {
@@ -126,7 +163,7 @@ export default {
     logout() {
       this.$store.commit('logout')
     },
-    reverse(){
+    reverse() {
       this.$store.commit('collapseReverse')
     },
     // handleSelect(index,indexPath){
@@ -138,20 +175,19 @@ export default {
     // }
   },
   created() {
-    const that=this
-    if (getWidth()>1000){
-      this.height=getHeight()-125
+    const that = this
+    if (getWidth() > 1000) {
+      this.height = getHeight() - 125
+    } else {
+      this.height = getHeight() - 60
     }
-    else {
-      this.height=getHeight()-60
-    }
-    window.addEventListener("resize",function (){
-      if (getWidth()>1000){
-        that.height=getHeight()-125
+    window.addEventListener("resize", function () {
+        if (getWidth() > 1000) {
+          that.height = getHeight() - 125
+        } else {
+          that.height = getHeight() - 60
+        }
       }
-      else {
-        that.height=getHeight()-60
-      }}
     )
     time()
   }
@@ -159,18 +195,20 @@ export default {
 </script>
 
 <style scoped>
-.myheader{
+.myheader {
   background-color: #ffffff;
   margin-top: -6px;
 }
-.mytitle{
+
+.mytitle {
   background-color: #11c69c;
   border-radius: 20px;
   box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.5);
   margin: 3px -16px;
   padding: 5px 10px 0;
 }
-.mytitletext{
+
+.mytitletext {
   font-size: xx-large;
   color: #fff;
   display: block;
@@ -180,12 +218,13 @@ export default {
   margin-left: 5px;
   border-radius: 10px;
 }
-.myavator{
+
+.myavator {
   float: right;
   margin-right: 5px;
 }
 
-.myfooter{
+.myfooter {
   background-color: #fff;
   text-align: center;
   line-height: 60px;
@@ -194,7 +233,8 @@ export default {
   height: 48px !important;
 
 }
-.myfooterinfo{
+
+.myfooterinfo {
   background-color: #333;
   border-radius: 20px;
   display: block;
@@ -208,36 +248,43 @@ export default {
 }
 
 @media only screen and (max-width: 767px) {
-  .mycontainer{
+  .mycontainer {
     background-image: url("https://picture.chardance.cloud/myblog/bg/bgMobile.png");
     background-size: cover;
   }
-  .mobile{
+
+  .mobile {
     margin-bottom: 15px;
     text-align: center;
   }
+
   .myaside {
     display: none;
   }
-  .mymain{
+
+  .mymain {
     padding: 13px 5px 0;
   }
+
   .showTime {
     display: none;
   }
 
 }
+
 @media only screen and (min-width: 768px) {
-  .mycontainer{
+  .mycontainer {
     background-image: url("https://picture.chardance.cloud/myblog/frontResource/images/bg.png ");
     background-size: cover;
   }
+
   .myaside {
     background-color: #545c64;
     color: #333;
     text-align: left;
   }
-  .mobile{
+
+  .mobile {
     display: none;
   }
 }

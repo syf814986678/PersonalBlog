@@ -1,12 +1,13 @@
 import axios from "axios";
 import store from "../store";
 import getBaseUrl from "../assets/js/getBaseUrl";
+
 const http = axios.create({
   baseURL: getBaseUrl.baseUrl
 })
 //请求拦截
 http.interceptors.request.use(function (config) {
-  if (config.url.indexOf("/admin/")!==-1 && store.state.token !== ''){
+  if (config.url.indexOf("/admin/") !== -1 && store.state.token !== '') {
     config.headers.Authorization = 'Bearer ' + store.state.token
   }
   return config

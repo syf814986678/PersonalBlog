@@ -82,10 +82,9 @@ public class CommonBlogController {
         Blog blog = null;
         try {
             blog = blogService.selectBlogByIdForCommon(blogId);
-            if(blog!=null){
+            if (blog != null) {
                 return ResultUtil.success(blog);
-            }
-            else {
+            } else {
                 return ResultUtil.operationError("博客不存在", null);
             }
         } catch (Exception e) {
@@ -145,5 +144,17 @@ public class CommonBlogController {
             throw new Exception("搜索博客错误" + e.toString());
         }
         return ResultUtil.success(list);
+    }
+
+    @PostMapping("/download/{userId}/{blogId}")
+    public Result downloadBlog(@PathVariable("userId") int userId, @PathVariable("blogId") String blogId) throws Exception {
+        String url = null;
+        try {
+            url = blogService.downloadBlog2MarkdownForCommon(userId, blogId);
+        } catch (Exception e) {
+            log.error("搜索博客错误" + e.toString());
+            throw new Exception("搜索博客错误" + e.toString());
+        }
+        return ResultUtil.success(url);
     }
 }

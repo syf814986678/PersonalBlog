@@ -238,7 +238,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.loading=true
+          this.loading = true
           this.$notify({
             title: '发布博客',
             message: "发布中，请稍等！",
@@ -246,8 +246,8 @@ export default {
             duration: 1000
           });
           // this.$router.push({name:'showBlogList',params:{test:this.testData}});
-          this.$http.post("/blog/admin/addBlogForAdmin",this.form).then(response=>{
-            if (response!=null){
+          this.$http.post("/blog/admin/addBlogForAdmin", this.form).then(response => {
+            if (response != null) {
               this.$notify({
                 title: '发布博客',
                 message: "发布成功",
@@ -257,13 +257,12 @@ export default {
               this.cancel();
               this.$router.push("/admin/showBlogList");
             }
-          }).catch(error=> {
+          }).catch(error => {
             console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+            this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
           })
-        }
-        else {
-          this.$store.commit('errorMsg',"有非空数据未填写!")
+        } else {
+          this.$store.commit('errorMsg', "有非空数据未填写!")
           return false;
         }
       });
@@ -345,41 +344,41 @@ export default {
       console.log(error)
       this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
     })
-    this.$http.post("/blog/admin/getTempBlogForAdmin").then(response=>{
-      if (response!=null){
-        if (response.data.data!==null){
+    this.$http.post("/blog/admin/getTempBlogForAdmin").then(response => {
+      if (response != null) {
+        if (response.data.data !== null) {
           this.$notify({
             title: '加载博客',
             message: "加载暂存博客成功",
             type: 'success',
             duration: 2500
           });
-          if (response.data.data.blogTitle!==""){
-            this.form.blogTitle=response.data.data.blogTitle
+          if (response.data.data.blogTitle !== "") {
+            this.form.blogTitle = response.data.data.blogTitle
           }
-          if (response.data.data.blogCoverImage!==""){
-            this.form.blogCoverImage=response.data.data.blogCoverImage
+          if (response.data.data.blogCoverImage !== "") {
+            this.form.blogCoverImage = response.data.data.blogCoverImage
           }
-          if (response.data.data.blogContent!==""){
-            this.form.blogContent=response.data.data.blogContent
+          if (response.data.data.blogContent !== "") {
+            this.form.blogContent = response.data.data.blogContent
           }
-          if (response.data.data.category.categoryId!==0){
-            this.form.category.categoryId=response.data.data.category.categoryId
+          if (response.data.data.category.categoryId !== 0) {
+            this.form.category.categoryId = response.data.data.category.categoryId
           }
-          if (response.data.data.category.categoryName!==""){
-            this.form.category.categoryName=response.data.data.category.categoryName
+          if (response.data.data.category.categoryName !== "") {
+            this.form.category.categoryName = response.data.data.category.categoryName
           }
         }
       }
-    }).catch(error=> {
+    }).catch(error => {
       console.log(error)
-      this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+      this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
     })
   },
-  beforeRouteLeave (to, from, next) {
-    if (this.form.blogContent!==""){
-      this.$http.post("/blog/admin/setTempBlogForAdmin",this.form).then(response=>{
-        if (response!=null){
+  beforeRouteLeave(to, from, next) {
+    if (this.form.blogContent !== "") {
+      this.$http.post("/blog/admin/setTempBlogForAdmin", this.form).then(response => {
+        if (response != null) {
           this.$notify({
             title: '暂存博客',
             message: "暂存博客成功",
@@ -387,9 +386,9 @@ export default {
             duration: 2500
           });
         }
-      }).catch(error=> {
+      }).catch(error => {
         console.log(error)
-        this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
+        this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
       })
     }
     next();

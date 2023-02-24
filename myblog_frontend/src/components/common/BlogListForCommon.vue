@@ -1,175 +1,173 @@
 <template>
   <div
-      v-infinite-scroll="load"
-      :infinite-scroll-disabled="disabled">
-      <div v-for="blog in blogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 98%  ">
-          <div class="maoboli">
-            <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{blog.blogTitle}}</h2>
-            <el-row style="margin-top: 10px;margin-bottom: 0">
-              <el-col :span="24">
-                <p class="blogCategory" @click="select(blog.category.categoryId,blog.category.categoryName)"><i class="el-icon-collection-tag myi"></i>{{blog.category.categoryName}}</p>
-              </el-col>
-            </el-row>
-            <el-row style="margin-top: 5px">
-              <el-col :span="12">
-                <p class="blogCreateGmt"><i class="el-icon-date" style="margin-right: 2px"></i>{{blog.createGmt}}</p>
-              </el-col>
-              <el-col :span="12">
-                <p class="blogCreateGmt"><i class="el-icon-edit" style="margin-right: 2px"></i>{{blog.updateGmt}}</p>
-              </el-col>
-            </el-row>
-            <el-image
-              class="myimage"
-              :src="blog.blogCoverImage"
-              :lazy="lazy"
-              @click="showBlog(blog.blogId)"
-              fit="fill" ></el-image>
-            <el-row style="margin-bottom: 7px" class="myrow">
-              <el-col :span="24">
-                <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)" style="cursor:pointer;font-size: 10px;width: 95%;border-radius: 15px">阅读全文</el-tag>
-              </el-col>
-            </el-row>
-          </div>
-        <el-divider></el-divider>
+    v-infinite-scroll="load"
+    :infinite-scroll-disabled="disabled">
+    <div v-for="blog in blogs" :key="blog.blogId" style="text-align: center;margin: 10px auto 5px;width: 98%  ">
+      <div class="maoboli">
+        <h2 class="blogTitle" @click="showBlog(blog.blogId)">{{ blog.blogTitle }}</h2>
+        <el-row style="margin-top: 10px;margin-bottom: 0">
+          <el-col :span="24">
+            <p class="blogCategory" @click="select(blog.category.categoryId,blog.category.categoryName)"><i
+              class="el-icon-collection-tag myi"></i>{{ blog.category.categoryName }}</p>
+          </el-col>
+        </el-row>
+        <el-row style="margin-top: 5px">
+          <el-col :span="12">
+            <p class="blogCreateGmt"><i class="el-icon-date" style="margin-right: 2px"></i>{{ blog.createGmt }}</p>
+          </el-col>
+          <el-col :span="12">
+            <p class="blogCreateGmt"><i class="el-icon-edit" style="margin-right: 2px"></i>{{ blog.updateGmt }}</p>
+          </el-col>
+        </el-row>
+        <el-image
+          class="myimage"
+          :src="blog.blogCoverImage"
+          :lazy="lazy"
+          @click="showBlog(blog.blogId)"
+          fit="fill"></el-image>
+        <el-row style="margin-bottom: 7px" class="myrow">
+          <el-col :span="24">
+            <el-tag effect="dark" type="danger" @click="showBlog(blog.blogId)"
+                    style="cursor:pointer;font-size: 10px;width: 95%;border-radius: 15px">阅读全文
+            </el-tag>
+          </el-col>
+        </el-row>
       </div>
+      <el-divider></el-divider>
     </div>
+  </div>
 </template>
 
 <script>
-  export default {
-    name: "showBlogListForCommon",
-    data() {
-      return  {
-        blogs:[],
-        pageSize: 5,
-        total: null,
-        disabled: true,
-        lazy: true,
+export default {
+  name: "showBlogListForCommon",
+  data() {
+    return {
+      blogs: [],
+      pageSize: 5,
+      total: null,
+      disabled: true,
+      lazy: true,
+    }
+  },
+  methods: {
+    load() {
+      this.disabled = true
+      if (this.$route.params.bloglist === "all" && this.blogs.length >= 10) {
+        this.$message({
+          message: '请选择右侧类型查看更多博客！',
+          type: 'error',
+          duration: 2500,
+          center: true
+        });
+      } else if (this.$route.params.bloglist === "category" && this.blogs.length >= this.total) {
+        this.$message({
+          message: '博客全部加载完毕',
+          type: 'error',
+          duration: 1000
+        });
+      } else {
+        this.$message({
+          message: '博客加载中',
+          type: 'warning',
+          duration: 500
+        });
+        this.$store.commit('setCommonCurrentPage', ++this.$store.state.commonCurrentPage)
+        this.refresh(this.$store.state.commonCurrentPage)
       }
     },
-    methods:{
-      load(){
-        this.disabled=true
-        if (this.$route.params.bloglist==="all" && this.blogs.length >= 10){
-          this.$message({
-            message: '请选择右侧类型查看更多博客！',
-            type: 'error',
-            duration: 2500,
-            center: true
-          });
-        }
-        else if (this.$route.params.bloglist==="category" && this.blogs.length >= this.total){
-          this.$message({
-            message: '博客全部加载完毕',
-            type: 'error',
-            duration: 1000
-          });
-        }
-        else {
-          this.$message({
-            message: '博客加载中',
-            type: 'warning',
-            duration: 500
-          });
-          this.$store.commit('setCommonCurrentPage',++this.$store.state.commonCurrentPage)
-          this.refresh(this.$store.state.commonCurrentPage)
-        }
-      },
-      select(id){
-        this.$router.push("/bloglist/category/"+id)
-      },
-      refresh(page){
-        if (this.$route.params.bloglist==="all"){
-          this.$http.post("/blog/common/selectBlogListByPageForCommon/"+0+"/"+page+"/"+this.pageSize).then(response=>{
-            if (response!=null){
-              this.blogs=response.data.data
-              this.$http.post("/blog/common/selectTotalBlogsForCommon/"+0).then(response=>{
-                if (response!=null){
-                  this.total=response.data.data
-                  setTimeout(() => {
-                    if (this.total>1){
-                      this.disabled=false
-                    }
-                    else {
-                      this.lazy=false
-                    }
-                  }, 200)
-                  this.$store.commit('setMainLoading',false)
-                }
-              }).catch(error=> {
-                console.log(error)
-                this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-              })
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-        }
-        else if (this.$route.params.bloglist==="category"){
-          this.$http.post("/blog/common/selectBlogListByPageForCommon/"+this.$route.params.bloglist2+"/"+page+"/"+this.pageSize).then(response=>{
-            if (response!=null){
-              this.blogs=response.data.data
-              this.$http.post("/blog/common/selectTotalBlogsForCommon/"+this.$route.params.bloglist2).then(response=>{
-                if (response!=null){
-                  this.total=response.data.data
-                  window.document.title = '博客类别: '+this.$store.state.category[this.$route.params.bloglist2]
-                  setTimeout(() => {
-                    if (this.total>1){
-                      this.disabled=false
-                    }
-                    else {
-                      this.lazy=false
-                    }
-                  }, 200)
-                  this.$store.commit('setMainLoading',false)
-                }
-              }).catch(error=> {
-                console.log(error)
-                this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-              })
-            }
-          }).catch(error=> {
-            console.log(error)
-            this.$store.commit('errorMsg',"请求发出错误！请稍后再试")
-          })
-        }
-      },
-      showBlog(blogId){
-        this.$router.push("/bloglist/blog/"+blogId)
-      },
+    select(id) {
+      this.$router.push("/bloglist/category/" + id)
     },
-    created() {
+    refresh(page) {
+      if (this.$route.params.bloglist === "all") {
+        this.$http.post("/blog/common/selectBlogListByPageForCommon/" + 0 + "/" + page + "/" + this.pageSize).then(response => {
+          if (response != null) {
+            this.blogs = response.data.data
+            this.$http.post("/blog/common/selectTotalBlogsForCommon/" + 0).then(response => {
+              if (response != null) {
+                this.total = response.data.data
+                setTimeout(() => {
+                  if (this.total > 1) {
+                    this.disabled = false
+                  } else {
+                    this.lazy = false
+                  }
+                }, 200)
+                this.$store.commit('setMainLoading', false)
+              }
+            }).catch(error => {
+              console.log(error)
+              this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+            })
+          }
+        }).catch(error => {
+          console.log(error)
+          this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+        })
+      } else if (this.$route.params.bloglist === "category") {
+        this.$http.post("/blog/common/selectBlogListByPageForCommon/" + this.$route.params.bloglist2 + "/" + page + "/" + this.pageSize).then(response => {
+          if (response != null) {
+            this.blogs = response.data.data
+            this.$http.post("/blog/common/selectTotalBlogsForCommon/" + this.$route.params.bloglist2).then(response => {
+              if (response != null) {
+                this.total = response.data.data
+                window.document.title = '博客类别: ' + this.$store.state.category[this.$route.params.bloglist2]
+                setTimeout(() => {
+                  if (this.total > 1) {
+                    this.disabled = false
+                  } else {
+                    this.lazy = false
+                  }
+                }, 200)
+                this.$store.commit('setMainLoading', false)
+              }
+            }).catch(error => {
+              console.log(error)
+              this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+            })
+          }
+        }).catch(error => {
+          console.log(error)
+          this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+        })
+      }
+    },
+    showBlog(blogId) {
+      this.$router.push("/bloglist/blog/" + blogId)
+    },
+  },
+  created() {
+    this.refresh(this.$store.state.commonCurrentPage)
+    setTimeout(() => {
+      document.getElementById("myelmain").scrollTop = 5
+      document.getElementById("myelmain").scrollTop = this.$store.state.height
+    }, 500)
+  },
+  beforeRouteLeave(to, from, next) {
+    this.disabled = true
+    this.$store.commit('setHeight', document.getElementById("myelmain").scrollTop)
+    next()
+  },
+  watch: {
+    '$route.params.bloglist2': function (to, from) {
+      this.disabled = true
+      this.$store.commit('setCommonCurrentPage', 1)
       this.refresh(this.$store.state.commonCurrentPage)
       setTimeout(() => {
-        document.getElementById("myelmain").scrollTop=5
-        document.getElementById("myelmain").scrollTop=this.$store.state.height
-      },500)
-    },
-    beforeRouteLeave (to, from, next) {
-      this.disabled=true
-      this.$store.commit('setHeight',document.getElementById("myelmain").scrollTop)
-      next()
-    },
-    watch: {
-      '$route.params.bloglist2': function (to, from) {
-        this.disabled=true
-        this.$store.commit('setCommonCurrentPage',1)
-        this.refresh(this.$store.state.commonCurrentPage)
-        setTimeout(() => {
-          document.documentElement.scrollTop=0
-          document.body.scrollTop=0
-          document.getElementById("myelmain").scrollTop=5
-          document.getElementById("myelmain").scrollTop=0
-        }, 200)
-      }
-    },
-  }
+        document.documentElement.scrollTop = 0
+        document.body.scrollTop = 0
+        document.getElementById("myelmain").scrollTop = 5
+        document.getElementById("myelmain").scrollTop = 0
+      }, 200)
+    }
+  },
+}
 </script>
 
 <style scoped>
 @media only screen and (max-width: 767px) {
-  .maoboli{
+  .maoboli {
     position: relative;
     z-index: 1;
     background-position: center top;
@@ -179,7 +177,8 @@
     padding-bottom: 5px;
     border-radius: 20px;
   }
-  .maoboli::before{
+
+  .maoboli::before {
     margin: 10px;
     content: '';
     position: absolute;
@@ -200,42 +199,48 @@
     box-shadow: 0 0 12px 15px rgba(0, 0, 0, 0.8);
 
   }
-  .blogTitle{
+
+  .blogTitle {
     text-align: center;
     font-size: 30px;
     color: #ae02f8;
-    cursor:pointer;
+    cursor: pointer;
     margin: 0 auto;
     padding: 0 10px;
     width: fit-content;
   }
-  .blogCategory{
+
+  .blogCategory {
     color: #fa0e0e;
     width: fit-content;
     margin: 0 auto;
     padding: 5px 10px;
     border-radius: 10px;
-    cursor:pointer;
+    cursor: pointer;
     font-size: 16px;
   }
-  .blogCreateGmt{
+
+  .blogCreateGmt {
     width: fit-content;
     margin: 0 auto;
     padding: 5px 0;
     border-radius: 10px;
-    cursor:pointer;
+    cursor: pointer;
     font-size: 14px;
     white-space: nowrap;
   }
-  .myimage{
+
+  .myimage {
     height: 180px;
   }
-  .myi{
+
+  .myi {
     color: black;
   }
 }
+
 @media only screen and (min-width: 768px) {
-  .maoboli{
+  .maoboli {
     position: relative;
     z-index: 1;
     background-position: center top;
@@ -245,7 +250,8 @@
     padding-bottom: 15px;
     border-radius: 20px
   }
-  .maoboli:before{
+
+  .maoboli:before {
     margin: 10px;
     content: '';
     position: absolute;
@@ -265,28 +271,31 @@
     filter: blur(10px);
     box-shadow: 0 0 12px 15px rgba(0, 0, 0, 0.8);
   }
-  .maoboli:hover:before{
-    background: linear-gradient(90deg, #070707,#ddf864,#05ddfa,#05ddfa,#ddf864,#070707);
+
+  .maoboli:hover:before {
+    background: linear-gradient(90deg, #070707, #ddf864, #05ddfa, #05ddfa, #ddf864, #070707);
     opacity: 0.4;
   }
 
-  .blogTitle{
+  .blogTitle {
     text-align: center;
     font-size: 30px;
     color: #ae02f8;
-    cursor:pointer;
+    cursor: pointer;
     -webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
     margin: 0 auto;
     padding: 0 10px;
     width: fit-content;
   }
-  .blogTitle:hover{
+
+  .blogTitle:hover {
     color: #fff;
     -webkit-animation: Glow 0.3s ease infinite alternate;
     animation: Glow 1s ease infinite alternate;
     background: none;
   }
+
   @-webkit-keyframes Glow {
     from {
       text-shadow: 0 0 10px #fff,
@@ -331,7 +340,7 @@
       0 0 75px #05ddfa;
     }
   }
-  .blogCategory{
+  .blogCategory {
     background: #333331;
     font-weight: bold;
     color: #ffffff;
@@ -339,39 +348,46 @@
     margin: 0 auto;
     padding: 5px 10px;
     border-radius: 10px;
-    cursor:pointer;
+    cursor: pointer;
     font-size: 16px;
   }
-  .blogCategory:hover{
+
+  .blogCategory:hover {
     background: #fa5979;
     transition: 0.3s;
   }
-  .blogCreateGmt{
+
+  .blogCreateGmt {
     font-weight: bold;
     width: fit-content;
     margin: 0 auto;
     padding: 5px 10px;
     border-radius: 10px;
-    cursor:default;
+    cursor: default;
     font-size: 16px;
   }
-  .myimage{
+
+  .myimage {
     height: 640px;
   }
-  .myrow{
+
+  .myrow {
     display: none;
   }
 }
-.myimage{
+
+.myimage {
   width: 95%;
-  cursor:pointer;
+  cursor: pointer;
   margin-top: 5px;
   border-radius: 20px;
 }
-.myi{
+
+.myi {
   margin-right: 5px;
 }
-.el-divider--horizontal{
-    background: #02f5c4;
-  }
+
+.el-divider--horizontal {
+  background: #02f5c4;
+}
 </style>

@@ -27,6 +27,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>3.13.1</version>
+        </dependency>
         <!--人脸识别-->
         <dependency>
             <groupId>com.aliyun</groupId>

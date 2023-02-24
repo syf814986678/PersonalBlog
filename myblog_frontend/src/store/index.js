@@ -2,13 +2,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from "vuex-persistedstate"
 import router from "../router";
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state:{
+  state: {
     collapseBtnClick: false,
     isCollapse: true,
-    user:{
+    user: {
       userId: '',
       userName: '',
     },
@@ -24,42 +25,42 @@ export default new Vuex.Store({
     },
     commonCurrentPage: 1,
     currentPage: 1,
-    height:0,
-    mainLoading:true,
+    height: 0,
+    mainLoading: true,
     category: {},
-    whatSearch:'',
+    whatSearch: '',
   },
-  mutations:{
-    setSearch(state,search){
-      state.whatSearch=search
+  mutations: {
+    setSearch(state, search) {
+      state.whatSearch = search
     },
-    setCategory(state,category){
+    setCategory(state, category) {
       state.category[category[0]] = category[1]
     },
-    setMainLoading(state,status){
-      state.mainLoading=status
+    setMainLoading(state, status) {
+      state.mainLoading = status
     },
-    setHeight(state,height){
-      state.height=height
+    setHeight(state, height) {
+      state.height = height
     },
-    setCommonCurrentPage(state,page){
-      state.commonCurrentPage=page
+    setCommonCurrentPage(state, page) {
+      state.commonCurrentPage = page
     },
-    setCurrentPage(state,page){
-      state.commonCurrentPage=page
+    setCurrentPage(state, page) {
+      state.commonCurrentPage = page
     },
-    setOSS(state,data){
-      state.OSS.accessId=data["accessId"]
-      state.OSS.host=data["host"]
-      state.OSS.policy=data["policy"]
-      state.OSS.signature=data["signature"]
-      state.OSS.callback=data["callback"]
-      state.OSS.expire=data["expire"]
-      state.OSS.dir=data["dir"]
+    setOSS(state, data) {
+      state.OSS.accessId = data["accessId"]
+      state.OSS.host = data["host"]
+      state.OSS.policy = data["policy"]
+      state.OSS.signature = data["signature"]
+      state.OSS.callback = data["callback"]
+      state.OSS.expire = data["expire"]
+      state.OSS.dir = data["dir"]
     },
-    setUser(state,user){
-      state.user.userId=user.userId
-      state.user.userName=user.userName
+    setUser(state, user) {
+      state.user.userId = user.userId
+      state.user.userName = user.userName
     },
     // setmyuserid(state,myuserid){
     //   state.myuser.userid=myuserid
@@ -67,21 +68,21 @@ export default new Vuex.Store({
     // setmyusername(state,myusername){
     //   state.myuser.username=myusername
     // },
-    setToken(state,token){
-      state.token=token
+    setToken(state, token) {
+      state.token = token
     },
-    logout(state){
-      state.user.userName=''
-      state.user.userId=''
-      state.token=''
+    logout(state) {
+      state.user.userName = ''
+      state.user.userId = ''
+      state.token = ''
       sessionStorage.removeItem('vuex')
       router.push("/login")
       const d = new Date();
-      d.setTime(d.getTime()+(-1*1000));
+      d.setTime(d.getTime() + (-1 * 1000));
       const expires = "expires=" + d.toUTCString();
-      document.cookie = "userId=;"+expires;
-      document.cookie = "userName=;"+expires;
-      document.cookie = "token=;"+expires;
+      document.cookie = "userId=;" + expires;
+      document.cookie = "userName=;" + expires;
+      document.cookie = "token=;" + expires;
     },
     collapseOpen(state) {
       if (state.collapseBtnClick) return;
@@ -94,7 +95,7 @@ export default new Vuex.Store({
     collapseReverse(state) {
       state.collapseBtnClick = !state.collapseBtnClick
     },
-    errorMsg(state,string){
+    errorMsg(state, string) {
       Vue.prototype.$notify({
         title: '失败',
         message: string,

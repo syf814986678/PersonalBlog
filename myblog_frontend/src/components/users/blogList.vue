@@ -1,9 +1,12 @@
 <template>
   <div style="margin: 0 auto">
-    <div  v-loading="categoriesLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
-          element-loading-background="rgba(0, 0, 0, 0.8)"
-          style="margin-bottom: 10px">
-      <el-button size="medium" v-for="item in categories" :key="item.categoryId" type="primary" style="font-size: 12px;font-weight: bold;margin-left: 0;margin-right: 10px;margin-bottom: 10px" @click="select(item.categoryId)">{{item.categoryName}} ({{item.categoryRank}})</el-button>
+    <div v-loading="categoriesLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
+         element-loading-background="rgba(0, 0, 0, 0.8)"
+         style="margin-bottom: 10px">
+      <el-button size="medium" v-for="item in categories" :key="item.categoryId" type="primary"
+                 style="font-size: 12px;font-weight: bold;margin-left: 0;margin-right: 10px;margin-bottom: 10px"
+                 @click="select(item.categoryId)">{{ item.categoryName }} ({{ item.categoryRank }})
+      </el-button>
     </div>
     <el-table v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
               element-loading-background="rgba(0, 0, 0, 0.8)" border :row-class-name="tableRowClassName" :data="myData">
@@ -114,7 +117,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item prop="category.categoryId" class="myitem">
-              <el-select :loading="selectLoading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
+              <el-select :loading="selectLoading" element-loading-text="拼命加载中"
+                         element-loading-spinner="el-icon-loading"
                          element-loading-background="rgba(0, 0, 0, 0.8)" v-model="formData.category.categoryId"
                          placeholder="博客类别" style="width: 100%">
                 <el-option v-for="option in options" :label="option.categoryName" :value="option.categoryId"
@@ -277,8 +281,8 @@ export default {
         ],
       },
       filename: '',
-      categories:[],
-      categoryId:0,
+      categories: [],
+      categoryId: 0,
     }
   },
   methods: {
@@ -288,11 +292,11 @@ export default {
         this.myData.length = 5
       }
     },
-    select(id){
-      this.categoryId=id
-      this.currentPage=1
+    select(id) {
+      this.categoryId = id
+      this.currentPage = 1
       this.$store.commit('setCurrentPage', 1)
-      this.refreshDate(this.categoryId,this.currentPage, this.pageSize);
+      this.refreshDate(this.categoryId, this.currentPage, this.pageSize);
     },
     chooseFile() {
       document.getElementById("file").click()
@@ -347,8 +351,8 @@ export default {
         this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
       })
     },
-    refreshDate(categoryId,pageNow, pageSize) {
-      if (this.$route.params.test!==undefined){
+    refreshDate(categoryId, pageNow, pageSize) {
+      if (this.$route.params.test !== undefined) {
         this.testadd(this.$route.params.test)
       }
       this.$http.post("/blog/admin/selectBlogListByPageForAdmin/" + categoryId + "/" + pageSize + "/" + pageNow).then(response => {
@@ -380,7 +384,7 @@ export default {
     },
     handleCurrentChange(page) {
       this.$store.commit('setCurrentPage', page)
-      this.refreshDate(this.categoryId,page, this.pageSize);
+      this.refreshDate(this.categoryId, page, this.pageSize);
     },
     tableRowClassName({row, rowIndex}) {
       if (rowIndex % 2) {
@@ -417,7 +421,7 @@ export default {
             type: 'success',
             duration: 2500
           });
-          this.refreshDate(this.categoryId,this.currentPage, this.pageSize);
+          this.refreshDate(this.categoryId, this.currentPage, this.pageSize);
         }
       }).catch(error => {
         console.log(error)
@@ -476,7 +480,7 @@ export default {
               });
               loading.close()
               this.dialogFormVisible = false
-              this.refreshDate(this.categoryId,this.currentPage, this.pageSize)
+              this.refreshDate(this.categoryId, this.currentPage, this.pageSize)
 
             }
           }).catch(error => {
@@ -556,7 +560,7 @@ export default {
   },
   created() {
     const that = this;
-    this.refreshDate(this.categoryId,this.currentPage, this.pageSize);
+    this.refreshDate(this.categoryId, this.currentPage, this.pageSize);
     document.onkeydown = function (e) {
       // 回车提交表单
       // 兼容FF和IE和Opera
