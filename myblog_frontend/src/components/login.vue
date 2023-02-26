@@ -7,17 +7,24 @@
       <h3>Login</h3>
     </div>
 
-    <div style="width: 50%;text-align: center;margin: 20px auto">
-      <el-switch
-        @change="switcher"
-        style="display: block"
-        v-model="switchValue"
-        active-color="#13ce66"
-        inactive-color="#ff4949"
-        active-text="人脸识别"
-        inactive-text="普通登录">
-      </el-switch>
-    </div>
+    <el-menu style="margin-bottom: 10px;width: 20%;left: 40%;" :default-active="activeIndex" mode="horizontal"
+             @select="handleSelect">
+      <el-menu-item index="1">账户密码登录</el-menu-item>
+      <el-menu-item index="2">人脸识别登录</el-menu-item>
+      <el-menu-item index="3">微信扫码登录</el-menu-item>
+    </el-menu>
+
+    <!--    <div style="width: 50%;text-align: center;margin: 20px auto">-->
+    <!--      <el-switch-->
+    <!--        @change="switcher"-->
+    <!--        style="display: block"-->
+    <!--        v-model="switchValue"-->
+    <!--        active-color="#13ce66"-->
+    <!--        inactive-color="#ff4949"-->
+    <!--        active-text="人脸识别"-->
+    <!--        inactive-text="普通登录">-->
+    <!--      </el-switch>-->
+    <!--    </div>-->
 
     <el-form id="commonLogin">
       <el-form-item>
@@ -45,8 +52,15 @@
       </div>
     </el-form>
 
-    <div id="faceLogin" style="text-align: center;margin: 20px auto">
+    <div id="faceLogin" style="text-align: center;margin: 20px auto;display: none">
       <canvas id="canvas" width="320" height="240"></canvas>
+    </div>
+
+    <div id="wxLogin" style="text-align: center;margin: 20px auto;display: none">
+      <el-image
+        style="width: 300px; height: 300px"
+        :src="wxQrCode"
+        fit="fill"></el-image>
     </div>
 
 
@@ -74,10 +88,44 @@ export default {
       intervalId: null,
       trackerTask: null,
       flag: true,
-      faceTimes: 0
+      faceTimes: 0,
+      activeIndex: "1",
+      wxQrCode: null,
+
     }
   },
   methods: {
+    handleSelect(key) {
+      if (key === "2") {
+        document.getElementById("commonLogin").style.display = 'none'
+        document.getElementById("faceLogin").style.display = ''
+        document.getElementById("wxLogin").style.display = 'none'
+        this.openCamera();
+      } else if (key === "1") {
+        document.getElementById("commonLogin").style.display = ''
+        document.getElementById("faceLogin").style.display = 'none'
+        document.getElementById("wxLogin").style.display = 'none'
+        this.mediaStreamTrack.stop();
+        clearInterval(this.intervalId);
+      } else if (key === "3") {
+        document.getElementById("commonLogin").style.display = 'none'
+        document.getElementById("faceLogin").style.display = 'none'
+        document.getElementById("wxLogin").style.display = ''
+        this.mediaStreamTrack.stop();
+        clearInterval(this.intervalId);
+        this.getWxQrCode()
+      }
+    },
+    getWxQrCode() {
+      this.$http.post("/admin/getWxCode").then(response => {
+        if (response != null) {
+          this.wxQrCode = response.data.data
+        }
+      }).catch(error => {
+        console.log(error)
+        this.$store.commit('errorMsg', "请求发出错误！请稍后再试")
+      })
+    },
     login() {
       this.$http.post("/admin/login", "username=" + this.username + "&password=" + this.password).then(response => {
         if (response != null) {
@@ -101,21 +149,20 @@ export default {
       })
     },
 
-    switcher() {
-      if (this.switchValue) {
-        document.getElementById("commonLogin").style.display = 'none'
-        document.getElementById("faceLogin").style.display = ''
-        this.openCamera();
-      } else {
-        document.getElementById("commonLogin").style.display = ''
-        document.getElementById("faceLogin").style.display = 'none'
-        this.mediaStreamTrack.stop();
-        clearInterval(this.intervalId);
-      }
+    // switcher() {
+    //   if (this.switchValue) {
+    //     document.getElementById("commonLogin").style.display = 'none'
+    //     document.getElementById("faceLogin").style.display = ''
+    //     this.openCamera();
+    //   } else {
+    //     document.getElementById("commonLogin").style.display = ''
+    //     document.getElementById("faceLogin").style.display = 'none'
+    //     this.mediaStreamTrack.stop();
+    //     clearInterval(this.intervalId);
+    //   }
+    // },
 
-    },
-
-    //访问摄像头
+//访问摄像头
     openCamera() {
       // this.faceTracker()
       if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia) {
@@ -127,7 +174,7 @@ export default {
       }
     },
 
-    //访问用户媒体设备的兼容方法
+//访问用户媒体设备的兼容方法
     getUserMedia(constraints, success, error) {
       if (navigator.mediaDevices.getUserMedia) {
         //最新的标准API
@@ -138,7 +185,7 @@ export default {
       }
     },
 
-    //成功回调
+//成功回调
     success(stream) {
       // console.log('成功');
       //兼容webkit核心浏览器
@@ -153,7 +200,7 @@ export default {
       // this.intervalId = setInterval(this.drawCanvasImage, 100)
     },
 
-    //失败回调
+//失败回调
     error(error) {
       console.log('失败');
       alert("访问用户媒体设备失败" + error);
@@ -174,12 +221,14 @@ export default {
       }
       return new File([new Blob([u8arr], {type: mime})], 'a.png');
     },
+
     destroyed() {
       // 停止侦测
       this.trackerTask.stop()
       // 关闭摄像头
       this.mediaStreamTrack.stop();
     },
+
     randomName(len) {
       len = len || 32;
       const chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
@@ -190,6 +239,7 @@ export default {
       }
       return pwd + ".png"
     },
+
     faceTracker() {
       const that = this;
       const canvas = document.getElementById('canvas');
