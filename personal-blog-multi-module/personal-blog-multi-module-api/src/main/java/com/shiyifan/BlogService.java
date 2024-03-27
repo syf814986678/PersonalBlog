@@ -110,7 +110,7 @@ public interface BlogService {
      * @method updateBlogForAdmin
      * @params [userId, blog]
      **/
-    Boolean updateBlogForAdmin(int userId, Blog blog) throws Exception;
+    Integer updateBlogForAdmin(int userId, Blog blog) throws Exception;
 
     /**
      * @return com.shiyifan.pojo.Blog

@@ -267,6 +267,9 @@ public class BlogServiceImpl implements BlogService {
     public Boolean addBlogForAdmin(int userId, Blog blog) throws Exception {
         log.info("方法:addBlogForAdmin开始,userId:" + userId + ",blogId:" + blog.getBlogId());
         try {
+            if (blogUtil.antiBrushingCheck(userId)) {
+                return false;
+            }
             blog.setBlogId(UUID.randomUUID().toString().replaceAll("-", ""));
             Integer categoryRankForAdmin = categoryService.getCategoryRankForAdmin(userId, blog.getCategory().getCategoryId());
             blog.setBlogTitle(blog.getBlogTitle() + "(" + arabicNumToChineseNumUtil.arabicNumToChineseNum(++categoryRankForAdmin) + ")");
@@ -274,6 +277,7 @@ public class BlogServiceImpl implements BlogService {
             categoryService.addCategoryRankForAdmin(userId, blog.getCategory().getCategoryId());
             blogUtil.setBlogToRedisAndElasticSearchForAdmin(userId, blog.getBlogId());
             blogUtil.cleanTempBlogForAdmin(userId);
+            blogUtil.antiBrushingAdd(userId);
         } catch (Exception e) {
             log.error("addBlogForAdmin错误" + e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -294,9 +298,13 @@ public class BlogServiceImpl implements BlogService {
     public Boolean deleteBlogForAdmin(int userId, String blogId, int categoryId) throws Exception {
         log.info("方法:deleteBlogForAdmin开始,userId:" + userId + ",blogId:" + blogId + ",categoryId" + categoryId);
         try {
+            if (blogUtil.antiBrushingCheck(userId)) {
+                return false;
+            }
             blogUtil.deleteBlogInRedisAndElasticSearchForAdmin(userId, blogId);
             blogMapper.deleteBlogByIdForAdmin(userId, blogId);
             categoryService.deleteCategoryRankForAdmin(userId, categoryId);
+            blogUtil.antiBrushingAdd(userId);
         } catch (Exception e) {
             log.error("deleteBlogForAdmin错误" + e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -314,12 +322,15 @@ public class BlogServiceImpl implements BlogService {
      **/
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean updateBlogForAdmin(int userId, Blog blog) throws Exception {
+    public Integer updateBlogForAdmin(int userId, Blog blog) throws Exception {
         log.info("方法:updateBlogForAdmin开始,userId:" + userId + ",blogId:" + blog.getBlogId());
         try {
+            if (blogUtil.antiBrushingCheck(userId)) {
+                return 1;
+            }
             Integer categoryIdForAdminInDb = categoryService.getCategoryIdForAdmin(userId, blog.getBlogId());
             if (categoryIdForAdminInDb == null) {
-                return false;
+                return 2;
             }
             if (categoryIdForAdminInDb != blog.getCategory().getCategoryId()) {
                 categoryService.deleteCategoryRankForAdmin(userId, categoryIdForAdminInDb);
@@ -331,12 +342,13 @@ public class BlogServiceImpl implements BlogService {
             blogMapper.updateBlogByIdForAdmin(userId, blog);
             Blog newBlog = blogMapper.selectBlogForRedisForAdmin(userId, blog.getBlogId());
             blogUtil.updateBlogInRedisAndElasticSearchForAdmin(userId, newBlog);
+            blogUtil.antiBrushingAdd(userId);
         } catch (Exception e) {
             log.error("updateBlogForAdmin错误" + e);
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             throw new Exception("updateBlogForAdmin错误" + e);
         }
-        return true;
+        return 0;
     }
 
     /**

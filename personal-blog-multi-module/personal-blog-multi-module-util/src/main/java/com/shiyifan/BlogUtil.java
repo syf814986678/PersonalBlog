@@ -26,6 +26,7 @@ import java.util.Map;
 @Component
 @Log4j2
 public class BlogUtil implements ApplicationRunner {
+
     @Autowired
     private RedisUtil redisUtil;
 
@@ -64,6 +65,9 @@ public class BlogUtil implements ApplicationRunner {
 
     @Value("${blog.userTempBlog}")
     private String userTempBlog;
+
+    @Value("${blog.antiBrushing}")
+    private String antiBrushing;
 
     @Value("${searchPath}")
     private String searchPath;
@@ -499,11 +503,19 @@ public class BlogUtil implements ApplicationRunner {
         redisUtil.flushDb();
     }
 
+    public boolean antiBrushingCheck(int userId) {
+        return !redisUtil.hasKey(antiBrushing + userId);
+    }
+
+    public void antiBrushingAdd(int userId) {
+        redisUtil.set(antiBrushing + userId, userId, 10);
+    }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         log.info("方法:flushDb开始");
         redisUtil.flushDb();
     }
+
 }
 

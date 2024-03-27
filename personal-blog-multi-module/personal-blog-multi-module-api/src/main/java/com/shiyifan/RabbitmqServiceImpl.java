@@ -52,9 +52,11 @@ public class RabbitmqServiceImpl implements RabbitmqService {
         try {
             Blog blog = (Blog) map.get("blog");
             int userId = (int) map.get("userId");
-            blogService.addBlogForAdmin(userId, blog);
+            if (!blogService.addBlogForAdmin(userId, blog)) {
+                throw new Exception("触发防刷机制，添加博客失败");
+            }
         } catch (Exception e) {
-//            DingTalkUtil.sendMsg(e.getMessage());
+            DingTalkUtil.sendMsg(e.getMessage());
             //添加队列重试
             // channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
         } finally {

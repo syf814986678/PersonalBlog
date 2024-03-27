@@ -185,7 +185,9 @@ public class AdminBlogController {
         try {
             claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
             int userId = (int) claims.get("userId");
-            blogService.deleteBlogForAdmin(userId, blogId, categoryId);
+            if (!blogService.deleteBlogForAdmin(userId, blogId, categoryId)) {
+                throw new Exception("触发防刷机制，删除博客失败");
+            }
         } catch (Exception e) {
             log.error("deleteBlogForAdmin错误" + e.toString());
             throw new Exception("deleteBlogForAdmin错误" + e.toString());
@@ -206,11 +208,15 @@ public class AdminBlogController {
         try {
             claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
             int userId = (int) claims.get("userId");
-            if(blogService.updateBlogForAdmin(userId, blog)){
+            Integer value = blogService.updateBlogForAdmin(userId, blog);
+            if (value == 0) {
                 return ResultUtil.success(null);
-            }
-            else {
-                return ResultUtil.operationError("类别ID不存在！",null);
+            } else if (value == 1) {
+                return ResultUtil.exception("触发防刷机制，更新博客失败", null);
+            } else if (value == 2) {
+                return ResultUtil.operationError("类别ID不存在！", null);
+            } else {
+                return ResultUtil.exception("其他异常", null);
             }
         } catch (Exception e) {
             log.error("updateBlogForAdmin错误" + e.toString());
@@ -220,13 +226,13 @@ public class AdminBlogController {
     }
 
     @PostMapping("/selectBlogByIdForAdmin/{blogId}")
-    public Result selectBlogByIdForAdmin(HttpServletRequest request,@PathVariable("blogId") String blogId) throws Exception {
+    public Result selectBlogByIdForAdmin(HttpServletRequest request, @PathVariable("blogId") String blogId) throws Exception {
         Claims claims = null;
         Blog blog = null;
         try {
             claims = (Claims) request.getAttribute(CodeState.USER_CLAIMS_STR);
             int userId = (int) claims.get("userId");
-            blog = blogService.selectBlogByIdForAdmin(userId,blogId);
+            blog = blogService.selectBlogByIdForAdmin(userId, blogId);
         } catch (Exception e) {
             log.error("updateBlogForAdmin错误" + e.toString());
             throw new Exception("updateBlogForAdmin错误" + e.toString());

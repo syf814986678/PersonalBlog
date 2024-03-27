@@ -173,7 +173,7 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>1.5.4</version>
+            <version>0.9.1</version>
         </dependency>
     </dependencies>
 </project>
