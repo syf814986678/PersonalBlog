@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.17.2</version>
+            <version>3.17.4</version>
         </dependency>
         <!--人脸识别-->
         <dependency>
@@ -112,25 +112,25 @@
         <dependency>
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot-starter</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.5</version>
         </dependency>
         <!--mybatis-->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.3.0</version>
+            <version>3.0.3</version>
         </dependency>
         <!--数据库连接池-->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.2.5</version>
+            <version>1.2.22</version>
         </dependency>
         <!--数据库-->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.0.32</version>
+            <version>8.3.0</version>
         </dependency>
         <!-- 阿里云接口工具包 -->
         <dependency>
@@ -141,17 +141,17 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>4.5.17</version>
+            <version>4.6.4</version>
         </dependency>
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.16.0</version>
+            <version>3.17.4</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
-            <version>1.5.3</version>
+            <version>1.5.4</version>
         </dependency>
         <!--elasticsearch-->
         <dependency>
@@ -173,7 +173,7 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
+            <version>1.5.4</version>
         </dependency>
     </dependencies>
 </project>
